@@ -1,0 +1,73 @@
+---
+import Base from "@/layouts/Base.astro";
+import Nav from "@/components/sections/Nav.astro";
+import Footer from "@/components/sections/Footer.astro";
+import RevealWrapper from "@/components/ui/RevealWrapper";
+import LineReveal from "@/components/ui/LineReveal.astro";
+import InsightsFilter from "@/components/interactive/InsightsFilter";
+import { getInsightsPage, getAllArticles } from "@/lib/content";
+
+const page = await getInsightsPage();
+const rawArticles = await getAllArticles();
+
+const articles = rawArticles.map((a) => ({
+  slug: a.slug,
+  title: a.title,
+  category: a.category,
+  excerpt: a.excerpt,
+  date: a.date,
+  readTime: a.readTime,
+}));
+
+const pageTitle = page?.pageTitle ?? "Insights & Field Guides";
+const pageSubtitle = page?.pageSubtitle ?? "Diplomatic Briefings";
+const pageDescription =
+  page?.pageDescription ??
+  "Strategic observations and practical guidance for diplomatic missions navigating real estate in global capitals.";
+const categories = page?.categories ?? [
+  { label: "All", slug: "all" },
+  { label: "Strategic Whitepaper", slug: "strategic-whitepaper" },
+  { label: "Field Guide", slug: "field-guide" },
+  { label: "Quiet Insight", slug: "quiet-insight" },
+];
+---
+
+<Base
+  title={`${pageTitle} — AABO Advisory`}
+  description={pageDescription}
+>
+  <Nav />
+
+  <main class="bg-canvas min-h-screen">
+    {/* Header */}
+    <div class="px-6 md:px-12 lg:px-20 pt-14 lg:pt-[60px] pb-10 lg:pb-12">
+      <div class="max-w-[1100px] mx-auto">
+        <RevealWrapper client:visible>
+          <div class="text-[10px] tracking-[0.25em] uppercase text-accent mb-4 font-semibold">
+            {pageSubtitle}
+          </div>
+          <h1 class="font-heading text-[32px] sm:text-[40px] lg:text-[48px] font-bold text-primary leading-[1.12] mb-4">
+            {pageTitle}
+          </h1>
+          <LineReveal width={48} class="mb-5" />
+          <p class="text-base leading-[1.7] text-text/55 max-w-[560px]">
+            {pageDescription}
+          </p>
+        </RevealWrapper>
+      </div>
+    </div>
+
+    {/* Article list with filters */}
+    <div class="px-6 md:px-12 lg:px-20 pb-16 lg:pb-20">
+      <div class="max-w-[1100px] mx-auto">
+        <InsightsFilter
+          client:load
+          articles={articles}
+          categories={categories}
+        />
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Base>

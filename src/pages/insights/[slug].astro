@@ -1,0 +1,49 @@
+---
+import Article from "@/layouts/Article.astro";
+import { reader } from "@/lib/content";
+import Markdoc from "@markdoc/markdoc";
+
+export async function getStaticPaths() {
+  const slugs = await reader.collections.articles.list();
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const article = await reader.collections.articles.read(slug!, {
+  resolveLinkedFiles: true,
+});
+
+if (!article) {
+  return Astro.redirect("/insights");
+}
+
+const allSlugs = await reader.collections.articles.list();
+const otherArticles = (
+  await Promise.all(
+    allSlugs
+      .filter((s) => s !== slug)
+      .map(async (s) => {
+        const a = await reader.collections.articles.read(s);
+        return a ? { slug: s, title: a.title, category: a.category } : null;
+      })
+  )
+).filter(Boolean) as { slug: string; title: string; category: string }[];
+
+const idx = allSlugs.indexOf(slug!);
+const docId = `AABO-2025-${String(idx + 1).padStart(3, "0")}`;
+
+const content = await article.body();
+const rendered = Markdoc.renderers.html(Markdoc.transform(content));
+---
+
+<Article
+  title={article.title}
+  category={article.category}
+  excerpt={article.excerpt}
+  date={article.date}
+  readTime={article.readTime}
+  docId={docId}
+  otherArticles={otherArticles}
+>
+  <Fragment set:html={rendered} />
+</Article>
