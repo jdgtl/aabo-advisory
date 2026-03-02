@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# build
+dist/
+.astro/
+
+# environment
+.env
+.env.*
+!.env.example
+
+# editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# wrangler
+.wrangler/
+.dev.vars
+
+# claude
+.claude/
