@@ -1,7 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import TurnstileWidget from "./TurnstileWidget";
 import { trackLeadCaptured, trackGateShown } from "@/lib/analytics";
-import { useEffect } from "react";
 
 export interface CalculatorData {
   priceRange: string;
@@ -14,13 +13,11 @@ export interface CalculatorData {
 interface Props {
   onClose: () => void;
   onSuccess: () => void;
-  /** CMS content for the gate headline/subtext */
   cms?: {
     gateHeadline?: string;
     gateSubtext?: string;
     gateButtonText?: string;
   };
-  /** Calculator data to send with the lead submission */
   calculatorData?: CalculatorData;
 }
 
@@ -30,10 +27,52 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
   const onTurnstileToken = useCallback((t: string) => setTurnstileToken(t), []);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     trackGateShown();
   }, []);
+
+  /* Focus trapping */
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const focusableSelector =
+      'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+
+      const focusable = dialog.querySelectorAll<HTMLElement>(focusableSelector);
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    const firstInput = dialog.querySelector<HTMLElement>("input, button");
+    firstInput?.focus();
+
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm({ ...form, [k]: e.target.value });
@@ -73,8 +112,12 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
     <div
       onClick={onClose}
       className="fixed inset-0 z-[200] bg-primary/80 backdrop-blur-[12px] flex items-center justify-center p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Unlock full analysis"
     >
       <div
+        ref={dialogRef}
         onClick={(e) => e.stopPropagation()}
         className="bg-canvas w-full max-w-[480px] max-h-[90vh] overflow-y-auto relative"
       >
@@ -90,6 +133,7 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
             </div>
             <button
               onClick={onClose}
+              aria-label="Close dialog"
               className="bg-transparent border-none cursor-pointer text-[22px] text-text/30 px-2 py-1 leading-none"
             >
               ×
@@ -103,21 +147,24 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
         <div className="pt-7 pb-10 px-8 sm:px-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium">
+              <label htmlFor="gate-name" className="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium">
                 Name
               </label>
               <input
+                id="gate-name"
                 value={form.name}
                 onChange={set("name")}
                 placeholder="Full name"
+                required
                 className="w-full p-3.5 text-sm font-body bg-light border border-mid text-text outline-none transition-colors focus:border-accent"
               />
             </div>
             <div>
-              <label className="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium">
+              <label htmlFor="gate-org" className="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium">
                 Organization
               </label>
               <input
+                id="gate-org"
                 value={form.org}
                 onChange={set("org")}
                 placeholder="Mission or entity"
@@ -126,20 +173,22 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
             </div>
           </div>
           <div className="mb-7">
-            <label className="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium">
+            <label htmlFor="gate-email" className="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium">
               Email
             </label>
             <input
+              id="gate-email"
               value={form.email}
               onChange={set("email")}
               type="email"
               placeholder="your@email.com"
+              required
               className="w-full p-3.5 text-sm font-body bg-light border border-mid text-text outline-none transition-colors focus:border-accent"
             />
           </div>
           <TurnstileWidget onToken={onTurnstileToken} />
           {error && (
-            <p className="text-xs text-red mb-3">{error}</p>
+            <p className="text-xs text-red mb-3" role="alert">{error}</p>
           )}
           <button
             onClick={handleSubmit}

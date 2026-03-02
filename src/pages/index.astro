@@ -9,18 +9,53 @@ import Services from "@/components/sections/Services.astro";
 import InsightsGrid from "@/components/sections/InsightsGrid.astro";
 import About from "@/components/sections/About.astro";
 import CTABanner from "@/components/sections/CTABanner.astro";
+import FAQ from "@/components/sections/FAQ.astro";
+import { professionalServiceJsonLd, faqPageJsonLd } from "@/lib/jsonld";
+
+const homepageFaqs = [
+  {
+    question: "What is diplomatic housing advisory?",
+    answer: "Diplomatic housing advisory is a specialized real estate service that helps diplomatic missions, consulates, and international organizations navigate property acquisition, leasing, and portfolio management in global capitals. It combines market expertise with an understanding of diplomatic process and institutional decision-making.",
+  },
+  {
+    question: "Why should diplomatic missions consider buying property instead of renting?",
+    answer: "Over a 20–30 year horizon, purchasing property can save a diplomatic mission $45–60 million compared to renting, depending on location, unit count, and market conditions. Ownership builds equity, eliminates exposure to annual rent increases of 3–5%, and provides long-term operational stability for staff housing.",
+  },
+  {
+    question: "What services does Aabo Advisory provide?",
+    answer: "Aabo Advisory provides three core services: Strategic Housing Advisory (rent vs. buy analysis, portfolio strategy, financial modeling), Transaction & Representation (acquisition, disposals, leasing, negotiation), and Operational Stewardship (post-closing oversight, vendor coordination, ongoing asset monitoring).",
+  },
+  {
+    question: "Which markets does Aabo Advisory serve?",
+    answer: "Aabo Advisory primarily serves diplomatic missions and international organizations operating in New York City, one of the most complex and high-value real estate markets in the world. Our advisory framework is designed for sovereign and institutional clients navigating this market.",
+  },
+  {
+    question: "How does the Buy vs. Rent Calculator work?",
+    answer: "Our Buy vs. Rent Calculator models the long-term financial impact of owning versus leasing diplomatic housing. It factors in purchase price, monthly costs, property appreciation, rent escalation, transaction costs, and hold period to produce a multi-decade cost comparison with detailed annual projections.",
+  },
+];
+
+const jsonld = [
+  professionalServiceJsonLd(),
+  faqPageJsonLd(homepageFaqs),
+];
 ---
 
-<Base>
+<Base jsonld={jsonld}>
   <Nav />
 
-  <main>
+  <main id="main-content">
     <Hero />
     <DivLine />
     <Approach />
     <Services />
     <InsightsGrid />
     <About />
+    <FAQ
+      label="FAQ"
+      headline="Frequently Asked Questions"
+      faqs={homepageFaqs}
+    />
     <CTABanner />
   </main>
 

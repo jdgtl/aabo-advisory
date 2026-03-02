@@ -43,6 +43,7 @@ const rendered = Markdoc.renderers.html(Markdoc.transform(content.node));
   date={article.date}
   readTime={article.readTime}
   docId={docId}
+  slug={slug!}
   otherArticles={otherArticles}
 >
   <Fragment set:html={rendered} />

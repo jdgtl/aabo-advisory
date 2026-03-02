@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useId } from "react";
 
 interface Option {
   value: string;
@@ -14,13 +14,15 @@ interface Props {
 
 export default function SelectInput({ label, value, onChange, options }: Props) {
   const [focused, setFocused] = useState(false);
+  const id = useId();
 
   return (
     <div className="flex-[1_1_180px] min-w-[160px]">
-      <label className="block text-[10px] tracking-[0.1em] uppercase text-text/45 mb-1.5 font-semibold font-body">
+      <label htmlFor={id} className="block text-[10px] tracking-[0.1em] uppercase text-text/45 mb-1.5 font-semibold font-body">
         {label}
       </label>
       <select
+        id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
