@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import TurnstileWidget from "./TurnstileWidget";
+import { trackContactSubmitted } from "@/lib/analytics";
 
 interface Props {
   onClose: () => void;
@@ -34,6 +35,7 @@ export default function ContactModal({ onClose }: Props) {
         body: JSON.stringify({ ...form, turnstile_token: turnstileToken }),
       });
       if (!res.ok) throw new Error("Submission failed");
+      trackContactSubmitted();
       setSubmitted(true);
     } catch {
       setError("Something went wrong. Please try again.");

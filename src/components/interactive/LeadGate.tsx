@@ -1,5 +1,15 @@
 import { useState, useCallback } from "react";
 import TurnstileWidget from "./TurnstileWidget";
+import { trackLeadCaptured, trackGateShown } from "@/lib/analytics";
+import { useEffect } from "react";
+
+export interface CalculatorData {
+  priceRange: string;
+  units: number;
+  timeline: number;
+  verdict: string;
+  savings: string;
+}
 
 interface Props {
   onClose: () => void;
@@ -10,14 +20,20 @@ interface Props {
     gateSubtext?: string;
     gateButtonText?: string;
   };
+  /** Calculator data to send with the lead submission */
+  calculatorData?: CalculatorData;
 }
 
-export default function LeadGate({ onClose, onSuccess, cms }: Props) {
+export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Props) {
   const [form, setForm] = useState({ name: "", org: "", email: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
   const onTurnstileToken = useCallback((t: string) => setTurnstileToken(t), []);
+
+  useEffect(() => {
+    trackGateShown();
+  }, []);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm({ ...form, [k]: e.target.value });
@@ -37,9 +53,14 @@ export default function LeadGate({ onClose, onSuccess, cms }: Props) {
       const res = await fetch("/api/calculator-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, turnstile_token: turnstileToken }),
+        body: JSON.stringify({
+          ...form,
+          turnstile_token: turnstileToken,
+          calculatorData,
+        }),
       });
       if (!res.ok) throw new Error("Submission failed");
+      trackLeadCaptured();
       onSuccess();
     } catch {
       setError("Something went wrong. Please try again.");

@@ -18,14 +18,17 @@ export async function createOrUpdateContact(
   const [firstName, ...rest] = params.name.split(" ");
   const lastName = rest.join(" ");
 
+  const attributes: Record<string, string | number> = {
+    FIRSTNAME: firstName,
+    LASTNAME: lastName,
+    COMPANY: params.org ?? "",
+    LEAD_DATE: new Date().toISOString().split("T")[0],
+    ...params.attributes,
+  };
+
   const body: Record<string, unknown> = {
     email: params.email,
-    attributes: {
-      FIRSTNAME: firstName,
-      LASTNAME: lastName,
-      COMPANY: params.org ?? "",
-      ...params.attributes,
-    },
+    attributes,
     listIds: params.listIds ?? [],
     updateEnabled: true,
   };
@@ -50,4 +53,26 @@ export async function createOrUpdateContact(
   }
 
   return { success: false };
+}
+
+export async function sendTransactionalEmail(
+  apiKey: string,
+  to: string,
+  templateId: number,
+  params: Record<string, string>,
+): Promise<void> {
+  if (!apiKey) return;
+
+  await fetch(`${BREVO_API}/smtp/email`, {
+    method: "POST",
+    headers: {
+      "api-key": apiKey,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      to: [{ email: to }],
+      templateId,
+      params,
+    }),
+  });
 }

@@ -1,5 +1,11 @@
 {
   "name": "aabo-advisory",
   "compatibility_date": "2025-12-01",
-  "pages_build_output_dir": "dist"
+  "pages_build_output_dir": "dist",
+  "kv_namespaces": [
+    {
+      "binding": "RATE_LIMIT",
+      "id": "<KV_NAMESPACE_ID>"
+    }
+  ]
 }
