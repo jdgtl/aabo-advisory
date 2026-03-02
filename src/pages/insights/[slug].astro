@@ -32,8 +32,8 @@ const otherArticles = (
 const idx = allSlugs.indexOf(slug!);
 const docId = `AABO-2025-${String(idx + 1).padStart(3, "0")}`;
 
-const content = await article.body();
-const rendered = Markdoc.renderers.html(Markdoc.transform(content));
+const content = await article.body;
+const rendered = Markdoc.renderers.html(Markdoc.transform(content.node));
 ---
 
 <Article

@@ -10,13 +10,13 @@ interface Article {
 }
 
 interface Category {
-  label: string;
-  slug: string;
+  readonly label: string;
+  readonly slug: string;
 }
 
 interface Props {
-  articles: Article[];
-  categories: Category[];
+  articles: readonly Article[];
+  categories: readonly Category[];
 }
 
 export default function InsightsFilter({ articles, categories }: Props) {
