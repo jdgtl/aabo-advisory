@@ -15,9 +15,13 @@ interface Props {
   };
 }
 
+const STORAGE_KEY = "aabo_calculator_unlocked";
+
 export default function CalculatorIsland({ cms }: Props) {
   const [gateOpen, setGateOpen] = useState(false);
-  const [unlocked, setUnlocked] = useState(false);
+  const [unlocked, setUnlocked] = useState(() => {
+    try { return localStorage.getItem(STORAGE_KEY) === "1"; } catch { return false; }
+  });
   const [calcData, setCalcData] = useState<CalculatorData | undefined>();
 
   const handleRequestFullAnalysis = useCallback(
@@ -44,6 +48,7 @@ export default function CalculatorIsland({ cms }: Props) {
           onSuccess={() => {
             setUnlocked(true);
             setGateOpen(false);
+            try { localStorage.setItem(STORAGE_KEY, "1"); } catch {}
             trackFullResultsViewed();
           }}
           cms={cms}

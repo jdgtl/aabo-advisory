@@ -6,11 +6,22 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { getRuntimeEnv } from "@/lib/runtime-env";
 
 interface CalculatorData {
+  // Summary
   priceRange?: string;
   units?: number;
   timeline?: number;
   verdict?: string;
   savings?: string;
+  // Full inputs
+  pricePerUnit?: number;
+  commonCharges?: number;
+  propertyTaxes?: number;
+  propType?: string;
+  monthlyRent?: number;
+  otherCharges?: number;
+  rentTaxes?: number;
+  annualAppreciation?: number;
+  annualRentGrowth?: number;
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -35,9 +46,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       email?: string;
       turnstile_token?: string;
       calculatorData?: CalculatorData;
+      repeat?: boolean;
     };
 
-    const { name, org, email, turnstile_token, calculatorData } = body;
+    const { name, org, email, turnstile_token, calculatorData, repeat } = body;
 
     // Validate required fields
     if (!name || !email) {
@@ -67,6 +79,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (units > 5 || priceNum > 3_000_000) {
       tags.push("high-value");
     }
+    if (repeat) {
+      tags.push("repeat-lead");
+    }
 
     // Brevo integration
     const brevoKey = env.BREVO_API_KEY ?? "";
@@ -84,6 +99,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
           CALCULATOR_VERDICT: calculatorData?.verdict ?? "",
           CALCULATOR_SAVINGS: calculatorData?.savings ?? "",
           CALCULATOR_UNITS: units,
+          CALCULATOR_PRICE_PER_UNIT: calculatorData?.pricePerUnit ?? 0,
+          CALCULATOR_MONTHLY_RENT: calculatorData?.monthlyRent ?? 0,
+          CALCULATOR_TIMELINE: calculatorData?.timeline ?? 0,
+          CALCULATOR_PROPERTY_TYPE: calculatorData?.propType ?? "",
+          LAST_CALCULATOR_DATE: new Date().toISOString().split("T")[0],
         },
       });
     }
@@ -93,18 +113,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const gsEmail = env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? "";
     const gsKey = env.GOOGLE_PRIVATE_KEY ?? "";
 
-    const calcSummary = calculatorData
-      ? `${calculatorData.verdict ?? "N/A"} | ${units} units | ${priceRange} | ${calculatorData.timeline ?? "N/A"}yr | savings: ${calculatorData.savings ?? "N/A"}`
-      : "No calculator data";
-
+    const d = calculatorData;
     if (sheetId && gsEmail && gsKey) {
       await appendRow(sheetId, "Calculator Leads", [
+        // Lead info
         new Date().toISOString(),
         name,
         org ?? "",
         email,
-        "calculator",
-        calcSummary,
+        repeat ? "Repeat" : "New",
+        // Summary
+        d?.verdict ?? "",
+        d?.savings ?? "",
+        String(d?.units ?? ""),
+        d?.priceRange ?? "",
+        String(d?.timeline ?? ""),
+        // Inputs
+        String(d?.pricePerUnit ?? ""),
+        String(d?.monthlyRent ?? ""),
+        d?.propType ?? "",
+        String(d?.commonCharges ?? ""),
+        String(d?.propertyTaxes ?? ""),
+        String(d?.otherCharges ?? ""),
+        String(d?.rentTaxes ?? ""),
+        String(d?.annualAppreciation ?? ""),
+        String(d?.annualRentGrowth ?? ""),
       ], { email: gsEmail, privateKey: gsKey });
     }
 

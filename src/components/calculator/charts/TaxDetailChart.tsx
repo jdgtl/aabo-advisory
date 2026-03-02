@@ -7,9 +7,8 @@ interface Props {
   result: CalcResult;
   pricePerUnit: number;
   units: number;
-  propertyType: string;
-  disposalCostPct: number;
-  rentBrokerPct: number;
+  propType: string;
+  timelineYears: number;
 }
 
 const MANSION_SCHEDULE = [
@@ -23,37 +22,56 @@ const MANSION_SCHEDULE = [
   { range: "$25,000,000+", rate: "3.90%", lo: 25e6, hi: Infinity },
 ];
 
-export default function TaxDetailChart({ result, pricePerUnit, units, propertyType, disposalCostPct, rentBrokerPct }: Props) {
-  const tp = pricePerUnit * units;
+export default function TaxDetailChart({ result, pricePerUnit, units, propType, timelineYears }: Props) {
+  const propTypeLabel = propType === "residential"
+    ? "Condos, Co-ops & 1\u20133 Family Houses"
+    : "Commercial & All Other Property";
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
       {/* Left Column */}
       <div className="flex flex-col gap-6">
-        <TaxBreakdown result={result} />
+        <TaxBreakdown result={result} units={units} />
 
+        {/* Disposal Cost Breakdown */}
         <div className="bg-light p-6 border-l-[3px] border-primary">
-          <div className="flex items-center text-[10px] tracking-[0.15em] uppercase text-primary/60 mb-4 font-semibold">
-            Estimated Disposal Costs at Sale
-            <InfoTip definition="Estimated broker and legal fees at the time you sell the property." formula="Disposal Rate × Projected Sale Value" />
+          <div className="flex items-center text-[10px] tracking-[0.15em] uppercase text-primary/60 mb-1 font-semibold">
+            Disposal Cost Breakdown
+            <InfoTip
+              definition="Seller-side costs when you sell the property, including broker/legal fees and NYC/NYS transfer taxes."
+              formula="Total Disposal = 6.50% × Projected Sale Value"
+            />
           </div>
-          <div className="flex justify-between py-2 border-b border-mid text-[13px] font-body">
-            <span className="text-text/60">Disposal ({disposalCostPct}% of sale value)</span>
-            <span className="text-primary font-semibold">{fmtFull(Math.round(result.totalDisposalCosts))}</span>
+          <div className="text-[11px] text-text/35 mb-3.5 font-body">
+            Seller-side costs at year {timelineYears} sale
           </div>
+          {[
+            { label: "Broker & Legal (est.)", value: result.dispBrokerLegal },
+            { label: "NYC Transfer Tax", value: result.dispNYC },
+            { label: "NYS Transfer Tax", value: result.dispNYS },
+          ].map((r, i, arr) => (
+            <div
+              key={i}
+              className={`flex justify-between py-2 text-[13px] font-body ${i < arr.length - 1 ? "border-b border-mid" : ""}`}
+            >
+              <span className="text-text/60">{r.label}</span>
+              <span className="text-primary font-semibold">{fmtFull(Math.round(r.value))}</span>
+            </div>
+          ))}
           <div className="flex justify-between pt-3 mt-1 border-t-2 border-primary text-sm font-body font-bold">
             <span className="text-primary">Total Disposal</span>
-            <span className="text-primary">{fmtFull(Math.round(result.totalDisposalCosts))}</span>
+            <span className="text-primary">{fmtFull(Math.round(result.totalDisp))}</span>
           </div>
         </div>
 
+        {/* Rent Broker */}
         <div className="bg-light p-6 border-l-[3px] border-green mt-auto">
           <div className="flex items-center text-[10px] tracking-[0.15em] uppercase text-green mb-4 font-semibold">
             Rent Transaction Costs
-            <InfoTip definition="One-time broker fee paid when signing the lease, based on the first year's annual rent." formula="Rent Broker Rate × Annual Rent" />
+            <InfoTip definition="One-time broker fee paid when signing the lease, based on the first year's annual rent." formula="7.5% × Annual Rent" />
           </div>
           <div className="flex justify-between py-2 text-[13px] font-body">
-            <span className="text-text/60">Broker Fee ({rentBrokerPct}% of annual rent)</span>
+            <span className="text-text/60">Broker Fee (7.5% of {fmtFull(Math.round(result.annualRentCost))}/yr)</span>
             <span className="text-primary font-semibold">{fmtFull(Math.round(result.rentBrokerFee))}</span>
           </div>
         </div>
@@ -62,10 +80,12 @@ export default function TaxDetailChart({ result, pricePerUnit, units, propertyTy
       {/* Right Column */}
       <div className="flex flex-col gap-6">
         <div className="bg-primary p-6 sm:p-7 flex-1">
-          <div className="text-[10px] tracking-[0.15em] uppercase text-accent mb-5 font-semibold">NYC Mansion Tax Schedule</div>
-          <div className="text-[11px] text-warm/50 mb-4">Applies to purchases of $1,000,000 and above</div>
+          <div className="text-[10px] tracking-[0.15em] uppercase text-accent mb-1 font-semibold">NYC Mansion Tax Schedule</div>
+          <div className="text-[11px] text-warm/50 mb-4">
+            Applied per unit at {fmtFull(pricePerUnit)}/unit &times; {units} units
+          </div>
           {MANSION_SCHEDULE.map((r, i) => {
-            const act = tp >= r.lo && tp < r.hi;
+            const act = pricePerUnit >= r.lo && pricePerUnit < r.hi;
             return (
               <div
                 key={i}
@@ -76,30 +96,37 @@ export default function TaxDetailChart({ result, pricePerUnit, units, propertyTy
               </div>
             );
           })}
-          {result.mansionTax > 0 && (
+          {result.mansionTotal > 0 && (
             <div className="mt-4 p-3 bg-accent/[0.07] border-t border-accent/20">
               <div className="flex justify-between text-[13px] font-bold">
-                <span className="text-accent">Your Mansion Tax</span>
-                <span className="text-accent">{fmtFull(Math.round(result.mansionTax))}</span>
+                <span className="text-accent">Your Mansion Tax ({units} units)</span>
+                <span className="text-accent">{fmtFull(Math.round(result.mansionTotal))}</span>
               </div>
             </div>
           )}
         </div>
 
         <div className="bg-light p-5 sm:p-6 mt-auto">
-          <div className="text-[10px] tracking-[0.15em] uppercase text-accent mb-3 font-semibold">Transfer Tax Rates Applied</div>
+          <div className="flex items-center text-[10px] tracking-[0.15em] uppercase text-accent mb-1 font-semibold">
+            Transfer Tax Rates (Disposal)
+            <InfoTip
+              definition="NYC and NYS transfer taxes are paid by the seller at the time of sale. Rates depend on property classification and sale price."
+              formula="Applied to projected sale value at disposal"
+            />
+          </div>
+          <div className="text-[11px] text-text/35 mb-3 font-body">{propTypeLabel}</div>
           <div className="text-xs text-text/55 leading-[1.7]">
             <div className="mb-2">
               <strong className="text-primary">NYC:</strong>{" "}
-              {propertyType === "condo"
-                ? tp <= 500000 ? "1.00% (Condo ≤ $500,000)" : "1.425% (Condo > $500,000)"
-                : tp <= 500000 ? "1.425% (Other ≤ $500,000)" : "2.625% (Other > $500,000)"}
+              {propType === "residential"
+                ? result.saleValue <= 500000 ? "1.00% (Residential \u2264 $500,000)" : "1.425% (Residential > $500,000)"
+                : result.saleValue <= 500000 ? "1.425% (Commercial \u2264 $500,000)" : "2.625% (Commercial > $500,000)"}
             </div>
             <div>
               <strong className="text-primary">NYS:</strong>{" "}
-              {propertyType === "condo"
-                ? tp < 3000000 ? "0.40% (Condo < $3,000,000)" : "0.65% (Condo ≥ $3,000,000)"
-                : tp < 2000000 ? "0.40% (Other < $2,000,000)" : "0.65% (Other ≥ $2,000,000)"}
+              {propType === "residential"
+                ? result.saleValue < 3000000 ? "0.40% (Residential < $3,000,000)" : "0.65% (Residential \u2265 $3,000,000)"
+                : result.saleValue < 2000000 ? "0.40% (Commercial < $2,000,000)" : "0.65% (Commercial \u2265 $2,000,000)"}
             </div>
           </div>
         </div>

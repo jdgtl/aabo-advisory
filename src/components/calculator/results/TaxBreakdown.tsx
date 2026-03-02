@@ -4,14 +4,17 @@ import InfoTip from "./InfoTip";
 
 interface Props {
   result: CalcResult;
+  units: number;
 }
 
-export default function TaxBreakdown({ result }: Props) {
+export default function TaxBreakdown({ result, units }: Props) {
   const rows = [
-    { label: "NYC Transfer Tax", value: result.nycTransferTax, highlight: false },
-    { label: "NYS Transfer Tax", value: result.nysTransferTax, highlight: false },
-    { label: "Mansion Tax", value: result.mansionTax, highlight: result.mansionTax > 0 },
-    { label: "Broker & Legal (est.)", value: result.closingCosts, highlight: false },
+    { label: "Broker & Legal (est.)", value: result.acqBrokerLegal, highlight: false },
+    {
+      label: `Mansion Tax (${units} \u00d7 ${fmtFull(result.mansionPerUnit)})`,
+      value: result.mansionTotal,
+      highlight: result.mansionTotal > 0,
+    },
   ];
 
   return (
@@ -19,12 +22,12 @@ export default function TaxBreakdown({ result }: Props) {
       <div className="flex items-center text-[10px] tracking-[0.15em] uppercase text-accent mb-1 font-semibold font-body">
         Acquisition Cost Breakdown
         <InfoTip
-          definition="Estimated split of your all-in acquisition rate between statutory taxes and broker/legal fees."
-          formula="Total Acquisition = Acquisition Rate × Total Purchase Price"
+          definition="Buyer-side costs at purchase, including estimated broker/legal fees and NYC mansion tax applied per unit (per deed)."
+          formula="Total Acquisition = 4.50% × Total Purchase Price"
         />
       </div>
       <div className="text-[11px] text-text/35 mb-3.5 font-body">
-        Components within the all-in acquisition rate
+        Buyer-side costs at purchase
       </div>
       {rows.map((r, i) => (
         <div
@@ -39,7 +42,7 @@ export default function TaxBreakdown({ result }: Props) {
       ))}
       <div className="flex justify-between pt-3 mt-1 border-t-2 border-accent text-sm font-body font-bold">
         <span className="text-primary">Total Acquisition</span>
-        <span className="text-primary">{fmtFull(result.totalAcquisitionCosts)}</span>
+        <span className="text-primary">{fmtFull(result.totalAcq)}</span>
       </div>
     </div>
   );

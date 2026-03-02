@@ -1,5 +1,11 @@
 import type { CalcParams } from "./defaults";
 
+/* ─── FIXED CONSTANTS ─── */
+const ACQ_PCT = 0.045;
+const DISP_PCT = 0.065;
+const MAINT_PCT = 0.05;
+const RENT_BRK_PCT = 0.075;
+
 export interface YearlyRow {
   year: number;
   buyAnnualCost: number;
@@ -15,15 +21,18 @@ export interface YearlyRow {
 
 export interface CalcResult {
   totalPurchasePrice: number;
-  totalAcquisitionCosts: number;
-  closingCosts: number;
-  nycTransferTax: number;
-  nysTransferTax: number;
-  mansionTax: number;
+  propType: string;
+  totalAcq: number;
+  mansionPerUnit: number;
+  mansionTotal: number;
+  acqBrokerLegal: number;
   totalMaintenanceCosts: number;
   buyTotalSpend: number;
   saleValue: number;
-  totalDisposalCosts: number;
+  totalDisp: number;
+  dispBrokerLegal: number;
+  dispNYC: number;
+  dispNYS: number;
   buyNetSpend: number;
   terminalValue: number;
   annualCarrying: number;
@@ -35,24 +44,24 @@ export interface CalcResult {
   rentMonthlyCost: number;
   savings: number;
   buyWins: boolean;
-  breakevenYear: number | null;
+  breakeven: number | null;
   yearlyData: YearlyRow[];
 }
 
 /* ─── TAX FUNCTIONS ─── */
-export function calcNYCTransferTax(p: number, t = "condo"): number {
-  const c = t === "condo" || t === "coop" || t === "house";
-  if (c) return p <= 500_000 ? p * 0.01 : p * 0.01425;
+export function nycTax(p: number, propType = "residential"): number {
+  const res = propType === "residential";
+  if (res) return p <= 500_000 ? p * 0.01 : p * 0.01425;
   return p <= 500_000 ? p * 0.01425 : p * 0.02625;
 }
 
-export function calcNYSTransferTax(p: number, t = "condo"): number {
-  const c = t === "condo" || t === "coop" || t === "house";
-  if (c) return p < 3_000_000 ? p * 0.004 : p * 0.0065;
+export function nysTax(p: number, propType = "residential"): number {
+  const res = propType === "residential";
+  if (res) return p < 3_000_000 ? p * 0.004 : p * 0.0065;
   return p < 2_000_000 ? p * 0.004 : p * 0.0065;
 }
 
-export function calcMansionTax(p: number): number {
+export function mansionTaxUnit(p: number): number {
   if (p < 1e6) return 0;
   if (p < 2e6) return p * 0.01;
   if (p < 3e6) return p * 0.0125;
@@ -69,37 +78,49 @@ export function runCalculation(p: CalcParams): CalcResult {
   const tp = p.pricePerUnit * p.units;
   const mo = p.timelineYears * 12;
   const ac = 12 * (p.commonCharges + p.propertyTaxes) * p.units;
-  const acqCost = p.acquisitionCostPct * tp;
-  const nycTx = calcNYCTransferTax(tp, p.propertyType);
-  const nysTx = calcNYSTransferTax(tp, p.propertyType);
-  const manTx = calcMansionTax(tp);
-  const closingCosts = Math.max(0, acqCost - nycTx - nysTx - manTx);
-  const maintCost = p.units * ((p.maintenancePct * p.timelineYears) / 10) * p.pricePerUnit;
-  const fvB = (Math.pow(1 + p.annualAppreciation, p.timelineYears) - 1) / p.annualAppreciation;
-  const buyTotal = ac * fvB + tp + maintCost + acqCost;
-  const sale = tp * Math.pow(1 + p.annualAppreciation, p.timelineYears);
-  const dispCost = p.disposalCostPct * sale;
-  const buyNet = buyTotal + dispCost - sale;
-  const terminal = sale - dispCost;
+
+  // Acquisition: per-unit mansion tax
+  const totalAcq = ACQ_PCT * tp;
+  const mansionPerUnit = mansionTaxUnit(p.pricePerUnit);
+  const mansionTotal = mansionPerUnit * p.units;
+  const acqBrokerLegal = Math.max(0, totalAcq - mansionTotal);
+
+  // Maintenance
+  const maintCost = p.units * ((MAINT_PCT * p.timelineYears) / 10) * p.pricePerUnit;
+
+  const fvB = (Math.pow(1 + p.appreciation, p.timelineYears) - 1) / p.appreciation;
+  const buyTotal = ac * fvB + tp + maintCost + totalAcq;
+  const sale = tp * Math.pow(1 + p.appreciation, p.timelineYears);
+
+  // Disposal: transfer taxes at sale
+  const totalDisp = DISP_PCT * sale;
+  const dispNYC = nycTax(sale, p.propType);
+  const dispNYS = nysTax(sale, p.propType);
+  const dispBrokerLegal = Math.max(0, totalDisp - dispNYC - dispNYS);
+
+  const buyNet = buyTotal + totalDisp - sale;
+  const terminal = sale - totalDisp;
+
+  // Rent
   const ar = (p.monthlyRent + p.otherCharges + p.rentTaxes) * p.units * 12;
-  const brkFee = p.rentBrokerPct * ar;
+  const brkFee = RENT_BRK_PCT * ar;
   const fvR =
-    ((Math.pow(1 + p.annualRentGrowth, p.timelineYears) - 1) / p.annualRentGrowth) *
-    (1 + p.annualRentGrowth);
+    ((Math.pow(1 + p.rentGrowth, p.timelineYears) - 1) / p.rentGrowth) *
+    (1 + p.rentGrowth);
   const rentTotal = ar * fvR + brkFee;
 
   const yearlyData: YearlyRow[] = [];
-  let cumBuy = tp + acqCost;
+  let cumBuy = tp + totalAcq;
   let cumRent = 0;
 
   for (let y = 1; y <= p.timelineYears; y++) {
-    const yc = ac * Math.pow(1 + p.annualAppreciation, y - 1);
-    const ym = y % 10 === 0 ? p.maintenancePct * tp : 0;
+    const yc = ac * Math.pow(1 + p.appreciation, y - 1);
+    const ym = y % 10 === 0 ? MAINT_PCT * tp : 0;
     cumBuy += yc + ym;
-    const yr = ar * Math.pow(1 + p.annualRentGrowth, y - 1);
+    const yr = ar * Math.pow(1 + p.rentGrowth, y - 1);
     cumRent += yr;
-    const pv = tp * Math.pow(1 + p.annualAppreciation, y);
-    const yd = p.disposalCostPct * pv;
+    const pv = tp * Math.pow(1 + p.appreciation, y);
+    const yd = DISP_PCT * pv;
     const eq = pv - yd;
     const nb = cumBuy + yd - pv;
     yearlyData.push({
@@ -118,15 +139,18 @@ export function runCalculation(p: CalcParams): CalcResult {
 
   return {
     totalPurchasePrice: tp,
-    totalAcquisitionCosts: acqCost,
-    closingCosts,
-    nycTransferTax: nycTx,
-    nysTransferTax: nysTx,
-    mansionTax: manTx,
+    propType: p.propType,
+    totalAcq,
+    mansionPerUnit,
+    mansionTotal,
+    acqBrokerLegal,
     totalMaintenanceCosts: maintCost,
     buyTotalSpend: buyTotal,
     saleValue: sale,
-    totalDisposalCosts: dispCost,
+    totalDisp,
+    dispBrokerLegal,
+    dispNYC,
+    dispNYS,
     buyNetSpend: buyNet,
     terminalValue: terminal,
     annualCarrying: ac,
@@ -138,7 +162,7 @@ export function runCalculation(p: CalcParams): CalcResult {
     rentMonthlyCost: rentTotal / mo,
     savings: rentTotal - buyNet,
     buyWins: buyNet < rentTotal,
-    breakevenYear: yearlyData.find((d) => d.advantage > 0)?.year ?? null,
+    breakeven: yearlyData.find((d) => d.advantage > 0)?.year ?? null,
     yearlyData,
   };
 }

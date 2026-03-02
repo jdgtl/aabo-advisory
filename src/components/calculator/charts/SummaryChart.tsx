@@ -56,8 +56,8 @@ export default function SummaryChart({ result }: Props) {
               <Tooltip content={<SummaryTip />} />
               <Area type="monotone" dataKey="netBuyCost" stroke={C.primary} fill="url(#bg)" strokeWidth={2} dot={false} />
               <Area type="monotone" dataKey="netRentCost" stroke={C.accent} fill="url(#rg)" strokeWidth={2} dot={false} />
-              {result.breakevenYear && (
-                <ReferenceLine x={result.breakevenYear} stroke={C.green} strokeDasharray="4 4" strokeWidth={1.5} />
+              {result.breakeven && (
+                <ReferenceLine x={result.breakeven} stroke={C.green} strokeDasharray="4 4" strokeWidth={1.5} />
               )}
             </AreaChart>
           </ResponsiveContainer>
@@ -65,7 +65,7 @@ export default function SummaryChart({ result }: Props) {
         <div className="flex gap-6 mt-3 justify-center">
           <div className="flex items-center gap-1.5 text-[11px] text-text/50"><div className="w-4 h-0.5 bg-primary" /> Net Buy Cost</div>
           <div className="flex items-center gap-1.5 text-[11px] text-text/50"><div className="w-4 h-0.5 bg-accent" /> Rent Cost</div>
-          {result.breakevenYear && (
+          {result.breakeven && (
             <div className="flex items-center gap-1.5 text-[11px] text-green"><div className="w-4 h-0.5 bg-green" /> Breakeven</div>
           )}
         </div>

@@ -6,7 +6,7 @@ interface Option {
 }
 
 interface Props {
-  label: string;
+  label?: string;
   value: string;
   onChange: (v: string) => void;
   options: Option[];
@@ -18,9 +18,11 @@ export default function SelectInput({ label, value, onChange, options }: Props) 
 
   return (
     <div className="flex-[1_1_180px] min-w-[160px]">
-      <label htmlFor={id} className="block text-[10px] tracking-[0.1em] uppercase text-text/45 mb-1.5 font-semibold font-body">
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={id} className="block text-[10px] tracking-[0.1em] uppercase text-text/45 mb-1.5 font-semibold font-body">
+          {label}
+        </label>
+      )}
       <select
         id={id}
         value={value}

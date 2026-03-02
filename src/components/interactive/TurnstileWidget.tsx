@@ -13,7 +13,7 @@ declare global {
   }
 }
 
-const SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "1x00000000000000000000AA"; // test key fallback
+const SITE_KEY = "0x4AAAAAAClPT-8YlwDn5tuG";
 
 interface Props {
   onToken: (token: string) => void;

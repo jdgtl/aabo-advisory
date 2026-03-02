@@ -47,9 +47,20 @@ export async function createOrUpdateContact(
     return { success: true, contactId: data.id as string | undefined };
   }
 
-  // 409 = contact already exists, update it
+  // 409 = contact already exists, update via PUT
   if (res.status === 409) {
-    return { success: true };
+    const updateRes = await fetch(`${BREVO_API}/contacts/${encodeURIComponent(params.email)}`, {
+      method: "PUT",
+      headers: {
+        "api-key": apiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        attributes,
+        listIds: params.listIds ?? [],
+      }),
+    });
+    return { success: updateRes.ok || updateRes.status === 204 };
   }
 
   return { success: false };

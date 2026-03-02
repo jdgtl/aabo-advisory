@@ -118,6 +118,114 @@ npx wrangler pages secret put PLAUSIBLE_DOMAIN --project-name=aabo-advisory
 
 Each command prompts for the secret value interactively.
 
+## Brevo CRM Setup
+
+### 1. Create Contact Lists
+
+Go to **Brevo → Contacts → Lists** and create:
+
+| List Name | Purpose |
+|---|---|
+| Consultation Requests | Contacts from the contact/consultation form |
+| Calculator Leads | Contacts from the calculator lead gate |
+| All Contacts | Master list (add both above as sub-lists) |
+
+Note each list's ID — these go into the Cloudflare env secrets as `BREVO_CONSULTATION_LIST_ID` and `BREVO_CALCULATOR_LIST_ID`.
+
+### 2. Create Contact Attributes
+
+Go to **Brevo → Contacts → Settings → Contact attributes & CRM** and create these attributes:
+
+| Attribute Name | Type | Category | Description |
+|---|---|---|---|
+| `FIRSTNAME` | Text | Normal | *(exists by default)* |
+| `LASTNAME` | Text | Normal | *(exists by default)* |
+| `COMPANY` | Text | Normal | Organization / mission name |
+| `SOURCE` | Text | Normal | Lead source: `consultation` or `calculator` |
+| `LEAD_DATE` | Text | Normal | Date of first submission (YYYY-MM-DD) |
+| `CALCULATOR_VERDICT` | Text | Normal | `buy` or `rent` |
+| `CALCULATOR_SAVINGS` | Text | Normal | Estimated savings (e.g. "$12,345,678") |
+| `CALCULATOR_UNITS` | Number | Normal | Number of housing units modeled |
+| `CALCULATOR_PRICE_PER_UNIT` | Number | Normal | Price per unit in dollars |
+| `CALCULATOR_MONTHLY_RENT` | Number | Normal | Monthly rent in dollars |
+| `CALCULATOR_TIMELINE` | Number | Normal | Analysis timeline in years |
+| `CALCULATOR_PROPERTY_TYPE` | Text | Normal | Property type (e.g. "condo", "co-op") |
+| `LAST_CALCULATOR_DATE` | Text | Normal | Most recent calculator submission (YYYY-MM-DD) |
+
+### 3. Tags Used
+
+The API routes automatically apply these tags to contacts:
+
+| Tag | Applied When |
+|---|---|
+| `calculator-lead` | Every calculator lead gate submission |
+| `consultation-request` | Every consultation form submission |
+| `high-value` | Calculator: units > 5 or total price > $3M |
+| `repeat-lead` | User submits the calculator gate more than once |
+
+### 4. Automation Workflows
+
+Set up in **Brevo → Automations → Create a workflow**:
+
+#### A. Calculator Lead Welcome Email
+- **Trigger:** Contact added to "Calculator Leads" list
+- **Wait:** 2 minutes
+- **Action:** Send email template using merge variables:
+  - `{{ contact.FIRSTNAME }}` — first name
+  - `{{ contact.COMPANY }}` — organization
+  - `{{ contact.CALCULATOR_VERDICT }}` — buy or rent
+  - `{{ contact.CALCULATOR_SAVINGS }}` — savings amount
+  - `{{ contact.CALCULATOR_UNITS }}` — number of units
+  - `{{ contact.CALCULATOR_TIMELINE }}` — timeline years
+  - `{{ contact.CALCULATOR_PRICE_PER_UNIT }}` — price per unit
+  - `{{ contact.CALCULATOR_MONTHLY_RENT }}` — monthly rent
+- **Example copy:** *"Based on your analysis of {{ contact.CALCULATOR_UNITS }} units at ${{ contact.CALCULATOR_PRICE_PER_UNIT }} per unit, {{ contact.CALCULATOR_VERDICT == 'buy' ? 'ownership' : 'continued leasing' }} appears favorable — with estimated {{ contact.CALCULATOR_VERDICT == 'buy' ? 'savings' : 'additional cost' }} of {{ contact.CALCULATOR_SAVINGS }} over {{ contact.CALCULATOR_TIMELINE }} years."*
+
+#### B. High-Value Lead Alert (to AABO team)
+- **Trigger:** Contact has tag `high-value`
+- **Action:** Send internal notification email to AABO team
+- **Include:** Name, org, email, units, price range, verdict, savings
+
+#### C. Repeat Lead Alert (to AABO team)
+- **Trigger:** Contact has tag `repeat-lead`
+- **Action:** Send internal notification email
+- **Copy:** *"[Name] from [Org] just ran the calculator again — they're actively evaluating."*
+
+#### D. Consultation Request Confirmation
+- **Trigger:** Contact added to "Consultation Requests" list
+- **Action 1:** Send confirmation email to the contact
+- **Action 2:** Send notification email to AABO team with message content
+
+#### E. Calculator → Consultation Nurture Sequence
+- **Trigger:** Contact added to "Calculator Leads" list AND NOT in "Consultation Requests" list
+- **Condition:** Split by `CALCULATOR_VERDICT`:
+
+**Buy verdict path:**
+- **Day 3:** Email — *"What the numbers don't show"* — link to "Pre-Closing Walk-Throughs" article + consultation CTA
+- **Day 7:** Email — *"Most missions we advise started exactly where you are"* — link to "Sovereign Advantage of Ownership" article + consultation CTA
+- **Day 14:** Final touch — *"Your analysis is still available"* — direct consultation CTA
+- **Exit condition:** Contact joins "Consultation Requests" list
+
+**Rent verdict path:**
+- **Day 3:** Email — *"The long view on diplomatic housing"* — link to "The 30-Year View" article
+- **Day 7:** Email — *"When does ownership make sense?"* — link to "Sovereign Advantage" article + consultation CTA
+- **Day 14:** Final touch — direct consultation CTA
+- **Exit condition:** Contact joins "Consultation Requests" list
+
+### 5. Google Sheet Column Headers
+
+Add these headers to Row 1 of the "Calculator Leads" sheet tab:
+
+| A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Timestamp | Name | Organization | Email | Status | Verdict | Savings | Units | Price Range | Timeline | Price/Unit | Monthly Rent | Property Type | Common Charges | Property Taxes | Other Charges | Rent Taxes | Broker % | Appreciation % | Rent Growth % | Acquisition % | Disposal % | Maintenance % |
+
+Add these headers to Row 1 of the "Consultation Requests" sheet tab:
+
+| A | B | C | D | E | F |
+|---|---|---|---|---|---|
+| Timestamp | Name | Organization | Email | Source | Message |
+
 ## Local Development
 
 ```bash

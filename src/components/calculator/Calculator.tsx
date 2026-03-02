@@ -8,6 +8,7 @@ import type { CalculatorData } from "../interactive/LeadGate";
 import DollarInput from "./inputs/DollarInput";
 import Input from "./inputs/Input";
 import SelectInput from "./inputs/SelectInput";
+import InfoTip from "./results/InfoTip";
 
 import Verdict from "./results/Verdict";
 import MetricCard from "./results/MetricCard";
@@ -46,20 +47,21 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
   const [pricePerUnit, setPricePerUnit] = useState<number>(defaults.pricePerUnit);
   const [commonCharges, setCommonCharges] = useState<number>(defaults.commonCharges);
   const [propertyTaxes, setPropertyTaxes] = useState<number>(defaults.propertyTaxes);
-  const [propertyType, setPropertyType] = useState<string>(defaults.propertyType);
+  const [singleUnitType, setSingleUnitType] = useState<string>("residential");
   const [monthlyRent, setMonthlyRent] = useState<number>(defaults.monthlyRent);
   const [otherCharges, setOtherCharges] = useState<number>(defaults.otherCharges);
   const [rentTaxes, setRentTaxes] = useState<number>(defaults.rentTaxes);
-  const [rentBrokerPct, setRentBrokerPct] = useState<number>(defaults.rentBrokerPct);
   const [timelineYears, setTimelineYears] = useState<number>(defaults.timelineYears);
   const [annualAppreciation, setAnnualAppreciation] = useState<number>(defaults.annualAppreciation);
   const [annualRentGrowth, setAnnualRentGrowth] = useState<number>(defaults.annualRentGrowth);
-  const [acquisitionCostPct, setAcquisitionCostPct] = useState<number>(defaults.acquisitionCostPct);
-  const [disposalCostPct, setDisposalCostPct] = useState<number>(defaults.disposalCostPct);
-  const [maintenancePct, setMaintenancePct] = useState<number>(defaults.maintenancePct);
   const [activeView, setActiveView] = useState<TabId>("summary");
-  const [showAdvanced, setShowAdvanced] = useState(true);
   const hasTrackedStart = useRef(false);
+
+  // Derived property classification
+  const propType = units >= 2 ? "commercial" : singleUnitType;
+  const propTypeLabel = propType === "residential"
+    ? "Condos, Co-ops & 1\u20133 Family Houses"
+    : "Commercial & All Other Property";
 
   // Track calculator started when user first modifies any input
   useEffect(() => {
@@ -86,18 +88,13 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
         otherCharges,
         rentTaxes,
         timelineYears,
-        annualAppreciation: annualAppreciation / 100,
-        annualRentGrowth: annualRentGrowth / 100,
-        acquisitionCostPct: acquisitionCostPct / 100,
-        disposalCostPct: disposalCostPct / 100,
-        maintenancePct: maintenancePct / 100,
-        rentBrokerPct: rentBrokerPct / 100,
-        propertyType,
+        appreciation: annualAppreciation / 100,
+        rentGrowth: annualRentGrowth / 100,
+        propType,
       }),
     [
       units, pricePerUnit, commonCharges, propertyTaxes, monthlyRent, otherCharges,
-      rentTaxes, timelineYears, annualAppreciation, annualRentGrowth,
-      acquisitionCostPct, disposalCostPct, maintenancePct, rentBrokerPct, propertyType,
+      rentTaxes, timelineYears, annualAppreciation, annualRentGrowth, propType,
     ],
   );
 
@@ -121,15 +118,27 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
             <DollarInput label="Price per Unit" value={pricePerUnit} onChange={setPricePerUnit} />
             <DollarInput label="Common Charges /mo" value={commonCharges} onChange={setCommonCharges} />
             <DollarInput label="Property Taxes /mo" value={propertyTaxes} onChange={setPropertyTaxes} />
-            <SelectInput
-              label="Property Type"
-              value={propertyType}
-              onChange={setPropertyType}
-              options={[
-                { value: "condo", label: "Condo / Co-op" },
-                { value: "other", label: "All Other Types" },
-              ]}
-            />
+            {/* Property Classification */}
+            <div>
+              <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1.5 font-medium">
+                Property Classification
+                <InfoTip definition="NYC classifies properties with 4+ units as commercial. For simplicity, this calculator treats 2+ units as commercial since most multi-unit acquisitions fall under commercial rates." />
+              </div>
+              {units >= 2 ? (
+                <div className="px-3 py-2.5 bg-light border border-mid text-sm text-text/70 font-body min-w-[180px]">
+                  {propTypeLabel}
+                </div>
+              ) : (
+                <SelectInput
+                  value={singleUnitType}
+                  onChange={setSingleUnitType}
+                  options={[
+                    { value: "residential", label: "Condos, Co-ops & 1\u20133 Family" },
+                    { value: "commercial", label: "Commercial & All Other" },
+                  ]}
+                />
+              )}
+            </div>
           </div>
         </div>
 
@@ -164,44 +173,66 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
           </div>
           <div className="flex-1 h-px bg-mid" />
         </div>
-        <div className="flex flex-wrap gap-4 items-start">
-          <Input label="Hold Period (Years)" value={timelineYears} onChange={setTimelineYears} suffix="yrs" min={1} max={30} step={1} />
-          <Input label="Annual Appreciation" value={annualAppreciation} onChange={setAnnualAppreciation} suffix="%" min={-5} max={15} step={0.25} hint="Property value growth" />
-          <Input label="Annual Rent Growth" value={annualRentGrowth} onChange={setAnnualRentGrowth} suffix="%" min={0} max={15} step={0.25} hint="Market rent escalation" />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1px_1fr] gap-6 lg:gap-10">
+          {/* Buy Assumptions */}
+          <div>
+            <div className="text-[10px] tracking-[0.08em] uppercase text-text/40 mb-3 font-semibold">Buy Assumptions</div>
+            <div className="flex flex-wrap gap-4">
+              <Input label="Hold Period (Years)" value={timelineYears} onChange={setTimelineYears} suffix="yrs" min={1} max={30} step={1} />
+              <Input label="Annual Appreciation" value={annualAppreciation} onChange={setAnnualAppreciation} suffix="%" min={-5} max={15} step={0.25} hint="Property value growth" />
+            </div>
+          </div>
+          {/* Divider */}
+          <div className="hidden lg:block bg-mid w-px" />
+          {/* Rent Assumptions */}
+          <div>
+            <div className="text-[10px] tracking-[0.08em] uppercase text-text/40 mb-3 font-semibold">Rent Assumptions</div>
+            <div className="flex flex-wrap gap-4">
+              <Input label="Hold Period (Years)" value={timelineYears} onChange={setTimelineYears} suffix="yrs" min={1} max={30} step={1} />
+              <Input label="Annual Rent Growth" value={annualRentGrowth} onChange={setAnnualRentGrowth} suffix="%" min={0} max={15} step={0.25} hint="Market rent escalation" />
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ── TRANSACTION COST ASSUMPTIONS ── */}
+      {/* ── TRANSACTION COST ASSUMPTIONS (fixed info cards) ── */}
       <div className="bg-light p-5 sm:p-7 mb-10 border border-mid">
-        <div
-          className="flex items-center justify-between cursor-pointer"
-          style={{ marginBottom: showAdvanced ? 20 : 0 }}
-          onClick={() => setShowAdvanced(!showAdvanced)}
-        >
-          <div className="flex items-center gap-3">
-            <div className="text-[10px] tracking-[0.15em] uppercase text-accent font-semibold">
-              Transaction Cost Assumptions
-            </div>
-            <div className="h-px w-[60px] bg-mid" />
+        <div className="flex items-center gap-3 mb-5">
+          <div className="text-[10px] tracking-[0.15em] uppercase text-accent font-semibold">
+            Transaction Cost Assumptions
           </div>
-          <div className="flex items-center gap-2 text-[11px] text-accent font-medium tracking-[0.04em]">
-            {showAdvanced ? "Collapse" : "Expand"}
-            <span
-              className="inline-block text-base leading-none transition-transform duration-300"
-              style={{ transform: showAdvanced ? "rotate(180deg)" : "none" }}
-            >
-              ⌄
-            </span>
+          <div className="h-px w-[60px] bg-mid" />
+        </div>
+        <div className="flex flex-wrap gap-4">
+          <div className="flex-1 min-w-[140px] bg-canvas p-4 border border-mid">
+            <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1 font-medium">
+              Acquisition Cost
+              <InfoTip definition="All-in buyer-side costs at purchase: broker fees, legal fees, and mansion tax. Applied as a percentage of total purchase price." />
+            </div>
+            <div className="text-lg font-bold text-primary font-heading">4.50%</div>
+          </div>
+          <div className="flex-1 min-w-[140px] bg-canvas p-4 border border-mid">
+            <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1 font-medium">
+              Disposal Cost
+              <InfoTip definition="Seller-side costs at sale: broker commission, legal fees, and NYC/NYS transfer taxes. Applied as a percentage of projected sale value." />
+            </div>
+            <div className="text-lg font-bold text-primary font-heading">6.50%</div>
+          </div>
+          <div className="flex-1 min-w-[140px] bg-canvas p-4 border border-mid">
+            <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1 font-medium">
+              Maintenance Cost
+              <InfoTip definition="Estimated capital maintenance reserve applied per 10-year cycle as a percentage of purchase price per unit." />
+            </div>
+            <div className="text-lg font-bold text-primary font-heading">5.00%</div>
+          </div>
+          <div className="flex-1 min-w-[140px] bg-canvas p-4 border border-mid">
+            <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1 font-medium">
+              Rent Broker Fee
+              <InfoTip definition="One-time broker fee when signing the lease, applied as a percentage of the first year's annual rent." />
+            </div>
+            <div className="text-lg font-bold text-primary font-heading">7.50%</div>
           </div>
         </div>
-        {showAdvanced && (
-          <div className="flex flex-wrap gap-4">
-            <Input label="Acquisition Costs" value={acquisitionCostPct} onChange={setAcquisitionCostPct} suffix="%" min={0} max={15} step={0.5} hint="All-in: broker, legal, taxes" />
-            <Input label="Disposal Costs" value={disposalCostPct} onChange={setDisposalCostPct} suffix="%" min={0} max={15} step={0.5} hint="Broker + legal at sale" />
-            <Input label="Maintenance Cost" value={maintenancePct} onChange={setMaintenancePct} suffix="%" min={0} max={20} step={0.5} hint="Per 10-year cycle" />
-            <Input label="Rent Broker Fee" value={rentBrokerPct} onChange={setRentBrokerPct} suffix="%" min={0} max={15} step={0.5} hint="One-time, on annual rent" />
-          </div>
-        )}
       </div>
 
       {/* ── VERDICT ── */}
@@ -212,16 +243,16 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
         <MetricCard
           label="Total Purchase Price"
           value={fmtFull(result.totalPurchasePrice)}
-          sub={`${units} units × ${fmtFull(pricePerUnit)}`}
+          sub={`${units} units \u00d7 ${fmtFull(pricePerUnit)}`}
           definition="The combined purchase price of all units."
-          formula="Price per Unit × Number of Units"
+          formula="Price per Unit \u00d7 Number of Units"
         />
         <MetricCard
           label={`Property Value Yr ${timelineYears}`}
           value={fmtFull(Math.round(result.saleValue))}
           sub={`${annualAppreciation}% annual growth`}
           definition="Projected market value of all units at the end of the hold period, assuming steady annual appreciation."
-          formula="Total Purchase Price × (1 + Appreciation Rate) ^ Hold Period"
+          formula="Total Purchase Price \u00d7 (1 + Appreciation Rate) ^ Hold Period"
         />
         <MetricCard
           label="Net Cost of Buying"
@@ -229,7 +260,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
           accent
           sub={`${fmtFull(Math.round(result.buyMonthlyCost))}/mo effective`}
           definition="Total out-of-pocket cost of ownership minus the proceeds from selling."
-          formula="Total Spend + Disposal Costs − Sale Value"
+          formula="Total Spend + Disposal Costs \u2212 Sale Value"
         />
         <MetricCard
           label="Total Cost of Renting"
@@ -244,7 +275,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
           accent
           sub="After disposal costs"
           definition="The net equity you walk away with after selling the property and paying all disposal costs."
-          formula="Sale Value − Disposal Costs"
+          formula="Sale Value \u2212 (Broker Fees + NYC Tax + NYS Tax)"
         />
       </div>
 
@@ -283,6 +314,15 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
                     timeline: timelineYears,
                     verdict: result.buyWins ? "buy" : "rent",
                     savings: fmtFull(Math.abs(result.savings)),
+                    pricePerUnit,
+                    commonCharges,
+                    propertyTaxes,
+                    propType,
+                    monthlyRent,
+                    otherCharges,
+                    rentTaxes,
+                    annualAppreciation,
+                    annualRentGrowth,
                   });
                 }}
                 className="bg-primary text-canvas px-8 py-3.5 text-[11px] tracking-[0.14em] uppercase font-body font-medium transition-all duration-300 hover:bg-secondary hover:-translate-y-px cursor-pointer"
@@ -322,9 +362,8 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
                 result={result}
                 pricePerUnit={pricePerUnit}
                 units={units}
-                propertyType={propertyType}
-                disposalCostPct={disposalCostPct}
-                rentBrokerPct={rentBrokerPct}
+                propType={propType}
+                timelineYears={timelineYears}
               />
             )}
           </div>
@@ -390,7 +429,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
           </p>
         </div>
         <a
-          href="#contact"
+          href="/#contact"
           onClick={() => trackCTAClicked("calculator-consultation")}
           className="shrink-0 bg-accent text-primary px-7 py-3.5 text-[11px] tracking-[0.14em] uppercase font-body font-medium transition-all duration-300 hover:bg-canvas hover:-translate-y-px"
         >

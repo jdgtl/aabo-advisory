@@ -3,11 +3,22 @@ import TurnstileWidget from "./TurnstileWidget";
 import { trackLeadCaptured, trackGateShown } from "@/lib/analytics";
 
 export interface CalculatorData {
+  // Summary
   priceRange: string;
   units: number;
   timeline: number;
   verdict: string;
   savings: string;
+  // Full inputs
+  pricePerUnit: number;
+  commonCharges: number;
+  propertyTaxes: number;
+  propType: string;
+  monthlyRent: number;
+  otherCharges: number;
+  rentTaxes: number;
+  annualAppreciation: number;
+  annualRentGrowth: number;
 }
 
 interface Props {
@@ -101,9 +112,11 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
           ...form,
           turnstile_token: turnstileToken,
           calculatorData,
+          repeat: (() => { try { return localStorage.getItem("aabo_calculator_submitted") === "1"; } catch { return false; } })(),
         }),
       });
       if (!res.ok) throw new Error("Submission failed");
+      try { localStorage.setItem("aabo_calculator_submitted", "1"); } catch {}
       trackLeadCaptured();
       onSuccess();
     } catch {

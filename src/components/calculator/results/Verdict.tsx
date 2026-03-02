@@ -32,7 +32,7 @@ export default function Verdict({ result, timelineYears }: Props) {
           >
             Net savings of {fmtFull(Math.abs(Math.round(result.savings)))} over {timelineYears} years
             by {result.buyWins ? "buying" : "renting"}.
-            {result.breakevenYear != null && ` Breakeven at year ${result.breakevenYear}.`}
+            {result.breakeven != null && ` Breakeven at year ${result.breakeven}.`}
           </div>
         </div>
         <div className="text-right">
