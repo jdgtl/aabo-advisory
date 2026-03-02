@@ -1,0 +1,55 @@
+---
+import Label from "@/components/ui/Label.astro";
+import RevealWrapper from "@/components/ui/RevealWrapper";
+import Card from "@/components/ui/Card";
+
+const APPROACH = [
+  {
+    title: "Long-Term Lens",
+    text: "Diplomatic housing decisions are rarely short-term. We evaluate real estate through a multi-decade horizon, accounting for cost, risk, continuity, and asset value.",
+    keyword: "Horizon",
+  },
+  {
+    title: "Dual Audience",
+    text: "We work with both headquarters and local missions, ensuring alignment between strategic objectives and on-the-ground realities.",
+    keyword: "Alignment",
+  },
+  {
+    title: "Discretion & Precision",
+    text: "Our advisory work is deliberate, analytical, and discreet. We prioritize clarity over speed and outcomes over volume.",
+    keyword: "Clarity",
+  },
+];
+---
+
+<section id="approach" class="bg-light px-6 py-16 sm:px-10 md:px-16 lg:px-20 lg:py-[100px]">
+  <div class="max-w-[1100px] mx-auto">
+    <RevealWrapper client:visible>
+      <Label text="Approach" />
+    </RevealWrapper>
+
+    <RevealWrapper client:visible delay={0.1}>
+      <h2 class="font-heading text-[28px] sm:text-[32px] lg:text-[36px] font-bold text-primary leading-[1.2] mb-10 lg:mb-14">
+        Deliberate. Analytical. Discreet.
+      </h2>
+    </RevealWrapper>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-9">
+      {APPROACH.map((item, i) => (
+        <RevealWrapper client:visible delay={0.1 * i}>
+          <Card
+            className="h-full bg-canvas border-l-[3px] border-accent px-6 py-8 sm:px-8 sm:py-10"
+            client:visible
+          >
+            <h3 class="font-heading text-lg lg:text-[21px] font-bold text-primary mb-3.5">
+              {item.title}
+            </h3>
+            <p class="text-sm leading-[1.75] text-text/75">
+              {item.text}
+            </p>
+          </Card>
+        </RevealWrapper>
+      ))}
+    </div>
+  </div>
+</section>

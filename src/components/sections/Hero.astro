@@ -1,0 +1,51 @@
+---
+import LineReveal from "@/components/ui/LineReveal.astro";
+import RevealWrapper from "@/components/ui/RevealWrapper";
+---
+
+<section
+  id="home"
+  class="relative min-h-[85vh] flex flex-col justify-center bg-canvas overflow-hidden
+         px-6 py-16 sm:px-10 md:px-16 lg:px-20 lg:py-20 lg:pb-[100px]"
+>
+  {/* Decorative circles */}
+  <div
+    class="pointer-events-none absolute top-[60px] right-10 lg:right-20 w-60 h-60 lg:w-80 lg:h-80 rounded-full border border-accent/[0.08] hidden md:block"
+  />
+  <div
+    class="pointer-events-none absolute top-[100px] right-16 lg:right-[120px] w-44 h-44 lg:w-60 lg:h-60 rounded-full border border-accent/[0.06] hidden md:block"
+  />
+
+  <div class="relative z-[1] max-w-[800px]">
+    <LineReveal width={48} class="mb-10" />
+
+    <RevealWrapper client:visible>
+      <h1 class="font-heading text-[32px] sm:text-[40px] md:text-[48px] lg:text-[54px] font-bold leading-[1.12] text-primary mb-7">
+        Real Estate Advisory<br />for Diplomatic Missions
+      </h1>
+    </RevealWrapper>
+
+    <RevealWrapper client:visible delay={0.1}>
+      <p class="text-base sm:text-lg lg:text-[19px] leading-[1.65] text-warm max-w-[560px] mb-5">
+        Strategic housing, acquisition, and long-term stewardship in global capitals.
+      </p>
+    </RevealWrapper>
+
+    <RevealWrapper client:visible delay={0.2}>
+      <p class="text-sm lg:text-[15px] leading-[1.75] text-text/70 max-w-[540px] mb-12">
+        We advise diplomatic, foreign and private organizations on real estate decisions in New York, helping balance financial responsibility, operational needs, and long-term presence.
+      </p>
+    </RevealWrapper>
+
+    <RevealWrapper client:visible delay={0.3}>
+      {/* CTA wired to ContactModal in Phase 5 */}
+      <a
+        href="#contact"
+        class="inline-block border-[1.5px] border-primary text-primary px-8 sm:px-10 py-4 text-xs tracking-[0.16em] uppercase font-body font-medium
+               transition-all duration-300 ease-[cubic-bezier(.4,0,.2,1)] hover:bg-primary hover:text-canvas hover:-translate-y-px cursor-pointer"
+      >
+        Schedule a Consultation
+      </a>
+    </RevealWrapper>
+  </div>
+</section>

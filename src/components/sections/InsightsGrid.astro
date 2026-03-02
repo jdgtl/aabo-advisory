@@ -1,0 +1,79 @@
+---
+import Label from "@/components/ui/Label.astro";
+import RevealWrapper from "@/components/ui/RevealWrapper";
+import Card from "@/components/ui/Card";
+
+// TODO: Pull article data from Keystatic content once Phase 4 is complete
+const ARTICLES = [
+  {
+    category: "Strategic Whitepaper",
+    title: "A 30-Year View on Diplomatic Housing in New York",
+    excerpt:
+      "Why diplomatic housing decisions deserve the same rigor applied to any long-term sovereign asset.",
+    slug: "30-year-view-diplomatic-housing",
+  },
+  {
+    category: "Field Guide",
+    title: "Pre-Closing Walk-Throughs in New Developments",
+    excerpt:
+      "A practical playbook for evaluating new development units before closing — tailored for mission procurement officers.",
+    slug: "pre-closing-walk-throughs",
+  },
+  {
+    category: "Quiet Insight",
+    title: "Why Ownership Can Create a Sovereign Advantage",
+    excerpt:
+      "How shifting from leasing to ownership can reduce long-term costs and create institutional continuity.",
+    slug: "ownership-sovereign-advantage",
+  },
+];
+---
+
+<section id="insights" class="bg-canvas px-6 py-16 sm:px-10 md:px-16 lg:px-20 lg:py-[100px]">
+  <div class="max-w-[1100px] mx-auto">
+    <RevealWrapper client:visible>
+      <Label text="Insights" />
+    </RevealWrapper>
+
+    <RevealWrapper client:visible delay={0.1}>
+      <h2 class="font-heading text-[28px] sm:text-[32px] lg:text-[36px] font-bold text-primary mb-3.5">
+        Perspectives &amp; Field Guides
+      </h2>
+    </RevealWrapper>
+
+    <RevealWrapper client:visible delay={0.15}>
+      <p class="text-sm lg:text-[15px] text-text/60 max-w-[480px] leading-[1.7] mb-10 lg:mb-[52px]">
+        Strategic observations and practical guidance.
+      </p>
+    </RevealWrapper>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {ARTICLES.map((a, i) => (
+        <RevealWrapper client:visible delay={0.1 * i}>
+          {/* Article cards link to /insights/[slug] — wired in Phase 4 */}
+          <a href={`/insights/${a.slug}`} class="block h-full no-underline">
+            <Card
+              className="h-full bg-light border-b-2 border-accent flex flex-col justify-between px-6 py-8 sm:px-[30px] sm:py-9 cursor-pointer"
+              client:visible
+            >
+              <div class="flex flex-col flex-1">
+                <div class="text-[10px] tracking-[0.15em] uppercase text-accent mb-3.5 font-semibold">
+                  {a.category}
+                </div>
+                <h3 class="font-heading text-base lg:text-[19px] font-bold text-primary leading-[1.35] mb-3">
+                  {a.title}
+                </h3>
+                <p class="text-[13px] leading-[1.7] text-text/60">
+                  {a.excerpt}
+                </p>
+                <div class="mt-auto pt-5 text-[11px] tracking-[0.12em] uppercase text-accent font-medium">
+                  Read Briefing →
+                </div>
+              </div>
+            </Card>
+          </a>
+        </RevealWrapper>
+      ))}
+    </div>
+  </div>
+</section>
