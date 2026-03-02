@@ -19,6 +19,21 @@
 
   --font-heading: "Playfair Display", Georgia, serif;
   --font-body: "DM Sans", sans-serif;
+
+  --ease-smooth: cubic-bezier(.4, 0, .2, 1);
+
+  --animate-reveal-up: reveal-up 0.7s var(--ease-smooth) both;
+  --animate-line-reveal: line-reveal 0.7s var(--ease-smooth) both;
+}
+
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(32px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes line-reveal {
+  from { width: 0; }
+  to { width: var(--line-width, 48px); }
 }
 
 /* Self-hosted font faces */

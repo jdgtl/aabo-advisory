@@ -1,0 +1,40 @@
+---
+interface Props {
+  width?: number;
+  class?: string;
+}
+
+const { width = 48, class: className = "" } = Astro.props;
+---
+
+<div
+  class:list={["line-reveal", className]}
+  style={`--line-width: ${width}px`}
+  data-line-reveal
+>
+  <div class="h-px bg-accent" style="width: 0" />
+</div>
+
+<script>
+  function initLineReveals() {
+    const els = document.querySelectorAll<HTMLElement>("[data-line-reveal]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const inner = entry.target.querySelector<HTMLElement>("div");
+            if (inner) {
+              inner.style.width = getComputedStyle(entry.target).getPropertyValue("--line-width");
+              inner.style.transition = "width 0.7s cubic-bezier(.4,0,.2,1)";
+            }
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.13 },
+    );
+    els.forEach((el) => observer.observe(el));
+  }
+  initLineReveals();
+  document.addEventListener("astro:page-load", initLineReveals);
+</script>
