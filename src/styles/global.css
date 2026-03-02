@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — Tailwind v4 CSS-based configuration
+ * Source: JSX prototype C palette + T typography
+ */
+@theme {
+  --color-primary: #0F1B2D;
+  --color-secondary: #1A2D47;
+  --color-text: #1A1A1A;
+  --color-accent: #B8965A;
+  --color-accent-light: #D4B87A;
+  --color-warm: #C8B89A;
+  --color-mid: #E8DFD0;
+  --color-light: #F5F0E8;
+  --color-canvas: #FAF8F5;
+  --color-green: #4A7C59;
+  --color-red: #8B3A3A;
+
+  --font-heading: "Playfair Display", Georgia, serif;
+  --font-body: "DM Sans", sans-serif;
+}
+
+/* Self-hosted font faces */
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/fonts/playfair-display-v40-latin-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/fonts/playfair-display-v40-latin-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("/fonts/dm-sans-v17-latin-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("/fonts/dm-sans-v17-latin-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("/fonts/dm-sans-v17-latin-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Base reset */
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}

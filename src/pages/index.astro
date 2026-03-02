@@ -1,0 +1,18 @@
+---
+import Base from "@/layouts/Base.astro";
+import TestIsland from "@/components/interactive/TestIsland";
+---
+
+<Base>
+  <main class="flex flex-col items-center justify-center min-h-screen px-6">
+    <h1 class="font-heading text-4xl md:text-5xl text-primary mb-4 text-center">
+      AABO Advisory
+    </h1>
+    <p class="text-lg text-secondary mb-8 text-center max-w-xl">
+      Diplomatic Real Estate Advisory — site under construction.
+    </p>
+
+    <!-- React island: verifies hydration works -->
+    <TestIsland client:load />
+  </main>
+</Base>
