@@ -4,10 +4,11 @@ import RevealWrapper from "@/components/ui/RevealWrapper";
 import { getHomepage } from "@/lib/content";
 
 const hp = await getHomepage();
+const services = hp?.services;
 
-const headline = hp?.servicesHeadline ?? "Three Pillars of Advisory";
-const subtext = hp?.servicesSubtext ?? "Our work spans the full lifecycle of diplomatic real estate — from strategic planning through acquisition to ongoing stewardship.";
-const pillars = hp?.servicePillars ?? [
+const headline = services?.headline ?? "Three Pillars of Advisory";
+const subtext = services?.subtext ?? "Our work spans the full lifecycle of diplomatic real estate — from strategic planning through acquisition to ongoing stewardship.";
+const pillars = services?.pillars ?? [
   {
     numeral: "I",
     title: "Strategic Housing Advisory",

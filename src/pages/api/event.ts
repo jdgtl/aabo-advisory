@@ -1,15 +1,17 @@
 import type { APIRoute } from "astro";
+import { getRuntimeEnv } from "@/lib/runtime-env";
 
 /**
  * Plausible analytics proxy — forwards events to plausible.io/api/event.
  * Deployed as a Cloudflare Pages Function to bypass ad blockers.
  */
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   const headers = { "Content-Type": "application/json" };
 
   try {
     const body = await request.text();
-    const domain = import.meta.env.PLAUSIBLE_DOMAIN ?? "";
+    const env = getRuntimeEnv(locals as Record<string, unknown>);
+    const domain = env.PLAUSIBLE_DOMAIN ?? "";
 
     if (!domain) {
       return new Response(JSON.stringify({ error: "Analytics not configured" }), {

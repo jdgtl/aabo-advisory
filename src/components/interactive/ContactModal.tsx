@@ -18,10 +18,12 @@ export default function ContactModal({ onClose }: Props) {
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm({ ...form, [k]: e.target.value });
 
-  /* Focus trapping */
+  /* Focus trapping + restore focus on close */
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
 
     const focusableSelector =
       'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -58,7 +60,10 @@ export default function ContactModal({ onClose }: Props) {
     const firstInput = dialog.querySelector<HTMLElement>("input, button");
     firstInput?.focus();
 
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      previouslyFocused?.focus();
+    };
   }, [onClose]);
 
   const handleSubmit = async () => {

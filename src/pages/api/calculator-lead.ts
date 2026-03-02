@@ -1,9 +1,9 @@
-/// <reference types="@cloudflare/workers-types" />
 import type { APIRoute } from "astro";
 import { createOrUpdateContact } from "@/lib/brevo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { appendRow } from "@/lib/google-sheets";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getRuntimeEnv } from "@/lib/runtime-env";
 
 interface CalculatorData {
   priceRange?: string;
@@ -17,13 +17,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const headers = { "Content-Type": "application/json" };
 
   try {
+    const env = getRuntimeEnv(locals as Record<string, unknown>);
+
     // Rate limiting
-    const runtime = (locals as Record<string, unknown>).runtime as
-      | { env?: { RATE_LIMIT?: KVNamespace } }
-      | undefined;
-    const kv = runtime?.env?.RATE_LIMIT;
     const ip = request.headers.get("cf-connecting-ip") ?? request.headers.get("x-forwarded-for") ?? "unknown";
-    const rateResult = await checkRateLimit(kv, ip, "calculator-lead");
+    const rateResult = await checkRateLimit(env.RATE_LIMIT, ip, "calculator-lead");
     if (!rateResult.allowed) {
       return new Response(JSON.stringify({ error: "Too many requests. Please try again later." }), {
         status: 429,
@@ -50,7 +48,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Turnstile verification
-    const turnstileSecret = import.meta.env.TURNSTILE_SECRET_KEY ?? "";
+    const turnstileSecret = env.TURNSTILE_SECRET_KEY ?? "";
     if (turnstileSecret) {
       const valid = await verifyTurnstile(turnstile_token ?? "", turnstileSecret);
       if (!valid) {
@@ -71,8 +69,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Brevo integration
-    const brevoKey = import.meta.env.BREVO_API_KEY ?? "";
-    const listId = parseInt(import.meta.env.BREVO_CALCULATOR_LIST_ID ?? "0", 10);
+    const brevoKey = env.BREVO_API_KEY ?? "";
+    const listId = parseInt(env.BREVO_CALCULATOR_LIST_ID ?? "0", 10);
 
     if (brevoKey) {
       await createOrUpdateContact(brevoKey, {
@@ -91,9 +89,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Google Sheets integration
-    const sheetId = import.meta.env.GOOGLE_SHEET_ID ?? "";
-    const gsEmail = import.meta.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? "";
-    const gsKey = import.meta.env.GOOGLE_PRIVATE_KEY ?? "";
+    const sheetId = env.GOOGLE_SHEET_ID ?? "";
+    const gsEmail = env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? "";
+    const gsKey = env.GOOGLE_PRIVATE_KEY ?? "";
 
     const calcSummary = calculatorData
       ? `${calculatorData.verdict ?? "N/A"} | ${units} units | ${priceRange} | ${calculatorData.timeline ?? "N/A"}yr | savings: ${calculatorData.savings ?? "N/A"}`

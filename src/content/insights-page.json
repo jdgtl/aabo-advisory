@@ -1,7 +1,9 @@
 {
-  "pageTitle": "Insights & Field Guides",
-  "pageSubtitle": "Diplomatic Briefings",
-  "pageDescription": "Strategic observations and practical guidance for diplomatic missions navigating real estate in global capitals.",
+  "header": {
+    "title": "Insights & Field Guides",
+    "subtitle": "Diplomatic Briefings",
+    "description": "Strategic observations and practical guidance for diplomatic missions navigating real estate in global capitals."
+  },
   "categories": [
     { "label": "All", "slug": "all" },
     { "label": "Strategic Whitepaper", "slug": "strategic-whitepaper" },

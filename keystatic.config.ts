@@ -34,79 +34,103 @@ export default config({
     homepage: singleton({
       label: "Homepage",
       path: "src/content/homepage",
+      format: { data: "json" },
       schema: {
-        heroHeadline: fields.text({ label: "Hero Headline" }),
-        heroSubtext: fields.text({ label: "Hero Subtext" }),
-        heroDescription: fields.text({
-          label: "Hero Description",
-          multiline: true,
-        }),
-        heroCTA: fields.text({ label: "Hero CTA Text" }),
-
-        approachHeadline: fields.text({ label: "Approach Headline" }),
-        approachSubtext: fields.text({ label: "Approach Subtext" }),
-        approachCards: fields.array(
-          fields.object({
-            title: fields.text({ label: "Title" }),
-            text: fields.text({ label: "Text", multiline: true }),
-            keyword: fields.text({ label: "Keyword" }),
-          }),
+        hero: fields.object(
           {
-            label: "Approach Cards",
-            itemLabel: (props) => props.fields.title.value,
+            headline: fields.text({ label: "Headline" }),
+            subtext: fields.text({ label: "Subtext" }),
+            description: fields.text({ label: "Description", multiline: true }),
+            cta: fields.text({ label: "CTA Button Text" }),
           },
+          { label: "Hero Section" },
         ),
 
-        servicesHeadline: fields.text({ label: "Services Headline" }),
-        servicesSubtext: fields.text({
-          label: "Services Subtext",
-          multiline: true,
-        }),
-        servicePillars: fields.array(
-          fields.object({
-            numeral: fields.text({ label: "Numeral" }),
-            title: fields.text({ label: "Title" }),
-            note: fields.text({ label: "Note" }),
-            items: fields.array(fields.text({ label: "Item" }), {
-              label: "Items",
-              itemLabel: (props) => props.value,
-            }),
-          }),
+        approach: fields.object(
           {
-            label: "Service Pillars",
-            itemLabel: (props) => props.fields.title.value,
+            headline: fields.text({ label: "Headline" }),
+            label: fields.text({ label: "Section Label" }),
+            cards: fields.array(
+              fields.object({
+                title: fields.text({ label: "Title" }),
+                text: fields.text({ label: "Text", multiline: true }),
+                keyword: fields.text({ label: "Keyword" }),
+              }),
+              {
+                label: "Cards",
+                itemLabel: (props) => props.fields.title.value,
+              },
+            ),
           },
+          { label: "Approach Section" },
         ),
 
-        aboutHeadline: fields.text({ label: "About Headline" }),
-        aboutParagraphs: fields.array(
-          fields.text({ label: "Paragraph", multiline: true }),
-          { label: "About Paragraphs", itemLabel: (props) => props.value.slice(0, 50) + "…" },
+        services: fields.object(
+          {
+            headline: fields.text({ label: "Headline" }),
+            subtext: fields.text({ label: "Subtext", multiline: true }),
+            pillars: fields.array(
+              fields.object({
+                numeral: fields.text({ label: "Numeral" }),
+                title: fields.text({ label: "Title" }),
+                note: fields.text({ label: "Note" }),
+                items: fields.array(fields.text({ label: "Item" }), {
+                  label: "Items",
+                  itemLabel: (props) => props.value,
+                }),
+              }),
+              {
+                label: "Service Pillars",
+                itemLabel: (props) => props.fields.title.value,
+              },
+            ),
+          },
+          { label: "Services Section" },
         ),
 
-        ctaHeadline: fields.text({ label: "CTA Headline" }),
-        ctaSubtext: fields.text({ label: "CTA Subtext", multiline: true }),
-        ctaButtonText: fields.text({ label: "CTA Button Text" }),
+        about: fields.object(
+          {
+            headline: fields.text({ label: "Headline" }),
+            paragraphs: fields.array(
+              fields.text({ label: "Paragraph", multiline: true }),
+              { label: "Paragraphs", itemLabel: (props) => props.value.slice(0, 50) + "…" },
+            ),
+          },
+          { label: "About Section" },
+        ),
+
+        cta: fields.object(
+          {
+            headline: fields.text({ label: "Headline" }),
+            subtext: fields.text({ label: "Subtext", multiline: true }),
+            buttonText: fields.text({ label: "Button Text" }),
+          },
+          { label: "CTA Banner" },
+        ),
       },
     }),
 
     insightsPage: singleton({
       label: "Insights Page",
       path: "src/content/insights-page",
+      format: { data: "json" },
       schema: {
-        pageTitle: fields.text({ label: "Page Title" }),
-        pageSubtitle: fields.text({ label: "Page Subtitle" }),
-        pageDescription: fields.text({
-          label: "Page Description",
-          multiline: true,
-        }),
+        header: fields.object(
+          {
+            title: fields.text({ label: "Page Title" }),
+            subtitle: fields.text({ label: "Page Subtitle" }),
+            description: fields.text({ label: "Page Description", multiline: true }),
+          },
+          { label: "Page Header" },
+        ),
+
         categories: fields.array(
           fields.object({
             label: fields.text({ label: "Label" }),
             slug: fields.text({ label: "Slug" }),
           }),
           {
-            label: "Categories",
+            label: "Filter Categories",
             itemLabel: (props) => props.fields.label.value,
           },
         ),
@@ -116,28 +140,45 @@ export default config({
     calculatorPage: singleton({
       label: "Calculator Page",
       path: "src/content/calculator-page",
+      format: { data: "json" },
       schema: {
-        pageTitle: fields.text({ label: "Page Title" }),
-        pageSubtitle: fields.text({ label: "Page Subtitle" }),
-        pageDescription: fields.text({
-          label: "Page Description",
-          multiline: true,
-        }),
-        verdictBuyText: fields.text({ label: "Verdict Buy Text" }),
-        verdictRentText: fields.text({ label: "Verdict Rent Text" }),
+        header: fields.object(
+          {
+            title: fields.text({ label: "Page Title" }),
+            subtitle: fields.text({ label: "Page Subtitle" }),
+            description: fields.text({ label: "Page Description", multiline: true }),
+          },
+          { label: "Page Header" },
+        ),
+
+        verdicts: fields.object(
+          {
+            buyText: fields.text({ label: "Buy Verdict Text", multiline: true }),
+            rentText: fields.text({ label: "Rent Verdict Text", multiline: true }),
+          },
+          { label: "Verdict Messages" },
+        ),
+
+        gate: fields.object(
+          {
+            headline: fields.text({ label: "Headline" }),
+            subtext: fields.text({ label: "Subtext" }),
+            buttonText: fields.text({ label: "Button Text" }),
+          },
+          { label: "Lead Gate" },
+        ),
+
         disclaimerText: fields.text({
           label: "Disclaimer Text",
           multiline: true,
         }),
-        gateHeadline: fields.text({ label: "Gate Headline" }),
-        gateSubtext: fields.text({ label: "Gate Subtext" }),
-        gateButtonText: fields.text({ label: "Gate Button Text" }),
       },
     }),
 
     footer: singleton({
       label: "Footer",
       path: "src/content/footer",
+      format: { data: "json" },
       schema: {
         tagline: fields.text({ label: "Tagline" }),
         motto: fields.text({ label: "Motto" }),
@@ -147,6 +188,7 @@ export default config({
     siteSettings: singleton({
       label: "Site Settings",
       path: "src/content/site-settings",
+      format: { data: "json" },
       schema: {
         siteName: fields.text({ label: "Site Name" }),
         siteDescription: fields.text({

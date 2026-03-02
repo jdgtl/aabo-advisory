@@ -5,10 +5,11 @@ import Card from "@/components/ui/Card";
 import { getHomepage } from "@/lib/content";
 
 const hp = await getHomepage();
+const approach = hp?.approach;
 
-const headline = hp?.approachHeadline ?? "Deliberate. Analytical. Discreet.";
-const labelText = hp?.approachSubtext ?? "Approach";
-const cards = hp?.approachCards ?? [
+const headline = approach?.headline ?? "Deliberate. Analytical. Discreet.";
+const labelText = approach?.label ?? "Approach";
+const cards = approach?.cards ?? [
   {
     title: "Long-Term Lens",
     text: "Diplomatic housing decisions are rarely short-term. We evaluate real estate through a multi-decade horizon, accounting for cost, risk, continuity, and asset value.",

@@ -9,9 +9,9 @@ import { webApplicationJsonLd, faqPageJsonLd, breadcrumbJsonLd } from "@/lib/jso
 
 const cms = await getCalculatorPage();
 
-const pageTitle = cms?.pageTitle ?? "Rent vs. Buy Calculator";
-const pageSubtitle = cms?.pageSubtitle ?? "Financial Analysis Tool";
-const pageDescription = cms?.pageDescription ?? "Model the long-term financial impact of owning versus leasing diplomatic housing in New York City.";
+const pageTitle = cms?.header?.title ?? "Rent vs. Buy Calculator";
+const pageSubtitle = cms?.header?.subtitle ?? "Financial Analysis Tool";
+const pageDescription = cms?.header?.description ?? "Model the long-term financial impact of owning versus leasing diplomatic housing in New York City.";
 
 const calcFaqs = [
   {
@@ -89,12 +89,12 @@ const jsonld = [
     <CalculatorIsland
       client:only="react"
       cms={{
-        verdictBuyText: cms?.verdictBuyText ?? "",
-        verdictRentText: cms?.verdictRentText ?? "",
+        verdictBuyText: cms?.verdicts?.buyText ?? "",
+        verdictRentText: cms?.verdicts?.rentText ?? "",
         disclaimerText: cms?.disclaimerText ?? "",
-        gateHeadline: cms?.gateHeadline ?? "",
-        gateSubtext: cms?.gateSubtext ?? "",
-        gateButtonText: cms?.gateButtonText ?? "",
+        gateHeadline: cms?.gate?.headline ?? "",
+        gateSubtext: cms?.gate?.subtext ?? "",
+        gateButtonText: cms?.gate?.buttonText ?? "",
       }}
     />
 

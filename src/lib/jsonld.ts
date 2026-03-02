@@ -3,14 +3,17 @@
  * Injected into <head> via Astro layouts for SEO and GEO.
  */
 
-const SITE_URL = "https://aaboadvisory.com";
-const ORG_NAME = "Aabo Advisory";
+import { site } from "./constants";
+
+const SITE_URL = site.url;
+const ORG_NAME = site.name;
 
 /* ── Shared fragments ── */
 
 const organizationRef = {
   "@type": "Organization" as const,
   name: ORG_NAME,
+  url: SITE_URL,
 };
 
 const areaServed = {
@@ -40,7 +43,6 @@ export function organizationJsonLd() {
       "Sovereign Housing Strategy",
       "Mission Housing Advisory",
     ],
-    sameAs: [],
   });
 }
 

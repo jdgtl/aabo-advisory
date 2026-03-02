@@ -7,7 +7,9 @@ export default function ContactModalIsland() {
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      const anchor = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href="#contact"]');
+      const anchor = (e.target as HTMLElement).closest<HTMLAnchorElement>(
+        'a[href="#contact"], a[href="/#contact"]'
+      );
       if (anchor) {
         e.preventDefault();
         trackContactModalOpened();

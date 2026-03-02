@@ -6,33 +6,16 @@ import { getAllArticles } from "@/lib/content";
 
 const rawArticles = await getAllArticles();
 
-const articles = rawArticles.length > 0
-  ? rawArticles.map((a) => ({
-      category: a.category,
-      title: a.title,
-      excerpt: a.excerpt,
-      slug: a.slug,
-    }))
-  : [
-      {
-        category: "Strategic Whitepaper",
-        title: "A 30-Year View on Diplomatic Housing in New York",
-        excerpt: "Why diplomatic housing decisions deserve the same rigor applied to any long-term sovereign asset.",
-        slug: "30-year-view-diplomatic-housing",
-      },
-      {
-        category: "Field Guide",
-        title: "Pre-Closing Walk-Throughs in New Developments",
-        excerpt: "A practical playbook for evaluating new development units before closing — tailored for mission procurement officers.",
-        slug: "pre-closing-walk-throughs",
-      },
-      {
-        category: "Quiet Insight",
-        title: "Why Ownership Can Create a Sovereign Advantage",
-        excerpt: "How shifting from leasing to ownership can reduce long-term costs and create institutional continuity.",
-        slug: "ownership-sovereign-advantage",
-      },
-    ];
+const articles = rawArticles
+  .slice(0, 3)
+  .map((a) => ({
+    category: a.category,
+    title: a.title,
+    excerpt: a.excerpt,
+    slug: a.slug,
+  }));
+
+const hasArticles = articles.length > 0;
 ---
 
 <section id="insights" class="bg-canvas px-6 py-16 sm:px-10 md:px-16 lg:px-20 lg:py-[100px]">
@@ -53,32 +36,53 @@ const articles = rawArticles.length > 0
       </p>
     </RevealWrapper>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {articles.map((a, i) => (
-        <RevealWrapper client:visible delay={0.1 * i}>
-          <a href={`/insights/${a.slug}`} class="block h-full no-underline">
-            <Card
-              className="h-full bg-light border-b-2 border-accent flex flex-col justify-between px-6 py-8 sm:px-[30px] sm:py-9 cursor-pointer"
-              client:visible
-            >
-              <div class="flex flex-col flex-1">
-                <div class="text-[10px] tracking-[0.15em] uppercase text-accent mb-3.5 font-semibold">
-                  {a.category}
+    {hasArticles ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {articles.map((a, i) => (
+          <RevealWrapper client:visible delay={0.1 * i}>
+            <a href={`/insights/${a.slug}`} class="block h-full no-underline">
+              <Card
+                className="h-full bg-light border-b-2 border-accent flex flex-col justify-between px-6 py-8 sm:px-[30px] sm:py-9 cursor-pointer"
+                client:visible
+              >
+                <div class="flex flex-col flex-1">
+                  <div class="text-[10px] tracking-[0.15em] uppercase text-accent mb-3.5 font-semibold">
+                    {a.category}
+                  </div>
+                  <h3 class="font-heading text-base lg:text-[19px] font-bold text-primary leading-[1.35] mb-3">
+                    {a.title}
+                  </h3>
+                  <p class="text-[13px] leading-[1.7] text-text/60">
+                    {a.excerpt}
+                  </p>
+                  <div class="mt-auto pt-5 text-[11px] tracking-[0.12em] uppercase text-accent font-medium">
+                    Read Briefing →
+                  </div>
                 </div>
-                <h3 class="font-heading text-base lg:text-[19px] font-bold text-primary leading-[1.35] mb-3">
-                  {a.title}
-                </h3>
-                <p class="text-[13px] leading-[1.7] text-text/60">
-                  {a.excerpt}
-                </p>
-                <div class="mt-auto pt-5 text-[11px] tracking-[0.12em] uppercase text-accent font-medium">
-                  Read Briefing →
-                </div>
-              </div>
-            </Card>
-          </a>
-        </RevealWrapper>
-      ))}
-    </div>
+              </Card>
+            </a>
+          </RevealWrapper>
+        ))}
+      </div>
+    ) : (
+      <RevealWrapper client:visible delay={0.2}>
+        <p class="text-sm text-text/40 italic">
+          Insights coming soon.
+        </p>
+      </RevealWrapper>
+    )}
+
+    {/* View All CTA */}
+    <RevealWrapper client:visible delay={hasArticles ? 0.3 : 0.2}>
+      <div class="mt-10 lg:mt-14 text-center">
+        <a
+          href="/insights"
+          class="inline-block border-[1.5px] border-primary text-primary px-8 py-3.5 text-[11px] tracking-[0.14em] uppercase font-body font-medium
+                 transition-all duration-300 ease-[cubic-bezier(.4,0,.2,1)] hover:bg-primary hover:text-canvas hover:-translate-y-px"
+        >
+          View All Insights →
+        </a>
+      </div>
+    </RevealWrapper>
   </div>
 </section>

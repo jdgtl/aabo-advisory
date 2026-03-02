@@ -25,10 +25,10 @@ const articles = rawArticles.map((a) => ({
   readTime: a.readTime,
 }));
 
-const pageTitle = page?.pageTitle ?? "Insights & Field Guides";
-const pageSubtitle = page?.pageSubtitle ?? "Diplomatic Briefings";
+const pageTitle = page?.header?.title ?? "Insights & Field Guides";
+const pageSubtitle = page?.header?.subtitle ?? "Diplomatic Briefings";
 const pageDescription =
-  page?.pageDescription ??
+  page?.header?.description ??
   "Strategic observations and practical guidance for diplomatic missions navigating real estate in global capitals.";
 const categories = page?.categories ?? [
   { label: "All", slug: "all" },

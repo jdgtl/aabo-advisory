@@ -4,9 +4,10 @@ import RevealWrapper from "@/components/ui/RevealWrapper";
 import { getHomepage } from "@/lib/content";
 
 const hp = await getHomepage();
+const about = hp?.about;
 
-const headline = hp?.aboutHeadline ?? "Confidence in Complexity";
-const paragraphs = hp?.aboutParagraphs ?? [
+const headline = about?.headline ?? "Confidence in Complexity";
+const paragraphs = about?.paragraphs ?? [
   "Our advisory practice grew out of years working with diplomatic missions, international organizations, and global clients navigating New York's real estate market.",
   "We combine market expertise with an understanding of diplomatic process, institutional decision-making, and long-term stewardship — helping missions operate with confidence in one of the world's most complex cities.",
 ];

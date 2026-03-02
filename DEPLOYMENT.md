@@ -83,29 +83,40 @@ Update `wrangler.jsonc` with the returned namespace ID:
 }
 ```
 
-### 4. Configure Worker Secrets
+### 4. Configure Environment Secrets
 
-Set each secret via Wrangler CLI. These are encrypted and available to API routes at runtime.
+Secrets are accessed via the Cloudflare runtime environment (`locals.runtime.env`). Set them using **either** method:
 
+**Option A: Cloudflare Pages Dashboard (recommended)**
+1. Go to **Workers & Pages → aabo-advisory → Settings → Environment variables**
+2. Add each variable under **Production** (and optionally **Preview**):
+
+| Variable | Description |
+|---|---|
+| `BREVO_API_KEY` | Brevo API key |
+| `BREVO_CONSULTATION_LIST_ID` | Brevo list ID for consultation requests |
+| `BREVO_CALCULATOR_LIST_ID` | Brevo list ID for calculator leads |
+| `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Google service account email |
+| `GOOGLE_PRIVATE_KEY` | Google service account private key (PEM format) |
+| `GOOGLE_SHEET_ID` | Google Sheet ID for archival |
+| `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile secret key |
+| `PLAUSIBLE_DOMAIN` | Site domain for Plausible analytics |
+
+3. Mark sensitive values as **Encrypted**
+
+**Option B: Wrangler CLI**
 ```bash
-# Brevo CRM
 npx wrangler pages secret put BREVO_API_KEY --project-name=aabo-advisory
 npx wrangler pages secret put BREVO_CONSULTATION_LIST_ID --project-name=aabo-advisory
 npx wrangler pages secret put BREVO_CALCULATOR_LIST_ID --project-name=aabo-advisory
-
-# Google Sheets
 npx wrangler pages secret put GOOGLE_SERVICE_ACCOUNT_EMAIL --project-name=aabo-advisory
 npx wrangler pages secret put GOOGLE_PRIVATE_KEY --project-name=aabo-advisory
 npx wrangler pages secret put GOOGLE_SHEET_ID --project-name=aabo-advisory
-
-# Cloudflare Turnstile
 npx wrangler pages secret put TURNSTILE_SECRET_KEY --project-name=aabo-advisory
-
-# Plausible Analytics
 npx wrangler pages secret put PLAUSIBLE_DOMAIN --project-name=aabo-advisory
 ```
 
-Each command will prompt for the secret value interactively.
+Each command prompts for the secret value interactively.
 
 ## Local Development
 

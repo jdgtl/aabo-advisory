@@ -2,10 +2,11 @@
 import { getHomepage } from "@/lib/content";
 
 const hp = await getHomepage();
+const ctaData = hp?.cta;
 
-const headline = hp?.ctaHeadline ?? "Begin a Conversation";
-const subtext = hp?.ctaSubtext ?? "We advise quietly, plan across decades, and measure success by stability, continuity, and outcomes over time.";
-const buttonText = hp?.ctaButtonText ?? "Schedule a Consultation";
+const headline = ctaData?.headline ?? "Begin a Conversation";
+const subtext = ctaData?.subtext ?? "We advise quietly, plan across decades, and measure success by stability, continuity, and outcomes over time.";
+const buttonText = ctaData?.buttonText ?? "Schedule a Consultation";
 ---
 
 <section class="relative bg-primary overflow-hidden text-center px-6 py-14 sm:px-10 md:px-16 lg:px-20 lg:py-[72px]">
@@ -20,7 +21,7 @@ const buttonText = hp?.ctaButtonText ?? "Schedule a Consultation";
       {subtext}
     </p>
     <a
-      href="#contact"
+      href="/#contact"
       class="inline-block border border-accent text-canvas px-8 sm:px-11 py-3.5 text-[11px] tracking-[0.16em] uppercase font-body font-medium
              transition-all duration-300 ease-[cubic-bezier(.4,0,.2,1)] hover:bg-accent hover:text-primary hover:-translate-y-px cursor-pointer"
     >

@@ -4,10 +4,11 @@ import RevealWrapper from "@/components/ui/RevealWrapper";
 import { getHomepage } from "@/lib/content";
 
 const hp = await getHomepage();
-const headline = hp?.heroHeadline ?? "Real Estate Advisory\nfor Diplomatic Missions";
-const subtext = hp?.heroSubtext ?? "Strategic housing, acquisition, and long-term stewardship in global capitals.";
-const description = hp?.heroDescription ?? "We advise diplomatic, foreign and private organizations on real estate decisions in New York, helping balance financial responsibility, operational needs, and long-term presence.";
-const cta = hp?.heroCTA ?? "Schedule a Consultation";
+const hero = hp?.hero;
+const headline = hero?.headline ?? "Real Estate Advisory\nfor Diplomatic Missions";
+const subtext = hero?.subtext ?? "Strategic housing, acquisition, and long-term stewardship in global capitals.";
+const description = hero?.description ?? "We advise diplomatic, foreign and private organizations on real estate decisions in New York, helping balance financial responsibility, operational needs, and long-term presence.";
+const cta = hero?.cta ?? "Schedule a Consultation";
 
 const headlineParts = headline.split("\n");
 ---
