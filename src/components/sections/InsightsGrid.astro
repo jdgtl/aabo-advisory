@@ -2,31 +2,37 @@
 import Label from "@/components/ui/Label.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper";
 import Card from "@/components/ui/Card";
+import { getAllArticles } from "@/lib/content";
 
-// TODO: Pull article data from Keystatic content once Phase 4 is complete
-const ARTICLES = [
-  {
-    category: "Strategic Whitepaper",
-    title: "A 30-Year View on Diplomatic Housing in New York",
-    excerpt:
-      "Why diplomatic housing decisions deserve the same rigor applied to any long-term sovereign asset.",
-    slug: "30-year-view-diplomatic-housing",
-  },
-  {
-    category: "Field Guide",
-    title: "Pre-Closing Walk-Throughs in New Developments",
-    excerpt:
-      "A practical playbook for evaluating new development units before closing — tailored for mission procurement officers.",
-    slug: "pre-closing-walk-throughs",
-  },
-  {
-    category: "Quiet Insight",
-    title: "Why Ownership Can Create a Sovereign Advantage",
-    excerpt:
-      "How shifting from leasing to ownership can reduce long-term costs and create institutional continuity.",
-    slug: "ownership-sovereign-advantage",
-  },
-];
+const rawArticles = await getAllArticles();
+
+const articles = rawArticles.length > 0
+  ? rawArticles.map((a) => ({
+      category: a.category,
+      title: a.title,
+      excerpt: a.excerpt,
+      slug: a.slug,
+    }))
+  : [
+      {
+        category: "Strategic Whitepaper",
+        title: "A 30-Year View on Diplomatic Housing in New York",
+        excerpt: "Why diplomatic housing decisions deserve the same rigor applied to any long-term sovereign asset.",
+        slug: "30-year-view-diplomatic-housing",
+      },
+      {
+        category: "Field Guide",
+        title: "Pre-Closing Walk-Throughs in New Developments",
+        excerpt: "A practical playbook for evaluating new development units before closing — tailored for mission procurement officers.",
+        slug: "pre-closing-walk-throughs",
+      },
+      {
+        category: "Quiet Insight",
+        title: "Why Ownership Can Create a Sovereign Advantage",
+        excerpt: "How shifting from leasing to ownership can reduce long-term costs and create institutional continuity.",
+        slug: "ownership-sovereign-advantage",
+      },
+    ];
 ---
 
 <section id="insights" class="bg-canvas px-6 py-16 sm:px-10 md:px-16 lg:px-20 lg:py-[100px]">
@@ -48,9 +54,8 @@ const ARTICLES = [
     </RevealWrapper>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {ARTICLES.map((a, i) => (
+      {articles.map((a, i) => (
         <RevealWrapper client:visible delay={0.1 * i}>
-          {/* Article cards link to /insights/[slug] — wired in Phase 4 */}
           <a href={`/insights/${a.slug}`} class="block h-full no-underline">
             <Card
               className="h-full bg-light border-b-2 border-accent flex flex-col justify-between px-6 py-8 sm:px-[30px] sm:py-9 cursor-pointer"

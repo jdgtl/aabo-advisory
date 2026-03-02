@@ -1,6 +1,15 @@
 ---
 import LineReveal from "@/components/ui/LineReveal.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper";
+import { getHomepage } from "@/lib/content";
+
+const hp = await getHomepage();
+const headline = hp?.heroHeadline ?? "Real Estate Advisory\nfor Diplomatic Missions";
+const subtext = hp?.heroSubtext ?? "Strategic housing, acquisition, and long-term stewardship in global capitals.";
+const description = hp?.heroDescription ?? "We advise diplomatic, foreign and private organizations on real estate decisions in New York, helping balance financial responsibility, operational needs, and long-term presence.";
+const cta = hp?.heroCTA ?? "Schedule a Consultation";
+
+const headlineParts = headline.split("\n");
 ---
 
 <section
@@ -21,30 +30,31 @@ import RevealWrapper from "@/components/ui/RevealWrapper";
 
     <RevealWrapper client:visible>
       <h1 class="font-heading text-[32px] sm:text-[40px] md:text-[48px] lg:text-[54px] font-bold leading-[1.12] text-primary mb-7">
-        Real Estate Advisory<br />for Diplomatic Missions
+        {headlineParts.map((part, i) => (
+          <>{i > 0 && <br />}{part}</>
+        ))}
       </h1>
     </RevealWrapper>
 
     <RevealWrapper client:visible delay={0.1}>
       <p class="text-base sm:text-lg lg:text-[19px] leading-[1.65] text-warm max-w-[560px] mb-5">
-        Strategic housing, acquisition, and long-term stewardship in global capitals.
+        {subtext}
       </p>
     </RevealWrapper>
 
     <RevealWrapper client:visible delay={0.2}>
       <p class="text-sm lg:text-[15px] leading-[1.75] text-text/70 max-w-[540px] mb-12">
-        We advise diplomatic, foreign and private organizations on real estate decisions in New York, helping balance financial responsibility, operational needs, and long-term presence.
+        {description}
       </p>
     </RevealWrapper>
 
     <RevealWrapper client:visible delay={0.3}>
-      {/* CTA wired to ContactModal in Phase 5 */}
       <a
         href="#contact"
         class="inline-block border-[1.5px] border-primary text-primary px-8 sm:px-10 py-4 text-xs tracking-[0.16em] uppercase font-body font-medium
                transition-all duration-300 ease-[cubic-bezier(.4,0,.2,1)] hover:bg-primary hover:text-canvas hover:-translate-y-px cursor-pointer"
       >
-        Schedule a Consultation
+        {cta}
       </a>
     </RevealWrapper>
   </div>

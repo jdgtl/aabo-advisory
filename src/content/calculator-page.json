@@ -1,0 +1,11 @@
+{
+  "pageTitle": "Rent vs. Buy Calculator",
+  "pageSubtitle": "Financial Analysis Tool",
+  "pageDescription": "Model the long-term financial impact of owning versus leasing diplomatic housing in New York City.",
+  "verdictBuyText": "Based on the inputs provided, purchasing appears to be the more cost-effective long-term strategy for your mission.",
+  "verdictRentText": "Based on the inputs provided, continuing to lease may be the more prudent approach for your mission at this time.",
+  "disclaimerText": "This calculator provides estimates for general informational purposes only. Actual costs may vary based on market conditions, financing terms, and other factors. This tool does not constitute financial advice. Consult with qualified advisors before making real estate decisions.",
+  "gateHeadline": "Access the Full Analysis",
+  "gateSubtext": "Enter your details to unlock the complete rent vs. buy comparison with detailed projections.",
+  "gateButtonText": "Unlock Calculator"
+}

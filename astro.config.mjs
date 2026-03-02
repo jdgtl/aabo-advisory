@@ -3,6 +3,8 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import cloudflare from "@astrojs/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
+import markdoc from "@astrojs/markdoc";
+import keystatic from "@keystatic/astro";
 
 export default defineConfig({
   site: "https://aaboadvisory.com",
@@ -11,7 +13,7 @@ export default defineConfig({
       enabled: true,
     },
   }),
-  integrations: [react(), sitemap()],
+  integrations: [react(), markdoc(), sitemap(), keystatic()],
   vite: {
     plugins: [tailwindcss()],
   },
