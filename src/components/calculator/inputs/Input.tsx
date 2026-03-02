@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useId } from "react";
 
 interface Props {
   label: string;
@@ -14,10 +14,11 @@ interface Props {
 
 export default function Input({ label, value, onChange, prefix, suffix, min, max, step, hint }: Props) {
   const [focused, setFocused] = useState(false);
+  const id = useId();
 
   return (
     <div className="flex-[1_1_180px] min-w-[160px]">
-      <label className="block text-[10px] tracking-[0.1em] uppercase text-text/45 mb-1.5 font-semibold font-body">
+      <label htmlFor={id} className="block text-[10px] tracking-[0.1em] uppercase text-text/45 mb-1.5 font-semibold font-body">
         {label}
       </label>
       <div
@@ -27,6 +28,7 @@ export default function Input({ label, value, onChange, prefix, suffix, min, max
           <span className="pl-3.5 py-3 text-sm text-warm font-body select-none">{prefix}</span>
         )}
         <input
+          id={id}
           type="number"
           value={value}
           min={min}

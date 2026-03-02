@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { fmtInput } from "../formatters";
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
 export default function DollarInput({ label, value, onChange, hint }: Props) {
   const [focused, setFocused] = useState(false);
   const [display, setDisplay] = useState(fmtInput(value));
+  const id = useId();
 
   useEffect(() => {
     if (!focused) setDisplay(fmtInput(value));
@@ -33,7 +34,7 @@ export default function DollarInput({ label, value, onChange, hint }: Props) {
 
   return (
     <div className="flex-[1_1_180px] min-w-[160px]">
-      <label className="block text-[10px] tracking-[0.1em] uppercase text-text/45 mb-1.5 font-semibold font-body">
+      <label htmlFor={id} className="block text-[10px] tracking-[0.1em] uppercase text-text/45 mb-1.5 font-semibold font-body">
         {label}
       </label>
       <div
@@ -41,6 +42,7 @@ export default function DollarInput({ label, value, onChange, hint }: Props) {
       >
         <span className="pl-3.5 py-3 text-sm text-warm font-body select-none">$</span>
         <input
+          id={id}
           type="text"
           inputMode="decimal"
           value={display}

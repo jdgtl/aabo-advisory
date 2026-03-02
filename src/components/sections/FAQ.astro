@@ -1,0 +1,47 @@
+---
+import Label from "@/components/ui/Label.astro";
+import RevealWrapper from "@/components/ui/RevealWrapper";
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  label?: string;
+  headline?: string;
+  faqs: FAQItem[];
+}
+
+const { label = "Frequently Asked Questions", headline = "Common Questions", faqs } = Astro.props;
+---
+
+<section class="bg-canvas px-6 py-16 sm:px-10 md:px-16 lg:px-20 lg:py-[80px]">
+  <div class="max-w-[1100px] mx-auto">
+    <RevealWrapper client:visible>
+      <Label text={label} />
+    </RevealWrapper>
+
+    <RevealWrapper client:visible delay={0.1}>
+      <h2 class="font-heading text-[28px] sm:text-[32px] lg:text-[36px] font-bold text-primary mb-10">
+        {headline}
+      </h2>
+    </RevealWrapper>
+
+    <div class="max-w-[760px] flex flex-col gap-0">
+      {faqs.map((faq, i) => (
+        <RevealWrapper client:visible delay={0.05 * i}>
+          <details class="group border-t border-mid last:border-b">
+            <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer list-none text-left text-[15px] font-medium text-primary leading-[1.5] transition-colors hover:text-accent [&::-webkit-details-marker]:hidden">
+              <span>{faq.question}</span>
+              <span class="shrink-0 text-accent text-lg transition-transform duration-300 group-open:rotate-45" aria-hidden="true">+</span>
+            </summary>
+            <div class="pb-5 pr-8 text-sm leading-[1.85] text-text/75">
+              {faq.answer}
+            </div>
+          </details>
+        </RevealWrapper>
+      ))}
+    </div>
+  </div>
+</section>

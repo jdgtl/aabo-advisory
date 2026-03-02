@@ -1,17 +1,20 @@
 ---
 import "@/styles/global.css";
 import ContactModalIsland from "@/components/interactive/ContactModalIsland";
+import { organizationJsonLd, webSiteJsonLd } from "@/lib/jsonld";
 
 interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
+  jsonld?: string[];
 }
 
 const {
   title = "AABO Advisory — Diplomatic Real Estate Advisory",
   description = "Specialized real estate advisory for the diplomatic community. Expert guidance on property acquisition, market analysis, and strategic investment.",
   ogImage = "/images/og-default.png",
+  jsonld = [],
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -57,8 +60,25 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       type="font/woff2"
       crossorigin
     />
+
+    <!-- JSON-LD: Global structured data -->
+    <script is:inline type="application/ld+json" set:html={organizationJsonLd()} />
+    <script is:inline type="application/ld+json" set:html={webSiteJsonLd()} />
+
+    <!-- JSON-LD: Page-specific structured data -->
+    {jsonld.map((ld) => (
+      <script is:inline type="application/ld+json" set:html={ld} />
+    ))}
   </head>
   <body class="min-h-screen bg-canvas text-text font-body antialiased">
+    <!-- Skip to content (a11y) -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[999] focus:bg-primary focus:text-canvas focus:px-4 focus:py-2 focus:text-sm focus:font-medium"
+    >
+      Skip to main content
+    </a>
+
     <slot />
     <ContactModalIsland client:idle />
   </body>
