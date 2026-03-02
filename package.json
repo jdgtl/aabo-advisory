@@ -1,0 +1,41 @@
+{
+  "name": "aabo-advisory",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "AABO Advisory — Diplomatic real estate advisory",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "cf:dev": "wrangler pages dev dist",
+    "cf:deploy": "wrangler pages deploy dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jdgtl/aabo-advisory.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jdgtl/aabo-advisory/issues"
+  },
+  "homepage": "https://github.com/jdgtl/aabo-advisory#readme",
+  "dependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@astrojs/cloudflare": "^12.6.12",
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/sitemap": "^3.7.0",
+    "@tailwindcss/vite": "^4.2.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "astro": "^5.18.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.69.0"
+  }
+}
