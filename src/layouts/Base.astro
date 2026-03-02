@@ -1,5 +1,6 @@
 ---
 import "@/styles/global.css";
+import ContactModalIsland from "@/components/interactive/ContactModalIsland";
 
 interface Props {
   title?: string;
@@ -59,5 +60,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   </head>
   <body class="min-h-screen bg-canvas text-text font-body antialiased">
     <slot />
+    <ContactModalIsland client:idle />
   </body>
 </html>

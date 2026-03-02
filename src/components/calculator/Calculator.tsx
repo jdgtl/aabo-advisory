@@ -350,6 +350,27 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
         </>
       )}
 
+      {/* ── CONSULTATION CTA ── */}
+      <div className="bg-primary px-6 sm:px-10 py-8 sm:py-10 mb-10 flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8">
+        <div className="flex-1">
+          <div className="text-[10px] tracking-[0.2em] uppercase text-accent mb-2 font-semibold">
+            Personalized Guidance
+          </div>
+          <h3 className="font-heading text-xl sm:text-2xl font-bold text-canvas mb-2 leading-[1.2]">
+            This analysis is generalized.
+          </h3>
+          <p className="text-sm leading-relaxed text-warm/70">
+            For a confidential assessment tailored to your mission's specific situation, schedule a consultation.
+          </p>
+        </div>
+        <a
+          href="#contact"
+          className="shrink-0 bg-accent text-primary px-7 py-3.5 text-[11px] tracking-[0.14em] uppercase font-body font-medium transition-all duration-300 hover:bg-canvas hover:-translate-y-px"
+        >
+          Schedule a Consultation
+        </a>
+      </div>
+
       {/* ── DISCLAIMER ── */}
       <div className="pt-8 pb-14 border-t border-mid">
         <div className="text-[10px] tracking-[0.12em] uppercase text-accent mb-3 font-semibold">Disclaimer</div>

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import TurnstileWidget from "./TurnstileWidget";
 
 interface Props {
   onClose: () => void;
@@ -9,6 +10,8 @@ export default function ContactModal({ onClose }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const onTurnstileToken = useCallback((t: string) => setTurnstileToken(t), []);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm({ ...form, [k]: e.target.value });
@@ -28,7 +31,7 @@ export default function ContactModal({ onClose }: Props) {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, turnstile_token: turnstileToken }),
       });
       if (!res.ok) throw new Error("Submission failed");
       setSubmitted(true);
@@ -120,6 +123,7 @@ export default function ContactModal({ onClose }: Props) {
                 className="w-full p-3.5 text-sm font-body bg-light border border-mid text-text outline-none transition-colors focus:border-accent resize-y min-h-[100px]"
               />
             </div>
+            <TurnstileWidget onToken={onTurnstileToken} />
             {error && (
               <p className="text-xs text-red mb-3">{error}</p>
             )}
