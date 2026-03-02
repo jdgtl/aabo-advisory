@@ -1,39 +1,29 @@
 ---
 import Label from "@/components/ui/Label.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper";
+import { getHomepage } from "@/lib/content";
 
-const PILLARS = [
+const hp = await getHomepage();
+
+const headline = hp?.servicesHeadline ?? "Three Pillars of Advisory";
+const subtext = hp?.servicesSubtext ?? "Our work spans the full lifecycle of diplomatic real estate — from strategic planning through acquisition to ongoing stewardship.";
+const pillars = hp?.servicePillars ?? [
   {
-    num: "I",
+    numeral: "I",
     title: "Strategic Housing Advisory",
-    items: [
-      "Rent vs. buy analysis",
-      "Portfolio strategy",
-      "Financial modeling & policy support",
-      "Long-term planning for staff housing",
-    ],
+    items: ["Rent vs. buy analysis", "Portfolio strategy", "Financial modeling & policy support", "Long-term planning for staff housing"],
     note: "Portfolio Performance and Optimization",
   },
   {
-    num: "II",
+    numeral: "II",
     title: "Transaction & Representation",
-    items: [
-      "Acquisition, Disposals, Leasing",
-      "New development and off-market sourcing",
-      "Negotiation and execution",
-      "Closing oversight and risk mitigation",
-    ],
+    items: ["Acquisition, Disposals, Leasing", "New development and off-market sourcing", "Negotiation and execution", "Closing oversight and risk mitigation"],
     note: "Full Cycle Transaction Management",
   },
   {
-    num: "III",
+    numeral: "III",
     title: "Operational Stewardship",
-    items: [
-      "Post-closing oversight",
-      "Vendor and issue coordination",
-      "Ongoing asset performance monitoring",
-      "Market-stats & Insights",
-    ],
+    items: ["Post-closing oversight", "Vendor and issue coordination", "Ongoing asset performance monitoring", "Market-stats & Insights"],
     note: "Pro-active, On-going Support",
   },
 ];
@@ -50,17 +40,17 @@ const PILLARS = [
 
     <RevealWrapper client:visible delay={0.1}>
       <h2 class="font-heading text-[28px] sm:text-[32px] lg:text-[36px] font-bold text-canvas mb-3.5">
-        Three Pillars of Advisory
+        {headline}
       </h2>
     </RevealWrapper>
 
     <RevealWrapper client:visible delay={0.15}>
       <p class="text-sm lg:text-[15px] text-warm/80 max-w-[520px] leading-[1.7] mb-10 lg:mb-14">
-        Our work spans the full lifecycle of diplomatic real estate — from strategic planning through acquisition to ongoing stewardship.
+        {subtext}
       </p>
     </RevealWrapper>
 
-    {PILLARS.map((p, pi) => (
+    {pillars.map((p, pi) => (
       <RevealWrapper client:visible delay={0.08 * pi}>
         <div
           class="grid grid-cols-1 md:grid-cols-[80px_1fr] lg:grid-cols-[80px_1fr_1fr] gap-4 md:gap-6 lg:gap-10
@@ -70,7 +60,7 @@ const PILLARS = [
         >
           {/* Roman numeral */}
           <div class="font-heading text-2xl lg:text-[28px] text-accent">
-            {p.num}
+            {p.numeral}
           </div>
 
           {/* Title + Note */}

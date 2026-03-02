@@ -1,6 +1,15 @@
 ---
 import Label from "@/components/ui/Label.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper";
+import { getHomepage } from "@/lib/content";
+
+const hp = await getHomepage();
+
+const headline = hp?.aboutHeadline ?? "Confidence in Complexity";
+const paragraphs = hp?.aboutParagraphs ?? [
+  "Our advisory practice grew out of years working with diplomatic missions, international organizations, and global clients navigating New York's real estate market.",
+  "We combine market expertise with an understanding of diplomatic process, institutional decision-making, and long-term stewardship — helping missions operate with confidence in one of the world's most complex cities.",
+];
 ---
 
 <section id="about" class="bg-light px-6 py-16 sm:px-10 md:px-16 lg:px-20 lg:py-[100px]">
@@ -12,21 +21,20 @@ import RevealWrapper from "@/components/ui/RevealWrapper";
 
       <RevealWrapper client:visible delay={0.1}>
         <h2 class="font-heading text-[28px] sm:text-[32px] lg:text-[36px] font-bold text-primary mb-7">
-          Confidence in Complexity
+          {headline}
         </h2>
       </RevealWrapper>
 
-      <RevealWrapper client:visible delay={0.15}>
-        <p class="text-sm lg:text-[15px] leading-[1.85] text-text/80 mb-5">
-          Our advisory practice grew out of years working with diplomatic missions, international organizations, and global clients navigating New York's real estate market.
-        </p>
-      </RevealWrapper>
-
-      <RevealWrapper client:visible delay={0.2}>
-        <p class="text-sm lg:text-[15px] leading-[1.85] text-text/80">
-          We combine market expertise with an understanding of diplomatic process, institutional decision-making, and long-term stewardship — helping missions operate with confidence in one of the world's most complex cities.
-        </p>
-      </RevealWrapper>
+      {paragraphs.map((para, i) => (
+        <RevealWrapper client:visible delay={0.15 + 0.05 * i}>
+          <p class:list={[
+            "text-sm lg:text-[15px] leading-[1.85] text-text/80",
+            i < paragraphs.length - 1 ? "mb-5" : "",
+          ]}>
+            {para}
+          </p>
+        </RevealWrapper>
+      ))}
     </div>
   </div>
 </section>

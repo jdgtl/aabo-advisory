@@ -1,0 +1,70 @@
+{
+  "heroHeadline": "Real Estate Advisory\nfor Diplomatic Missions",
+  "heroSubtext": "Strategic housing, acquisition, and long-term stewardship in global capitals.",
+  "heroDescription": "We advise diplomatic, foreign and private organizations on real estate decisions in New York, helping balance financial responsibility, operational needs, and long-term presence.",
+  "heroCTA": "Schedule a Consultation",
+  "approachHeadline": "Deliberate. Analytical. Discreet.",
+  "approachSubtext": "Approach",
+  "approachCards": [
+    {
+      "title": "Long-Term Lens",
+      "text": "Diplomatic housing decisions are rarely short-term. We evaluate real estate through a multi-decade horizon, accounting for cost, risk, continuity, and asset value.",
+      "keyword": "Horizon"
+    },
+    {
+      "title": "Dual Audience",
+      "text": "We work with both headquarters and local missions, ensuring alignment between strategic objectives and on-the-ground realities.",
+      "keyword": "Alignment"
+    },
+    {
+      "title": "Discretion & Precision",
+      "text": "Our advisory work is deliberate, analytical, and discreet. We prioritize clarity over speed and outcomes over volume.",
+      "keyword": "Clarity"
+    }
+  ],
+  "servicesHeadline": "Three Pillars of Advisory",
+  "servicesSubtext": "Our work spans the full lifecycle of diplomatic real estate — from strategic planning through acquisition to ongoing stewardship.",
+  "servicePillars": [
+    {
+      "numeral": "I",
+      "title": "Strategic Housing Advisory",
+      "note": "Portfolio Performance and Optimization",
+      "items": [
+        "Rent vs. buy analysis",
+        "Portfolio strategy",
+        "Financial modeling & policy support",
+        "Long-term planning for staff housing"
+      ]
+    },
+    {
+      "numeral": "II",
+      "title": "Transaction & Representation",
+      "note": "Full Cycle Transaction Management",
+      "items": [
+        "Acquisition, Disposals, Leasing",
+        "New development and off-market sourcing",
+        "Negotiation and execution",
+        "Closing oversight and risk mitigation"
+      ]
+    },
+    {
+      "numeral": "III",
+      "title": "Operational Stewardship",
+      "note": "Pro-active, On-going Support",
+      "items": [
+        "Post-closing oversight",
+        "Vendor and issue coordination",
+        "Ongoing asset performance monitoring",
+        "Market-stats & Insights"
+      ]
+    }
+  ],
+  "aboutHeadline": "Confidence in Complexity",
+  "aboutParagraphs": [
+    "Our advisory practice grew out of years working with diplomatic missions, international organizations, and global clients navigating New York's real estate market.",
+    "We combine market expertise with an understanding of diplomatic process, institutional decision-making, and long-term stewardship — helping missions operate with confidence in one of the world's most complex cities."
+  ],
+  "ctaHeadline": "Begin a Conversation",
+  "ctaSubtext": "We advise quietly, plan across decades, and measure success by stability, continuity, and outcomes over time.",
+  "ctaButtonText": "Schedule a Consultation"
+}
