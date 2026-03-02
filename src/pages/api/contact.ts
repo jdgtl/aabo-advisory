@@ -1,9 +1,29 @@
+/// <reference types="@cloudflare/workers-types" />
 import type { APIRoute } from "astro";
 import { createOrUpdateContact } from "@/lib/brevo";
+import { verifyTurnstile } from "@/lib/turnstile";
+import { appendRow } from "@/lib/google-sheets";
+import { checkRateLimit } from "@/lib/rate-limit";
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
+  const headers = { "Content-Type": "application/json" };
+
   try {
-    const body = await request.json() as {
+    // Rate limiting
+    const runtime = (locals as Record<string, unknown>).runtime as
+      | { env?: { RATE_LIMIT?: KVNamespace } }
+      | undefined;
+    const kv = runtime?.env?.RATE_LIMIT;
+    const ip = request.headers.get("cf-connecting-ip") ?? request.headers.get("x-forwarded-for") ?? "unknown";
+    const rateResult = await checkRateLimit(kv, ip, "contact");
+    if (!rateResult.allowed) {
+      return new Response(JSON.stringify({ error: "Too many requests. Please try again later." }), {
+        status: 429,
+        headers: { ...headers, "Retry-After": String(rateResult.retryAfter ?? 3600) },
+      });
+    }
+
+    const body = (await request.json()) as {
       name?: string;
       org?: string;
       email?: string;
@@ -11,16 +31,36 @@ export const POST: APIRoute = async ({ request }) => {
       turnstile_token?: string;
     };
 
-    const { name, org, email, message } = body;
+    const { name, org, email, message, turnstile_token } = body;
 
+    // Validate required fields
     if (!name || !email) {
       return new Response(JSON.stringify({ error: "Name and email are required" }), {
         status: 400,
-        headers: { "Content-Type": "application/json" },
+        headers,
       });
     }
 
-    // Brevo integration (gracefully skip if key not set)
+    if (!message) {
+      return new Response(JSON.stringify({ error: "Message is required" }), {
+        status: 400,
+        headers,
+      });
+    }
+
+    // Turnstile verification
+    const turnstileSecret = import.meta.env.TURNSTILE_SECRET_KEY ?? "";
+    if (turnstileSecret) {
+      const valid = await verifyTurnstile(turnstile_token ?? "", turnstileSecret);
+      if (!valid) {
+        return new Response(JSON.stringify({ error: "Turnstile verification failed" }), {
+          status: 403,
+          headers,
+        });
+      }
+    }
+
+    // Brevo integration
     const brevoKey = import.meta.env.BREVO_API_KEY ?? "";
     const listId = parseInt(import.meta.env.BREVO_CONSULTATION_LIST_ID ?? "0", 10);
 
@@ -32,21 +72,34 @@ export const POST: APIRoute = async ({ request }) => {
         tags: ["consultation-request"],
         listIds: listId ? [listId] : [],
         attributes: {
-          SOURCE: "contact-form",
-          MESSAGE: message ?? "",
+          SOURCE: "consultation",
+          MESSAGE: message,
         },
       });
     }
 
-    return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    // Google Sheets integration
+    const sheetId = import.meta.env.GOOGLE_SHEET_ID ?? "";
+    const gsEmail = import.meta.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? "";
+    const gsKey = import.meta.env.GOOGLE_PRIVATE_KEY ?? "";
+
+    if (sheetId && gsEmail && gsKey) {
+      await appendRow(sheetId, "Consultations", [
+        new Date().toISOString(),
+        name,
+        org ?? "",
+        email,
+        "consultation",
+        message,
+      ], { email: gsEmail, privateKey: gsKey });
+    }
+
+    return new Response(JSON.stringify({ success: true }), { status: 200, headers });
   } catch (err) {
     console.error("Contact form error:", err);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers,
     });
   }
 };

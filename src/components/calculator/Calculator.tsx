@@ -1,7 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { runCalculation } from "./engine";
 import { defaults } from "./defaults";
 import { fmtFull } from "./formatters";
+import { trackCalculatorStarted, trackCTAClicked } from "@/lib/analytics";
+import type { CalculatorData } from "../interactive/LeadGate";
 
 import DollarInput from "./inputs/DollarInput";
 import Input from "./inputs/Input";
@@ -34,7 +36,7 @@ interface Props {
     disclaimerText?: string;
   };
   /** Callback when "View Full Analysis" is clicked (triggers lead gate) */
-  onRequestFullAnalysis?: () => void;
+  onRequestFullAnalysis?: (data?: CalculatorData) => void;
   /** Whether full analysis is unlocked */
   unlocked?: boolean;
 }
@@ -57,6 +59,21 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
   const [maintenancePct, setMaintenancePct] = useState<number>(defaults.maintenancePct);
   const [activeView, setActiveView] = useState<TabId>("summary");
   const [showAdvanced, setShowAdvanced] = useState(true);
+  const hasTrackedStart = useRef(false);
+
+  // Track calculator started when user first modifies any input
+  useEffect(() => {
+    if (!hasTrackedStart.current) {
+      const isModified =
+        units !== defaults.units ||
+        pricePerUnit !== defaults.pricePerUnit ||
+        monthlyRent !== defaults.monthlyRent;
+      if (isModified) {
+        hasTrackedStart.current = true;
+        trackCalculatorStarted();
+      }
+    }
+  }, [units, pricePerUnit, monthlyRent]);
 
   const result = useMemo(
     () =>
@@ -258,7 +275,16 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
                 Access all charts, year-by-year projections, and tax detail breakdowns.
               </p>
               <button
-                onClick={onRequestFullAnalysis}
+                onClick={() => {
+                  const totalPrice = units * pricePerUnit;
+                  onRequestFullAnalysis?.({
+                    priceRange: fmtFull(totalPrice),
+                    units,
+                    timeline: timelineYears,
+                    verdict: result.buyWins ? "buy" : "rent",
+                    savings: fmtFull(Math.abs(result.savings)),
+                  });
+                }}
                 className="bg-primary text-canvas px-8 py-3.5 text-[11px] tracking-[0.14em] uppercase font-body font-medium transition-all duration-300 hover:bg-secondary hover:-translate-y-px cursor-pointer"
               >
                 View Full Analysis
@@ -365,6 +391,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
         </div>
         <a
           href="#contact"
+          onClick={() => trackCTAClicked("calculator-consultation")}
           className="shrink-0 bg-accent text-primary px-7 py-3.5 text-[11px] tracking-[0.14em] uppercase font-body font-medium transition-all duration-300 hover:bg-canvas hover:-translate-y-px"
         >
           Schedule a Consultation

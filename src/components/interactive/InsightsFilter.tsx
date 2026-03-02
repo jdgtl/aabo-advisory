@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { trackArticleOpened } from "@/lib/analytics";
 
 interface Article {
   slug: string;
@@ -54,6 +55,7 @@ export default function InsightsFilter({ articles, categories }: Props) {
           <a
             key={a.slug}
             href={`/insights/${a.slug}`}
+            onClick={() => trackArticleOpened(a.title)}
             className="group grid grid-cols-1 md:grid-cols-[3px_1fr_auto] gap-4 md:gap-7 py-9 border-t border-mid no-underline items-center transition-all duration-300 hover:pl-3 hover:bg-light/50"
           >
             <div className="hidden md:block bg-accent self-stretch rounded-sm" />
