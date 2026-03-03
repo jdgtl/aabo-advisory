@@ -209,7 +209,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
               Acquisition Cost
               <InfoTip definition="All-in buyer-side costs at purchase: broker fees, legal fees, and mansion tax. Applied as a percentage of total purchase price." />
             </div>
-            <div className="text-lg font-bold text-primary font-heading">4.50%</div>
+            <div className="text-lg font-bold text-primary font-heading">2.00%</div>
           </div>
           <div className="flex-1 min-w-[140px] bg-canvas p-4 border border-mid">
             <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1 font-medium">

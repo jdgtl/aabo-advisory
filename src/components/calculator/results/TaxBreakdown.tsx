@@ -23,7 +23,7 @@ export default function TaxBreakdown({ result, units }: Props) {
         Acquisition Cost Breakdown
         <InfoTip
           definition="Buyer-side costs at purchase, including estimated broker/legal fees and NYC mansion tax applied per unit (per deed)."
-          formula="Total Acquisition = 4.50% × Total Purchase Price"
+          formula="Total Acquisition = 2.00% × Total Purchase Price"
         />
       </div>
       <div className="text-[11px] text-text/35 mb-3.5 font-body">

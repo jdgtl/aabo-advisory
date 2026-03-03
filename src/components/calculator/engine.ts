@@ -1,7 +1,7 @@
 import type { CalcParams } from "./defaults";
 
 /* ─── FIXED CONSTANTS ─── */
-const ACQ_PCT = 0.045;
+const ACQ_PCT = 0.02;
 const DISP_PCT = 0.065;
 const MAINT_PCT = 0.05;
 const RENT_BRK_PCT = 0.075;
