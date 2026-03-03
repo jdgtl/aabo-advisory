@@ -49,18 +49,6 @@ const sectionLinks = [
         </a>
       ))}
       <a
-        href="/calculator"
-        data-nav-link="calculator"
-        class:list={[
-          "text-xs tracking-[0.06em] font-body pb-0.5 border-b-[1.5px] border-transparent transition-all duration-300",
-          light
-            ? "text-accent hover:border-accent [&.nav-link-active]:border-accent"
-            : "text-accent hover:border-accent [&.nav-link-active]:border-accent",
-        ]}
-      >
-        Calculator
-      </a>
-      <a
         href="/#contact"
         class:list={[
           "px-5 py-2.5 text-[11px] tracking-[0.12em] uppercase font-body font-medium transition-all duration-300 border",
@@ -96,18 +84,6 @@ const sectionLinks = [
         {link.label}
       </a>
     ))}
-    <a
-      href="/calculator"
-      data-nav-link="calculator"
-      class:list={[
-        "text-sm tracking-[0.06em] font-body transition-colors",
-        light
-          ? "text-accent hover:text-primary [&.nav-link-active]:text-primary"
-          : "text-accent hover:text-canvas [&.nav-link-active]:text-canvas",
-      ]}
-    >
-      Calculator
-    </a>
     <a
       href="/#contact"
       class:list={[

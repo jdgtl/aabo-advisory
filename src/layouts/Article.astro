@@ -4,11 +4,13 @@ import Nav from "@/components/sections/Nav.astro";
 import Footer from "@/components/sections/Footer.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper";
 import { articleJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
+import ArticleActions from "@/components/interactive/ArticleActions";
 
 interface Props {
   title: string;
   category: string;
   excerpt: string;
+  keyTakeaway?: string;
   date: string;
   readTime: string;
   docId: string;
@@ -20,7 +22,7 @@ interface Props {
   }[];
 }
 
-const { title, category, excerpt, date, readTime, docId, slug, otherArticles } = Astro.props;
+const { title, category, excerpt, keyTakeaway, date, readTime, docId, slug, otherArticles } = Astro.props;
 
 const jsonld = [
   articleJsonLd({
@@ -121,7 +123,7 @@ const jsonld = [
               </div>
               <div class="border-l-2 border-accent pl-5">
                 <p class="font-heading text-base leading-[1.6] text-primary italic">
-                  {excerpt}
+                  {keyTakeaway || excerpt}
                 </p>
               </div>
             </div>
@@ -146,6 +148,15 @@ const jsonld = [
                 </a>
               ))}
             </nav>
+          </RevealWrapper>
+
+          <RevealWrapper client:visible delay={0.4}>
+            <div class="mt-6 bg-primary p-6 print-hide">
+              <div class="text-[10px] tracking-[0.15em] uppercase text-accent mb-2 font-semibold">
+                Actions
+              </div>
+              <ArticleActions title={title} client:visible />
+            </div>
           </RevealWrapper>
         </aside>
       </div>

@@ -7,6 +7,8 @@ import { getAllArticles } from "@/lib/content";
 const rawArticles = await getAllArticles();
 
 const articles = rawArticles
+  .filter((a) => a.featured)
+  .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""))
   .slice(0, 3)
   .map((a) => ({
     category: a.category,
