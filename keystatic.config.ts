@@ -25,7 +25,7 @@ export default config({
           defaultValue: "Quiet Insight",
         }),
         excerpt: fields.text({ label: "Excerpt", multiline: true }),
-        date: fields.date({ label: "Date" }),
+        date: fields.date({ label: "Date", validation: { isRequired: true } }),
         featured: fields.checkbox({ label: "Featured", defaultValue: false }),
         body: fields.markdoc({ label: "Body" }),
       },
