@@ -5,7 +5,7 @@ import Footer from "@/components/sections/Footer.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper";
 import LineReveal from "@/components/ui/LineReveal.astro";
 import InsightsFilter from "@/components/interactive/InsightsFilter";
-import { getInsightsPage, getAllArticles } from "@/lib/content";
+import { getInsightsPage, getAllArticles, formatDate } from "@/lib/content";
 import { breadcrumbJsonLd } from "@/lib/jsonld";
 
 const insightsBreadcrumbs = breadcrumbJsonLd([
@@ -21,8 +21,8 @@ const articles = rawArticles.map((a) => ({
   title: a.title,
   category: a.category,
   excerpt: a.excerpt,
-  date: a.date,
-  readTime: a.readTime,
+  date: formatDate(a.date),
+  readTime: a.readTime ?? "5 min read",
 }));
 
 const pageTitle = page?.header?.title ?? "Insights & Field Guides";

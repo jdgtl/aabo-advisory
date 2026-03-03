@@ -1,6 +1,6 @@
 ---
 import Article from "@/layouts/Article.astro";
-import { reader } from "@/lib/content";
+import { reader, calcReadTime, formatDate } from "@/lib/content";
 import Markdoc from "@markdoc/markdoc";
 
 export async function getStaticPaths() {
@@ -34,14 +34,16 @@ const docId = `AABO-2025-${String(idx + 1).padStart(3, "0")}`;
 
 const content = await article.body;
 const rendered = Markdoc.renderers.html(Markdoc.transform(content.node));
+const readTime = article.readTime ?? calcReadTime(rendered.replace(/<[^>]*>/g, ""));
+const date = formatDate(article.date);
 ---
 
 <Article
   title={article.title}
   category={article.category}
   excerpt={article.excerpt}
-  date={article.date}
-  readTime={article.readTime}
+  date={date}
+  readTime={readTime}
   docId={docId}
   slug={slug!}
   otherArticles={otherArticles}

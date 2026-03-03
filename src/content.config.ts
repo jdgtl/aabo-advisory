@@ -7,7 +7,7 @@ const articles = defineCollection({
     category: z.string(),
     excerpt: z.string(),
     date: z.string(),
-    readTime: z.string(),
+    readTime: z.string().optional(),
     featured: z.boolean().optional().default(false),
   }),
 });

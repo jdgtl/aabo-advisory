@@ -3,6 +3,23 @@ import keystaticConfig from "../../keystatic.config";
 
 export const reader = createReader(process.cwd(), keystaticConfig);
 
+/** ~265 wpm average adult reading speed */
+export function calcReadTime(text: string): string {
+  const words = text.trim().split(/\s+/).length;
+  const mins = Math.max(1, Math.round(words / 265));
+  return `${mins} min read`;
+}
+
+/** Format YYYY-MM-DD → "Month YYYY", pass through other formats */
+export function formatDate(date: string): string {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    const [y, m] = date.split("-");
+    const month = new Date(Number(y), Number(m) - 1).toLocaleString("en-US", { month: "long" });
+    return `${month} ${y}`;
+  }
+  return date;
+}
+
 export async function getHomepage() {
   return await reader.singletons.homepage.read();
 }
