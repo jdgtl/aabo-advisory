@@ -28,20 +28,64 @@ const { label = "Frequently Asked Questions", headline = "Common Questions", faq
       </h2>
     </RevealWrapper>
 
-    <div class="max-w-[760px] flex flex-col gap-0">
+    <div class="max-w-[760px] flex flex-col gap-0" data-faq-accordion>
       {faqs.map((faq, i) => (
         <RevealWrapper client:visible delay={0.05 * i}>
-          <details class="group border-t border-mid last:border-b">
-            <summary class="flex items-center justify-between gap-4 py-5 cursor-pointer list-none text-left text-[15px] font-medium text-primary leading-[1.5] transition-colors hover:text-accent [&::-webkit-details-marker]:hidden">
+          <div class="border-t border-mid last:border-b" data-faq-item>
+            <button
+              type="button"
+              class="w-full flex items-center justify-between gap-4 py-5 cursor-pointer bg-transparent border-none text-left text-base font-medium text-primary leading-[1.5] transition-colors hover:text-accent"
+              data-faq-trigger
+              aria-expanded="false"
+            >
               <span>{faq.question}</span>
-              <span class="shrink-0 text-accent text-lg transition-transform duration-300 group-open:rotate-45" aria-hidden="true">+</span>
-            </summary>
-            <div class="pb-5 pr-8 text-sm leading-[1.85] text-text/75">
-              {faq.answer}
+              <span class="shrink-0 text-accent text-lg transition-transform duration-300" data-faq-icon aria-hidden="true">+</span>
+            </button>
+            <div class="overflow-hidden transition-[max-height] duration-300 ease-[cubic-bezier(.4,0,.2,1)] max-h-0" data-faq-content>
+              <div class="pb-5 pr-8 text-sm leading-[1.85] text-text/75">
+                {faq.answer}
+              </div>
             </div>
-          </details>
+          </div>
         </RevealWrapper>
       ))}
     </div>
   </div>
 </section>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-faq-accordion]").forEach((accordion) => {
+    const triggers = accordion.querySelectorAll<HTMLButtonElement>("[data-faq-trigger]");
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => {
+        const item = trigger.closest("[data-faq-item]")!;
+        const content = item.querySelector<HTMLElement>("[data-faq-content]")!;
+        const icon = item.querySelector<HTMLElement>("[data-faq-icon]")!;
+        const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+        // Close all others
+        accordion.querySelectorAll<HTMLElement>("[data-faq-item]").forEach((other) => {
+          if (other === item) return;
+          const otherContent = other.querySelector<HTMLElement>("[data-faq-content]")!;
+          const otherIcon = other.querySelector<HTMLElement>("[data-faq-icon]")!;
+          const otherTrigger = other.querySelector<HTMLButtonElement>("[data-faq-trigger]")!;
+          otherContent.style.maxHeight = "0";
+          otherIcon.style.transform = "rotate(0deg)";
+          otherTrigger.setAttribute("aria-expanded", "false");
+        });
+
+        // Toggle current
+        if (isOpen) {
+          content.style.maxHeight = "0";
+          icon.style.transform = "rotate(0deg)";
+          trigger.setAttribute("aria-expanded", "false");
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+          icon.style.transform = "rotate(45deg)";
+          trigger.setAttribute("aria-expanded", "true");
+        }
+      });
+    });
+  });
+</script>

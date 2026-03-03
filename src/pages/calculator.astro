@@ -47,11 +47,11 @@ const jsonld = [
   description={pageDescription}
   jsonld={jsonld}
 >
-  <Nav />
+  <Nav light />
 
   <main id="main-content">
     {/* Page Header */}
-    <div class="bg-primary px-4 sm:px-8 lg:px-12 border-b border-accent/15">
+    <div class="bg-primary px-6 sm:px-10 md:px-16 lg:px-20 border-b border-accent/15">
       <div class="max-w-[1100px] mx-auto flex items-center justify-between h-[52px]">
         <div class="flex items-center gap-4">
           <span class="font-heading text-base font-bold text-canvas tracking-[0.08em]">AABO</span>
@@ -63,19 +63,23 @@ const jsonld = [
     </div>
 
     {/* Title Section */}
-    <div class="max-w-[1100px] mx-auto px-4 sm:px-8 lg:px-12 pt-10 sm:pt-12 pb-3">
-      <div class="text-[10px] tracking-[0.25em] uppercase text-accent mb-4 font-semibold">
-        {pageSubtitle} · Calculator
+    <div class="px-6 sm:px-10 md:px-16 lg:px-20 pt-10 sm:pt-12 pb-3">
+      <div class="max-w-[1100px] mx-auto">
+        <div class="text-[10px] tracking-[0.25em] uppercase text-accent mb-4 font-semibold">
+          {pageSubtitle} · Calculator
+        </div>
+        <h1 class="font-heading text-3xl sm:text-[40px] font-bold text-primary mb-3 leading-[1.15]">
+          Buy vs. Rent Analysis
+        </h1>
+        <p class="text-base leading-[1.7] text-text/55 max-w-[580px]">
+          {pageDescription}
+        </p>
       </div>
-      <h1 class="font-heading text-3xl sm:text-[40px] font-bold text-primary mb-3 leading-[1.15]">
-        Buy vs. Rent Analysis
-      </h1>
-      <p class="text-[15px] leading-[1.7] text-text/55 max-w-[580px]">
-        {pageDescription}
-      </p>
     </div>
-    <div class="max-w-[1100px] mx-auto px-4 sm:px-8 lg:px-12 mb-10">
-      <div class="w-12 h-0.5 bg-accent"></div>
+    <div class="px-6 sm:px-10 md:px-16 lg:px-20 mb-10">
+      <div class="max-w-[1100px] mx-auto">
+        <div class="w-12 h-0.5 bg-accent"></div>
+      </div>
     </div>
 
     {/* Key facts in clean semantic HTML for AI crawlers (GEO) */}
@@ -86,17 +90,19 @@ const jsonld = [
     </section>
 
     {/* Calculator Island */}
-    <CalculatorIsland
-      client:only="react"
-      cms={{
-        verdictBuyText: cms?.verdicts?.buyText ?? "",
-        verdictRentText: cms?.verdicts?.rentText ?? "",
-        disclaimerText: cms?.disclaimerText ?? "",
-        gateHeadline: cms?.gate?.headline ?? "",
-        gateSubtext: cms?.gate?.subtext ?? "",
-        gateButtonText: cms?.gate?.buttonText ?? "",
-      }}
-    />
+    <div class="px-6 sm:px-10 md:px-16 lg:px-20">
+      <CalculatorIsland
+        client:only="react"
+        cms={{
+          verdictBuyText: cms?.verdicts?.buyText ?? "",
+          verdictRentText: cms?.verdicts?.rentText ?? "",
+          disclaimerText: cms?.disclaimerText ?? "",
+          gateHeadline: cms?.gate?.headline ?? "",
+          gateSubtext: cms?.gate?.subtext ?? "",
+          gateButtonText: cms?.gate?.buttonText ?? "",
+        }}
+      />
+    </div>
 
     <FAQ
       label="Calculator FAQ"

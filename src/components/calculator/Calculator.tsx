@@ -99,7 +99,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
   );
 
   return (
-    <div className="max-w-[1100px] mx-auto px-4 sm:px-8 lg:px-12">
+    <div className="max-w-[1100px] mx-auto">
       {/* ── INPUTS ── */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_1px_1fr] gap-6 lg:gap-10 mb-8">
         {/* Purchase Scenario */}

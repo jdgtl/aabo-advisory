@@ -5,7 +5,13 @@ const NAV_SECTIONS = ["home", "approach", "services", "insights", "about"];
 export default function NavClient() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
+  const [activeSection, setActiveSection] = useState(() => {
+    if (typeof window === "undefined") return "home";
+    const path = window.location.pathname;
+    if (path.startsWith("/insights")) return "insights";
+    if (path.startsWith("/calculator")) return "calculator";
+    return "home";
+  });
 
   /* ── scroll state ── */
   useEffect(() => {
@@ -26,8 +32,9 @@ export default function NavClient() {
     }
   }, [scrolled]);
 
-  /* ── active section observer ── */
+  /* ── active section observer (homepage only) ── */
   useEffect(() => {
+    if (window.location.pathname !== "/") return;
     const els = NAV_SECTIONS.map((id) => document.getElementById(id)).filter(
       Boolean,
     ) as HTMLElement[];

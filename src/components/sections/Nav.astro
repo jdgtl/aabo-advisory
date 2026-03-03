@@ -1,6 +1,12 @@
 ---
 import NavClient from "@/components/interactive/NavClient";
 
+interface Props {
+  light?: boolean;
+}
+
+const { light = false } = Astro.props;
+
 const sectionLinks = [
   { href: "/#home", id: "home", label: "Home" },
   { href: "/#approach", id: "approach", label: "Approach" },
@@ -14,7 +20,12 @@ const sectionLinks = [
   <nav
     data-nav
     aria-label="Main navigation"
-    class="flex items-center justify-between px-6 md:px-12 py-5 transition-all duration-400 ease-[cubic-bezier(.4,0,.2,1)] border-b border-transparent bg-canvas [&.nav-scrolled]:py-3 [&.nav-scrolled]:bg-canvas/95 [&.nav-scrolled]:backdrop-blur-xl [&.nav-scrolled]:border-mid"
+    class:list={[
+      "flex items-center justify-between px-6 md:px-12 py-5 transition-all duration-400 ease-[cubic-bezier(.4,0,.2,1)] border-b border-transparent",
+      light
+        ? "bg-canvas [&.nav-scrolled]:py-3 [&.nav-scrolled]:bg-canvas/95 [&.nav-scrolled]:backdrop-blur-xl [&.nav-scrolled]:border-mid"
+        : "bg-primary [&.nav-scrolled]:py-3 [&.nav-scrolled]:bg-primary [&.nav-scrolled]:border-accent/15",
+    ]}
   >
     {/* Logo */}
     <a href="/" class="block transition-all duration-300">
@@ -27,20 +38,36 @@ const sectionLinks = [
         <a
           href={link.href}
           data-nav-link={link.id}
-          class="text-xs tracking-[0.06em] font-body text-text pb-0.5 border-b-[1.5px] border-transparent transition-all duration-300 hover:text-accent [&.nav-link-active]:text-accent [&.nav-link-active]:font-semibold [&.nav-link-active]:border-accent"
+          class:list={[
+            "text-xs tracking-[0.06em] font-body pb-0.5 border-b-[1.5px] border-transparent transition-all duration-300",
+            light
+              ? "text-accent hover:border-accent [&.nav-link-active]:border-accent"
+              : "text-accent hover:border-accent [&.nav-link-active]:border-accent",
+          ]}
         >
           {link.label}
         </a>
       ))}
       <a
         href="/calculator"
-        class="text-xs tracking-[0.06em] font-body text-text pb-0.5 border-b-[1.5px] border-transparent transition-all duration-300 hover:text-accent"
+        data-nav-link="calculator"
+        class:list={[
+          "text-xs tracking-[0.06em] font-body pb-0.5 border-b-[1.5px] border-transparent transition-all duration-300",
+          light
+            ? "text-accent hover:border-accent [&.nav-link-active]:border-accent"
+            : "text-accent hover:border-accent [&.nav-link-active]:border-accent",
+        ]}
       >
         Calculator
       </a>
       <a
         href="/#contact"
-        class="bg-primary text-canvas px-5 py-2.5 text-[11px] tracking-[0.12em] uppercase font-body font-medium transition-all duration-300 hover:bg-secondary hover:-translate-y-px"
+        class:list={[
+          "px-5 py-2.5 text-[11px] tracking-[0.12em] uppercase font-body font-medium transition-all duration-300 border",
+          light
+            ? "border-accent text-primary hover:bg-accent hover:text-primary"
+            : "border-accent text-canvas hover:bg-accent hover:text-primary",
+        ]}
       >
         Schedule a Consultation
       </a>
@@ -50,26 +77,45 @@ const sectionLinks = [
     <NavClient client:load />
   </nav>
 
-  {/* Mobile drawer — outside <nav> to avoid stacking context trap */}
-  <div data-nav-drawer class="fixed inset-x-0 top-[57px] bottom-0 bg-canvas flex-col items-center pt-12 gap-6 hidden md:!hidden z-50">
+  {/* Mobile drawer */}
+  <div data-nav-drawer class:list={[
+    "fixed inset-x-0 top-[57px] bottom-0 flex-col items-center pt-12 gap-6 hidden md:!hidden z-50",
+    light ? "bg-canvas" : "bg-primary",
+  ]}>
     {sectionLinks.map((link) => (
       <a
         href={link.href}
         data-nav-link={link.id}
-        class="text-sm tracking-[0.06em] font-body text-text transition-colors hover:text-accent [&.nav-link-active]:text-accent [&.nav-link-active]:font-semibold"
+        class:list={[
+          "text-sm tracking-[0.06em] font-body transition-colors",
+          light
+            ? "text-accent hover:text-primary [&.nav-link-active]:text-primary"
+            : "text-accent hover:text-canvas [&.nav-link-active]:text-canvas",
+        ]}
       >
         {link.label}
       </a>
     ))}
     <a
       href="/calculator"
-      class="text-sm tracking-[0.06em] font-body text-text transition-colors hover:text-accent"
+      data-nav-link="calculator"
+      class:list={[
+        "text-sm tracking-[0.06em] font-body transition-colors",
+        light
+          ? "text-accent hover:text-primary [&.nav-link-active]:text-primary"
+          : "text-accent hover:text-canvas [&.nav-link-active]:text-canvas",
+      ]}
     >
       Calculator
     </a>
     <a
       href="/#contact"
-      class="bg-primary text-canvas px-6 py-3 text-[11px] tracking-[0.12em] uppercase font-body font-medium mt-4"
+      class:list={[
+        "px-6 py-3 text-[11px] tracking-[0.12em] uppercase font-body font-medium mt-4 transition-all duration-300 border",
+        light
+          ? "border-accent text-primary hover:bg-accent hover:text-primary"
+          : "border-accent text-canvas hover:bg-accent hover:text-primary",
+      ]}
     >
       Schedule a Consultation
     </a>
