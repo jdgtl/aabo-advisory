@@ -34,7 +34,7 @@ const docId = `AABO-2025-${String(idx + 1).padStart(3, "0")}`;
 
 const content = await article.body;
 const rendered = Markdoc.renderers.html(Markdoc.transform(content.node));
-const readTime = article.readTime ?? calcReadTime(rendered.replace(/<[^>]*>/g, ""));
+const readTime = calcReadTime(rendered.replace(/<[^>]*>/g, ""));
 const date = formatDate(article.date);
 ---
 

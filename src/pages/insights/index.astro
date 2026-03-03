@@ -5,7 +5,8 @@ import Footer from "@/components/sections/Footer.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper";
 import LineReveal from "@/components/ui/LineReveal.astro";
 import InsightsFilter from "@/components/interactive/InsightsFilter";
-import { getInsightsPage, getAllArticles, formatDate } from "@/lib/content";
+import { getInsightsPage, getAllArticles, formatDate, calcReadTime } from "@/lib/content";
+import Markdoc from "@markdoc/markdoc";
 import { breadcrumbJsonLd } from "@/lib/jsonld";
 
 const insightsBreadcrumbs = breadcrumbJsonLd([
@@ -16,14 +17,20 @@ const insightsBreadcrumbs = breadcrumbJsonLd([
 const page = await getInsightsPage();
 const rawArticles = await getAllArticles();
 
-const articles = rawArticles.map((a) => ({
-  slug: a.slug,
-  title: a.title,
-  category: a.category,
-  excerpt: a.excerpt,
-  date: formatDate(a.date),
-  readTime: a.readTime ?? "5 min read",
-}));
+const articles = await Promise.all(
+  rawArticles.map(async (a) => {
+    const content = await a.body();
+    const html = Markdoc.renderers.html(Markdoc.transform(content.node));
+    return {
+      slug: a.slug,
+      title: a.title,
+      category: a.category,
+      excerpt: a.excerpt,
+      date: formatDate(a.date),
+      readTime: calcReadTime(html.replace(/<[^>]*>/g, "")),
+    };
+  }),
+);
 
 const pageTitle = page?.header?.title ?? "Insights & Field Guides";
 const pageSubtitle = page?.header?.subtitle ?? "Diplomatic Briefings";
