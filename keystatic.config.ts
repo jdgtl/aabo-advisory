@@ -3,6 +3,7 @@ import { config, fields, collection, singleton } from "@keystatic/core";
 export default config({
   storage: {
     kind: "cloud",
+    branchPrefix: "x-never/",
   },
   cloud: {
     project: "sauce-creative/aabo-advisory",
