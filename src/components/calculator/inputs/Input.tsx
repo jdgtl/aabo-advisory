@@ -1,4 +1,4 @@
-import { useState, useId } from "react";
+import { useState, useEffect, useId } from "react";
 
 interface Props {
   label: string;
@@ -10,11 +10,17 @@ interface Props {
   max?: number;
   step?: number;
   hint?: string;
+  placeholder?: string;
 }
 
-export default function Input({ label, value, onChange, prefix, suffix, min, max, step, hint }: Props) {
+export default function Input({ label, value, onChange, prefix, suffix, min, max, step, hint, placeholder }: Props) {
   const [focused, setFocused] = useState(false);
+  const [display, setDisplay] = useState(value === 0 ? "" : String(value));
   const id = useId();
+
+  useEffect(() => {
+    if (!focused) setDisplay(value === 0 ? "" : String(value));
+  }, [value, focused]);
 
   return (
     <div className="flex-[1_1_180px] min-w-[160px]">
@@ -29,15 +35,25 @@ export default function Input({ label, value, onChange, prefix, suffix, min, max
         )}
         <input
           id={id}
-          type="number"
-          value={value}
-          min={min}
-          max={max}
-          step={step}
-          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          className={`flex-1 border-none outline-none py-3 text-sm font-body text-text bg-transparent w-full ${prefix ? "pr-3.5 pl-1" : "px-3.5"}`}
+          type="text"
+          inputMode="decimal"
+          value={display}
+          placeholder={placeholder}
+          onChange={(e) => {
+            setDisplay(e.target.value);
+            const num = parseFloat(e.target.value);
+            if (!isNaN(num)) onChange(Math.min(Math.max(num, min ?? -Infinity), max ?? Infinity));
+            else if (e.target.value === "") onChange(0);
+          }}
+          onFocus={() => {
+            setFocused(true);
+            if (value === 0) setDisplay("");
+          }}
+          onBlur={() => {
+            setFocused(false);
+            setDisplay(value === 0 ? "" : String(value));
+          }}
+          className={`flex-1 border-none outline-none py-3 text-sm font-body text-text bg-transparent w-full placeholder:text-text/25 ${prefix ? "pr-3.5 pl-1" : "px-3.5"}`}
         />
         {suffix && (
           <span className="pr-3.5 py-3 text-[13px] text-warm font-body select-none">{suffix}</span>

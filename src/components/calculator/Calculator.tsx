@@ -43,17 +43,17 @@ interface Props {
 }
 
 export default function Calculator({ cms, onRequestFullAnalysis, unlocked = false }: Props) {
-  const [units, setUnits] = useState<number>(defaults.units);
-  const [pricePerUnit, setPricePerUnit] = useState<number>(defaults.pricePerUnit);
-  const [commonCharges, setCommonCharges] = useState<number>(defaults.commonCharges);
-  const [propertyTaxes, setPropertyTaxes] = useState<number>(defaults.propertyTaxes);
+  const [units, setUnits] = useState<number>(0);
+  const [pricePerUnit, setPricePerUnit] = useState<number>(0);
+  const [commonCharges, setCommonCharges] = useState<number>(0);
+  const [propertyTaxes, setPropertyTaxes] = useState<number>(0);
   const [singleUnitType, setSingleUnitType] = useState<string>("residential");
-  const [monthlyRent, setMonthlyRent] = useState<number>(defaults.monthlyRent);
-  const [otherCharges, setOtherCharges] = useState<number>(defaults.otherCharges);
-  const [rentTaxes, setRentTaxes] = useState<number>(defaults.rentTaxes);
-  const [timelineYears, setTimelineYears] = useState<number>(defaults.timelineYears);
-  const [annualAppreciation, setAnnualAppreciation] = useState<number>(defaults.annualAppreciation);
-  const [annualRentGrowth, setAnnualRentGrowth] = useState<number>(defaults.annualRentGrowth);
+  const [monthlyRent, setMonthlyRent] = useState<number>(0);
+  const [otherCharges, setOtherCharges] = useState<number>(0);
+  const [rentTaxes, setRentTaxes] = useState<number>(0);
+  const [timelineYears, setTimelineYears] = useState<number>(0);
+  const [annualAppreciation, setAnnualAppreciation] = useState<number>(0);
+  const [annualRentGrowth, setAnnualRentGrowth] = useState<number>(0);
   const [activeView, setActiveView] = useState<TabId>("summary");
   const hasTrackedStart = useRef(false);
 
@@ -63,14 +63,10 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
     ? "Condos, Co-ops & 1\u20133 Family Houses"
     : "Commercial & All Other Property";
 
-  // Track calculator started when user first modifies any input
+  // Track calculator started when user first enters any value
   useEffect(() => {
     if (!hasTrackedStart.current) {
-      const isModified =
-        units !== defaults.units ||
-        pricePerUnit !== defaults.pricePerUnit ||
-        monthlyRent !== defaults.monthlyRent;
-      if (isModified) {
+      if (units > 0 || pricePerUnit > 0 || monthlyRent > 0) {
         hasTrackedStart.current = true;
         trackCalculatorStarted();
       }
@@ -114,10 +110,10 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
             </div>
           </div>
           <div className="flex flex-wrap gap-4">
-            <Input label="Units" value={units} onChange={setUnits} min={1} max={50} step={1} />
-            <DollarInput label="Price per Unit" value={pricePerUnit} onChange={setPricePerUnit} />
-            <DollarInput label="Common Charges /mo" value={commonCharges} onChange={setCommonCharges} />
-            <DollarInput label="Property Taxes /mo" value={propertyTaxes} onChange={setPropertyTaxes} />
+            <Input label="Units" value={units} onChange={setUnits} min={1} max={50} step={1} placeholder="e.g. 9" />
+            <DollarInput label="Price per Unit" value={pricePerUnit} onChange={setPricePerUnit} placeholder="e.g. 2,000,000" />
+            <DollarInput label="Common Charges /mo" value={commonCharges} onChange={setCommonCharges} placeholder="e.g. 1,200" />
+            <DollarInput label="Property Taxes /mo" value={propertyTaxes} onChange={setPropertyTaxes} placeholder="e.g. 1,000" />
             {/* Property Classification */}
             <div>
               <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1.5 font-medium">
@@ -157,10 +153,10 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
             </div>
           </div>
           <div className="flex flex-wrap gap-4">
-            <Input label="Units" value={units} onChange={setUnits} min={1} max={50} step={1} />
-            <DollarInput label="Monthly Rent /unit" value={monthlyRent} onChange={setMonthlyRent} />
-            <DollarInput label="Other Charges /mo" value={otherCharges} onChange={setOtherCharges} />
-            <DollarInput label="Taxes /mo /unit" value={rentTaxes} onChange={setRentTaxes} />
+            <Input label="Units" value={units} onChange={setUnits} min={1} max={50} step={1} placeholder="e.g. 9" />
+            <DollarInput label="Monthly Rent /unit" value={monthlyRent} onChange={setMonthlyRent} placeholder="e.g. 8,000" />
+            <DollarInput label="Other Charges /mo" value={otherCharges} onChange={setOtherCharges} placeholder="0" />
+            <DollarInput label="Taxes /mo /unit" value={rentTaxes} onChange={setRentTaxes} placeholder="0" />
           </div>
         </div>
       </div>
@@ -178,8 +174,8 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
           <div>
             <div className="text-[10px] tracking-[0.08em] uppercase text-text/40 mb-3 font-semibold">Buy Assumptions</div>
             <div className="flex flex-wrap gap-4">
-              <Input label="Hold Period (Years)" value={timelineYears} onChange={setTimelineYears} suffix="yrs" min={1} max={30} step={1} />
-              <Input label="Annual Appreciation" value={annualAppreciation} onChange={setAnnualAppreciation} suffix="%" min={-5} max={15} step={0.25} hint="Property value growth" />
+              <Input label="Hold Period (Years)" value={timelineYears} onChange={setTimelineYears} suffix="yrs" min={1} max={30} step={1} placeholder="e.g. 16" />
+              <Input label="Annual Appreciation" value={annualAppreciation} onChange={setAnnualAppreciation} suffix="%" min={-5} max={15} step={0.25} hint="Property value growth" placeholder="e.g. 2.5" />
             </div>
           </div>
           {/* Divider */}
@@ -188,8 +184,8 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
           <div>
             <div className="text-[10px] tracking-[0.08em] uppercase text-text/40 mb-3 font-semibold">Rent Assumptions</div>
             <div className="flex flex-wrap gap-4">
-              <Input label="Hold Period (Years)" value={timelineYears} onChange={setTimelineYears} suffix="yrs" min={1} max={30} step={1} />
-              <Input label="Annual Rent Growth" value={annualRentGrowth} onChange={setAnnualRentGrowth} suffix="%" min={0} max={15} step={0.25} hint="Market rent escalation" />
+              <Input label="Hold Period (Years)" value={timelineYears} onChange={setTimelineYears} suffix="yrs" min={1} max={30} step={1} placeholder="e.g. 16" />
+              <Input label="Annual Rent Growth" value={annualRentGrowth} onChange={setAnnualRentGrowth} suffix="%" min={0} max={15} step={0.25} hint="Market rent escalation" placeholder="e.g. 2.75" />
             </div>
           </div>
         </div>

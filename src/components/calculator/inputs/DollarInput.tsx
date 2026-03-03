@@ -6,24 +6,25 @@ interface Props {
   value: number;
   onChange: (v: number) => void;
   hint?: string;
+  placeholder?: string;
 }
 
-export default function DollarInput({ label, value, onChange, hint }: Props) {
+export default function DollarInput({ label, value, onChange, hint, placeholder }: Props) {
   const [focused, setFocused] = useState(false);
-  const [display, setDisplay] = useState(fmtInput(value));
+  const [display, setDisplay] = useState(value === 0 ? "" : fmtInput(value));
   const id = useId();
 
   useEffect(() => {
-    if (!focused) setDisplay(fmtInput(value));
+    if (!focused) setDisplay(value === 0 ? "" : fmtInput(value));
   }, [value, focused]);
 
   const handleFocus = () => {
     setFocused(true);
-    setDisplay(String(value));
+    setDisplay(value === 0 ? "" : String(value));
   };
   const handleBlur = () => {
     setFocused(false);
-    setDisplay(fmtInput(value));
+    setDisplay(value === 0 ? "" : fmtInput(value));
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/,/g, "");
@@ -46,10 +47,11 @@ export default function DollarInput({ label, value, onChange, hint }: Props) {
           type="text"
           inputMode="decimal"
           value={display}
+          placeholder={placeholder}
           onChange={handleChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className="flex-1 border-none outline-none py-3 pr-3.5 pl-1 text-sm font-body text-text bg-transparent w-full"
+          className="flex-1 border-none outline-none py-3 pr-3.5 pl-1 text-sm font-body text-text bg-transparent w-full placeholder:text-text/25"
         />
       </div>
       {hint && <div className="text-[10px] text-warm mt-1 opacity-60">{hint}</div>}
