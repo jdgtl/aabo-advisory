@@ -2,6 +2,10 @@
   "name": "aabo-advisory",
   "compatibility_date": "2025-12-01",
   "pages_build_output_dir": "dist",
+  "vars": {
+    "KEYSTATIC_GITHUB_CLIENT_ID": "Iv23liGfIidoLCO8f20i",
+    "PUBLIC_KEYSTATIC_GITHUB_APP_SLUG": "aabo-keystatic"
+  },
   "kv_namespaces": [
     {
       "binding": "RATE_LIMIT",
