@@ -2,8 +2,10 @@ import { config, fields, collection, singleton } from "@keystatic/core";
 
 export default config({
   storage: {
-    kind: "github",
-    repo: "jdgtl/aabo-advisory",
+    kind: "cloud",
+  },
+  cloud: {
+    project: "sauce-creative/aabo-advisory",
   },
 
   collections: {
