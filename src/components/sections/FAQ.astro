@@ -10,7 +10,7 @@ interface FAQItem {
 interface Props {
   label?: string;
   headline?: string;
-  faqs: FAQItem[];
+  faqs: readonly FAQItem[];
 }
 
 const { label = "Frequently Asked Questions", headline = "Common Questions", faqs } = Astro.props;

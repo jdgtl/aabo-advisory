@@ -171,7 +171,7 @@ export interface FAQItem {
   answer: string;
 }
 
-export function faqPageJsonLd(faqs: FAQItem[]) {
+export function faqPageJsonLd(faqs: readonly FAQItem[]) {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "FAQPage",
