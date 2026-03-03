@@ -11,8 +11,11 @@ import About from "@/components/sections/About.astro";
 import CTABanner from "@/components/sections/CTABanner.astro";
 import FAQ from "@/components/sections/FAQ.astro";
 import { professionalServiceJsonLd, faqPageJsonLd } from "@/lib/jsonld";
+import { getHomepage } from "@/lib/content";
 
-const homepageFaqs = [
+const hp = await getHomepage();
+
+const homepageFaqs = hp?.faqs?.length ? hp.faqs : [
   {
     question: "What is diplomatic housing advisory?",
     answer: "Diplomatic housing advisory is a specialized real estate service that helps diplomatic missions, consulates, and international organizations navigate property acquisition, leasing, and portfolio management in global capitals. It combines market expertise with an understanding of diplomatic process and institutional decision-making.",

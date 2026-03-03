@@ -112,6 +112,17 @@ export default config({
           },
           { label: "CTA Banner" },
         ),
+
+        faqs: fields.array(
+          fields.object({
+            question: fields.text({ label: "Question" }),
+            answer: fields.text({ label: "Answer", multiline: true }),
+          }),
+          {
+            label: "FAQs",
+            itemLabel: (props) => props.fields.question.value,
+          },
+        ),
       },
     }),
 
@@ -177,6 +188,17 @@ export default config({
           label: "Disclaimer Text",
           multiline: true,
         }),
+
+        faqs: fields.array(
+          fields.object({
+            question: fields.text({ label: "Question" }),
+            answer: fields.text({ label: "Answer", multiline: true }),
+          }),
+          {
+            label: "FAQs",
+            itemLabel: (props) => props.fields.question.value,
+          },
+        ),
       },
     }),
 

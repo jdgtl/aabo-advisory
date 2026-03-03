@@ -1,7 +1,6 @@
 import type { APIRoute } from "astro";
 import { createOrUpdateContact } from "@/lib/brevo";
 import { verifyTurnstile } from "@/lib/turnstile";
-import { appendRow } from "@/lib/google-sheets";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getRuntimeEnv } from "@/lib/runtime-env";
 
@@ -60,7 +59,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Brevo integration
     const brevoKey = env.BREVO_API_KEY ?? "";
-    const listId = parseInt(env.BREVO_CONSULTATION_LIST_ID ?? "0", 10);
+    const listId = parseInt(env.BREVO_LIST_ID ?? "2", 10);
 
     if (brevoKey) {
       await createOrUpdateContact(brevoKey, {
@@ -74,22 +73,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
           MESSAGE: message,
         },
       });
-    }
-
-    // Google Sheets integration
-    const sheetId = env.GOOGLE_SHEET_ID ?? "";
-    const gsEmail = env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? "";
-    const gsKey = env.GOOGLE_PRIVATE_KEY ?? "";
-
-    if (sheetId && gsEmail && gsKey) {
-      await appendRow(sheetId, "Consultations", [
-        new Date().toISOString(),
-        name,
-        org ?? "",
-        email,
-        "consultation",
-        message,
-      ], { email: gsEmail, privateKey: gsKey });
     }
 
     return new Response(JSON.stringify({ success: true }), { status: 200, headers });

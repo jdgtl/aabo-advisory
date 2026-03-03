@@ -13,5 +13,23 @@
     "subtext": "Enter your details to unlock the complete rent vs. buy comparison with detailed projections.",
     "buttonText": "Unlock Calculator"
   },
-  "disclaimerText": "This calculator provides estimates for general informational purposes only. Actual costs may vary based on market conditions, financing terms, and other factors. This tool does not constitute financial advice. Consult with qualified advisors before making real estate decisions."
+  "disclaimerText": "This calculator provides estimates for general informational purposes only. Actual costs may vary based on market conditions, financing terms, and other factors. This tool does not constitute financial advice. Consult with qualified advisors before making real estate decisions.",
+  "faqs": [
+    {
+      "question": "What assumptions does the calculator use?",
+      "answer": "The calculator models purchase costs (price, common charges, property taxes, transaction fees), rental costs (monthly rent, annual escalation), and investment factors (appreciation rate, hold period). Default values reflect typical Manhattan diplomatic housing, but all inputs are adjustable."
+    },
+    {
+      "question": "How accurate are the projections?",
+      "answer": "The calculator provides directional guidance based on the inputs you provide. Actual outcomes depend on market conditions, interest rates, maintenance costs, and other factors. We recommend using the calculator as a starting point and consulting with our team for a comprehensive analysis tailored to your mission's specific situation."
+    },
+    {
+      "question": "What does a typical diplomatic property cost in New York?",
+      "answer": "Diplomatic housing in New York typically ranges from $500,000 to $5,000,000+ per unit depending on location, size, and building type. Missions often maintain portfolios of 5–20 units for staff housing. Monthly carrying costs (common charges, taxes) typically run $2,000–$8,000 per unit."
+    },
+    {
+      "question": "Why is the hold period important in the analysis?",
+      "answer": "The hold period is one of the most significant variables. Over shorter periods (1–5 years), transaction costs often make renting more economical. Over longer periods (10–30 years), property appreciation and avoidance of compounding rent increases typically make ownership significantly more cost-effective — often saving $45–60 million over 30 years for a multi-unit portfolio."
+    }
+  ]
 }

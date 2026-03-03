@@ -1,7 +1,6 @@
 import type { APIRoute } from "astro";
 import { createOrUpdateContact } from "@/lib/brevo";
 import { verifyTurnstile } from "@/lib/turnstile";
-import { appendRow } from "@/lib/google-sheets";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getRuntimeEnv } from "@/lib/runtime-env";
 
@@ -85,7 +84,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Brevo integration
     const brevoKey = env.BREVO_API_KEY ?? "";
-    const listId = parseInt(env.BREVO_CALCULATOR_LIST_ID ?? "0", 10);
+    const listId = parseInt(env.BREVO_LIST_ID ?? "2", 10);
 
     if (brevoKey) {
       await createOrUpdateContact(brevoKey, {
@@ -106,39 +105,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
           LAST_CALCULATOR_DATE: new Date().toISOString().split("T")[0],
         },
       });
-    }
-
-    // Google Sheets integration
-    const sheetId = env.GOOGLE_SHEET_ID ?? "";
-    const gsEmail = env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? "";
-    const gsKey = env.GOOGLE_PRIVATE_KEY ?? "";
-
-    const d = calculatorData;
-    if (sheetId && gsEmail && gsKey) {
-      await appendRow(sheetId, "Calculator Leads", [
-        // Lead info
-        new Date().toISOString(),
-        name,
-        org ?? "",
-        email,
-        repeat ? "Repeat" : "New",
-        // Summary
-        d?.verdict ?? "",
-        d?.savings ?? "",
-        String(d?.units ?? ""),
-        d?.priceRange ?? "",
-        String(d?.timeline ?? ""),
-        // Inputs
-        String(d?.pricePerUnit ?? ""),
-        String(d?.monthlyRent ?? ""),
-        d?.propType ?? "",
-        String(d?.commonCharges ?? ""),
-        String(d?.propertyTaxes ?? ""),
-        String(d?.otherCharges ?? ""),
-        String(d?.rentTaxes ?? ""),
-        String(d?.annualAppreciation ?? ""),
-        String(d?.annualRentGrowth ?? ""),
-      ], { email: gsEmail, privateKey: gsKey });
     }
 
     return new Response(JSON.stringify({ success: true }), { status: 200, headers });
