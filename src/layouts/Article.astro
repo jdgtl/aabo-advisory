@@ -52,7 +52,22 @@ const jsonld = [
       <div class="text-[10px] text-warm/60">{docId}</div>
       <div class="flex-1"></div>
       <div class="text-[10px] text-warm/40">{date} &middot; {readTime}</div>
+      <div class="w-px h-4 bg-accent/25 print-hide"></div>
+      <button onclick="window.print()" class="print-hide text-[10px] text-warm/40 hover:text-accent transition-colors cursor-pointer tracking-[0.05em] uppercase">Print</button>
     </div>
+  </div>
+
+  {/* Print-only header — visible only when printing */}
+  <div class="print-header">
+    <img src="/logo.svg" alt="AABO Advisory" class="print-logo" />
+    <div class="print-meta">
+      <span class="print-category">{category}</span>
+      <span class="print-separator">&middot;</span>
+      <span>{date}</span>
+      <span class="print-separator">&middot;</span>
+      <span>{readTime}</span>
+    </div>
+    <hr class="print-rule" />
   </div>
 
   <article id="main-content" class="bg-canvas">
@@ -211,5 +226,114 @@ const jsonld = [
     color: var(--color-text, #1A1A1A);
     opacity: 0.78;
     margin-bottom: 0.5rem;
+  }
+
+  /* Print header — hidden on screen */
+  .print-header {
+    display: none;
+  }
+
+  @media print {
+    /* Hide non-content elements */
+    nav,
+    footer,
+    aside,
+    .print-hide,
+    [data-reveal] {
+      display: none !important;
+    }
+
+    /* Hide the classification bar and the entire nav/footer components */
+    .bg-primary.border-b {
+      display: none !important;
+    }
+
+    /* Show print header */
+    .print-header {
+      display: block;
+      padding: 1.5rem 2rem 0;
+    }
+
+    .print-logo {
+      height: 28px;
+      margin-bottom: 0.75rem;
+    }
+
+    .print-meta {
+      font-size: 10px;
+      color: #666;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    .print-category {
+      text-transform: uppercase;
+      font-weight: 600;
+      color: #B8965A;
+      letter-spacing: 0.12em;
+      font-size: 9px;
+      border: 1px solid #B8965A;
+      padding: 1px 6px;
+      margin-right: 4px;
+    }
+
+    .print-separator {
+      margin: 0 0.35em;
+      color: #aaa;
+    }
+
+    .print-rule {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 0;
+    }
+
+    /* Layout: single column, full width */
+    body {
+      background: white !important;
+      color: #1A1A1A !important;
+    }
+
+    #main-content {
+      background: white !important;
+    }
+
+    /* Force single-column layout */
+    .grid {
+      display: block !important;
+    }
+
+    /* Hide the sidebar summary card */
+    .bg-light.p-5.border-l-\[3px\] {
+      display: none !important;
+    }
+
+    /* Article body print styles */
+    .article-body h2 {
+      color: #B8965A !important;
+    }
+
+    .article-body p:first-of-type::first-letter {
+      color: #B8965A !important;
+    }
+
+    /* Clean up spacing */
+    .article-body {
+      max-width: 100% !important;
+    }
+
+    /* Remove animations/transitions */
+    * {
+      animation: none !important;
+      transition: none !important;
+      opacity: 1 !important;
+    }
+
+    /* Ensure RevealWrapper contents are visible */
+    [class*="RevealWrapper"],
+    [class*="reveal"] {
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
 </style>

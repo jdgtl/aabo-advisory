@@ -19,12 +19,11 @@ export default config({
         category: fields.select({
           label: "Category",
           options: [
-            { label: "Strategic Whitepaper", value: "Strategic Whitepaper" },
-            { label: "Field Guide", value: "Field Guide" },
-            { label: "Quiet Insight", value: "Quiet Insight" },
-            { label: "Calculator Guide", value: "Calculator Guide" },
+            { label: "Insights", value: "Insights" },
+            { label: "Industry News", value: "Industry News" },
+            { label: "Market Updates", value: "Market Updates" },
           ],
-          defaultValue: "Quiet Insight",
+          defaultValue: "Insights",
         }),
         excerpt: fields.text({ label: "Excerpt", multiline: true }),
         date: fields.date({ label: "Date", validation: { isRequired: true } }),

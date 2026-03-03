@@ -6,9 +6,8 @@
   },
   "categories": [
     { "label": "All", "slug": "all" },
-    { "label": "Strategic Whitepaper", "slug": "strategic-whitepaper" },
-    { "label": "Field Guide", "slug": "field-guide" },
-    { "label": "Quiet Insight", "slug": "quiet-insight" },
-    { "label": "Calculator Guide", "slug": "calculator-guide" }
+    { "label": "Insights", "slug": "insights" },
+    { "label": "Industry News", "slug": "industry-news" },
+    { "label": "Market Updates", "slug": "market-updates" }
   ]
 }
