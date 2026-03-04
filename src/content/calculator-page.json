@@ -1,29 +1,29 @@
 {
   "header": {
-    "title": "Rent vs. Buy Calculator",
+    "title": "Portfolio Calculator",
     "subtitle": "Financial Analysis Tool",
     "description": "Model the long-term financial impact of owning versus leasing diplomatic housing in New York City."
   },
   "verdicts": {
-    "buyText": "Based on the inputs provided, purchasing appears to be the more cost-effective long-term strategy for your mission.",
-    "rentText": "Based on the inputs provided, continuing to lease may be the more prudent approach for your mission at this time."
+    "buyText": "Based on the inputs provided, purchasing appears the more cost-effective long-term strategy.",
+    "rentText": "Based on the inputs provided, continuing to lease may be a more prudent approach at this time."
   },
   "gate": {
     "headline": "Access the Full Analysis",
-    "subtext": "Enter your details to unlock the complete rent vs. buy comparison with detailed projections.",
+    "subtext": "Enter your email to unlock the complete Portfolio Calculator with detailed projections.",
     "buttonText": "Unlock Calculator"
   },
   "cta": {
     "label": "Tailored Assessment",
     "headline": "This analysis reflects general assumptions.",
-    "description": "For a confidential assessment tailored to your mission's specific situation, schedule a consultation.",
+    "description": "For a free, confidential assessment tailored to your mission's specific situation, schedule a consultation.",
     "buttonText": "Schedule a Consultation"
   },
-  "disclaimerText": "This calculator provides estimates for general informational purposes only. Actual costs may vary based on market conditions, financing terms, and other factors. This tool does not constitute financial advice. Consult with qualified advisors before making real estate decisions.",
+  "disclaimerText": "This calculator provides estimates for general informational purposes. Actual costs may vary based on market conditions, financing terms, and other factors. This tool does not constitute financial advice. Consult with qualified advisors before making real estate decisions.",
   "faqs": [
     {
       "question": "What assumptions does the calculator use?",
-      "answer": "The calculator models purchase costs (price, common charges, property taxes, transaction fees), rental costs (monthly rent, annual escalation), and investment factors (appreciation rate, hold period). Default values reflect typical Manhattan diplomatic housing, but all inputs are adjustable."
+      "answer": "The calculator models transaction costs (price, common charges, property taxes, transaction fees), rental costs (monthly rent, annual escalation), and investment factors (appreciation rate, hold period). Default values reflect typical diplomatic housing. Inputs are adjustable."
     },
     {
       "question": "How accurate are the projections?",
