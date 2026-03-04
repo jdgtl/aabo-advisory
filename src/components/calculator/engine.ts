@@ -1,10 +1,6 @@
 import type { CalcParams } from "./defaults";
 
-/* ─── FIXED CONSTANTS ─── */
-const ACQ_PCT = 0.02;
-const DISP_PCT = 0.075;
-const MAINT_PCT = 0.05;
-const RENT_BRK_PCT = 0.075;
+/* ─── DEFAULT CONSTANTS (overridable via CalcParams) ─── */
 
 export interface YearlyRow {
   year: number;
@@ -78,6 +74,11 @@ export function runCalculation(p: CalcParams): CalcResult {
   const tp = p.pricePerUnit * p.units;
   const mo = p.timelineYears * 12;
   const ac = 12 * (p.commonCharges + p.propertyTaxes) * p.units;
+
+  const ACQ_PCT = p.acqPct;
+  const DISP_PCT = p.dispPct;
+  const MAINT_PCT = p.maintPct;
+  const RENT_BRK_PCT = p.rentBrkPct;
 
   // Acquisition: per-unit mansion tax
   const totalAcq = ACQ_PCT * tp;

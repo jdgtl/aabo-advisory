@@ -9,6 +9,9 @@ interface Props {
   units: number;
   propType: string;
   timelineYears: number;
+  acqPct: number;
+  dispPct: number;
+  rentBrkPct: number;
 }
 
 const MANSION_SCHEDULE = [
@@ -22,7 +25,7 @@ const MANSION_SCHEDULE = [
   { range: "$25,000,000+", rate: "3.90%", lo: 25e6, hi: Infinity },
 ];
 
-export default function TaxDetailChart({ result, pricePerUnit, units, propType, timelineYears }: Props) {
+export default function TaxDetailChart({ result, pricePerUnit, units, propType, timelineYears, acqPct, dispPct, rentBrkPct }: Props) {
   const propTypeLabel = propType === "residential"
     ? "Condos, Co-ops & 1\u20133 Family Houses"
     : "Commercial & All Other Property";
@@ -31,7 +34,7 @@ export default function TaxDetailChart({ result, pricePerUnit, units, propType, 
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
       {/* Left Column */}
       <div className="flex flex-col gap-6">
-        <TaxBreakdown result={result} units={units} />
+        <TaxBreakdown result={result} units={units} acqPct={acqPct} />
 
         {/* Disposal Cost Breakdown */}
         <div className="bg-light p-6 border-l-[3px] border-primary">
@@ -39,7 +42,7 @@ export default function TaxDetailChart({ result, pricePerUnit, units, propType, 
             Disposal Cost Breakdown
             <InfoTip
               definition="Seller-side costs when you sell the property, including broker/legal fees and NYC/NYS transfer taxes."
-              formula="Total Disposal = 7.50% \u00d7 Projected Sale Value"
+              formula={`Total Disposal = ${dispPct.toFixed(2)}% \u00d7 Projected Sale Value`}
             />
           </div>
           <div className="text-[11px] text-text/35 mb-3.5 font-body">
@@ -68,10 +71,10 @@ export default function TaxDetailChart({ result, pricePerUnit, units, propType, 
         <div className="bg-light p-6 border-l-[3px] border-green mt-auto">
           <div className="flex items-center text-[10px] tracking-[0.15em] uppercase text-green mb-4 font-semibold">
             Rent Transaction Costs
-            <InfoTip definition="One-time broker fee paid when signing the lease, based on the first year's annual rent." formula="7.5% × Annual Rent" />
+            <InfoTip definition="One-time broker fee paid when signing the lease, based on the first year's annual rent." formula={`${rentBrkPct.toFixed(1)}% \u00d7 Annual Rent`} />
           </div>
           <div className="flex justify-between py-2 text-[13px] font-body">
-            <span className="text-text/60">Broker Fee (7.5% of {fmtFull(Math.round(result.annualRentCost))}/yr)</span>
+            <span className="text-text/60">Broker Fee ({rentBrkPct.toFixed(1)}% of {fmtFull(Math.round(result.annualRentCost))}/yr)</span>
             <span className="text-primary font-semibold">{fmtFull(Math.round(result.rentBrokerFee))}</span>
           </div>
         </div>

@@ -19,6 +19,11 @@ export interface CalculatorData {
   rentTaxes: number;
   annualAppreciation: number;
   annualRentGrowth: number;
+  // Transaction cost assumptions
+  acqPct: number;
+  dispPct: number;
+  maintPct: number;
+  rentBrkPct: number;
 }
 
 interface Props {
@@ -129,6 +134,10 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
             timelineYears: calculatorData.timeline,
             appreciation: calculatorData.annualAppreciation / 100,
             rentGrowth: calculatorData.annualRentGrowth / 100,
+            acqPct: calculatorData.acqPct / 100,
+            dispPct: calculatorData.dispPct / 100,
+            maintPct: calculatorData.maintPct / 100,
+            rentBrkPct: calculatorData.rentBrkPct / 100,
           });
 
           const pdfInputs = {

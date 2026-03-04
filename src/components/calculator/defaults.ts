@@ -10,6 +10,10 @@ export interface CalcParams {
   timelineYears: number;
   appreciation: number;
   rentGrowth: number;
+  acqPct: number;
+  dispPct: number;
+  maintPct: number;
+  rentBrkPct: number;
 }
 
 /** Display-value defaults (percentages as whole numbers, e.g. 2.5 = 2.5%) */
@@ -25,4 +29,8 @@ export const defaults = {
   timelineYears: 30,
   annualAppreciation: 2.5,
   annualRentGrowth: 2.75,
+  acqPct: 2.0,
+  dispPct: 7.5,
+  maintPct: 5.0,
+  rentBrkPct: 7.5,
 } as const;

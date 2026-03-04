@@ -63,6 +63,10 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
   const [timelineYears, setTimelineYears] = useState<number>(defaults.timelineYears);
   const [annualAppreciation, setAnnualAppreciation] = useState<number>(defaults.annualAppreciation);
   const [annualRentGrowth, setAnnualRentGrowth] = useState<number>(defaults.annualRentGrowth);
+  const [acqPct, setAcqPct] = useState<number>(defaults.acqPct);
+  const [dispPct, setDispPct] = useState<number>(defaults.dispPct);
+  const [maintPct, setMaintPct] = useState<number>(defaults.maintPct);
+  const [rentBrkPct, setRentBrkPct] = useState<number>(defaults.rentBrkPct);
   const [activeView, setActiveView] = useState<TabId>("summary");
   const hasTrackedStart = useRef(false);
 
@@ -90,10 +94,15 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
         appreciation: annualAppreciation / 100,
         rentGrowth: annualRentGrowth / 100,
         propType,
+        acqPct: acqPct / 100,
+        dispPct: dispPct / 100,
+        maintPct: maintPct / 100,
+        rentBrkPct: rentBrkPct / 100,
       }),
     [
       units, pricePerUnit, commonCharges, propertyTaxes, monthlyRent, otherCharges,
       rentTaxes, timelineYears, annualAppreciation, annualRentGrowth, propType,
+      acqPct, dispPct, maintPct, rentBrkPct,
     ],
   );
 
@@ -105,7 +114,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
         <div>
           <div className="border-l-[3px] border-primary pl-4 mb-6">
             <div className="text-sm font-bold text-primary font-heading">Purchase Scenario</div>
-            <div className="text-[11px] text-warm/60">Acquisition, carrying costs, and disposal</div>
+            <div className="text-[11px] text-text/50">Acquisition, carrying costs, and disposal</div>
           </div>
           <div className="flex flex-wrap gap-4">
             <Input label="Units" value={units} onChange={setUnits} min={1} max={50} step={1} placeholder="e.g. 1" />
@@ -137,7 +146,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
         <div>
           <div className="border-l-[3px] border-primary pl-4 mb-6">
             <div className="text-sm font-bold text-primary font-heading">Rental Scenario</div>
-            <div className="text-[11px] text-warm/60">Monthly obligations and escalation</div>
+            <div className="text-[11px] text-text/50">Monthly obligations and escalation</div>
           </div>
           <div className="flex flex-wrap gap-4">
             <Input label="Units" value={units} onChange={setUnits} min={1} max={50} step={1} placeholder="e.g. 1" />
@@ -178,7 +187,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
         </div>
       </div>
 
-      {/* ── TRANSACTION COST ASSUMPTIONS (fixed info cards) ── */}
+      {/* ── TRANSACTION COST ASSUMPTIONS ── */}
       <div className="bg-light p-5 sm:p-7 mb-10 border border-mid">
         <div className="flex items-center gap-3 mb-5">
           <div className="text-[10px] tracking-[0.15em] uppercase text-accent font-semibold">
@@ -187,34 +196,10 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
           <div className="h-px w-[60px] bg-mid" />
         </div>
         <div className="flex flex-wrap gap-4">
-          <div className="flex-1 min-w-[140px] bg-canvas p-4 border border-mid">
-            <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1 font-medium">
-              Acquisition Cost
-              <InfoTip definition="All-in buyer-side costs at purchase: broker fees, legal fees, and mansion tax. Applied as a percentage of total purchase price." />
-            </div>
-            <div className="text-lg font-bold text-primary font-heading">2.00%</div>
-          </div>
-          <div className="flex-1 min-w-[140px] bg-canvas p-4 border border-mid">
-            <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1 font-medium">
-              Disposal Cost
-              <InfoTip definition="Seller-side costs at sale: broker commission, legal fees, and NYC/NYS transfer taxes. Applied as a percentage of projected sale value." />
-            </div>
-            <div className="text-lg font-bold text-primary font-heading">7.50%</div>
-          </div>
-          <div className="flex-1 min-w-[140px] bg-canvas p-4 border border-mid">
-            <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1 font-medium">
-              Maintenance Cost
-              <InfoTip definition="Estimated capital maintenance reserve applied per 10-year cycle as a percentage of purchase price per unit." />
-            </div>
-            <div className="text-lg font-bold text-primary font-heading">5.00%</div>
-          </div>
-          <div className="flex-1 min-w-[140px] bg-canvas p-4 border border-mid">
-            <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1 font-medium">
-              Rent Broker Fee
-              <InfoTip definition="One-time broker fee when signing the lease, applied as a percentage of the first year's annual rent." />
-            </div>
-            <div className="text-lg font-bold text-primary font-heading">7.50%</div>
-          </div>
+          <Input label="Acquisition Cost" value={acqPct} onChange={setAcqPct} suffix="%" min={0} max={20} step={0.25} hint="Buyer-side closing costs" placeholder="e.g. 2.0" tooltip={<InfoTip definition="All-in buyer-side costs at purchase: broker fees, legal fees, and mansion tax. Applied as a percentage of total purchase price." />} />
+          <Input label="Disposal Cost" value={dispPct} onChange={setDispPct} suffix="%" min={0} max={20} step={0.25} hint="Seller-side closing costs" placeholder="e.g. 7.5" tooltip={<InfoTip definition="Seller-side costs at sale: broker commission, legal fees, and NYC/NYS transfer taxes. Applied as a percentage of projected sale value." />} />
+          <Input label="Maintenance Cost" value={maintPct} onChange={setMaintPct} suffix="%" min={0} max={20} step={0.25} hint="Per 10-year cycle" placeholder="e.g. 5.0" tooltip={<InfoTip definition="Estimated capital maintenance reserve applied per 10-year cycle as a percentage of purchase price per unit." />} />
+          <Input label="Rent Broker Fee" value={rentBrkPct} onChange={setRentBrkPct} suffix="%" min={0} max={20} step={0.25} hint="First-year annual rent" placeholder="e.g. 7.5" tooltip={<InfoTip definition="One-time broker fee when signing the lease, applied as a percentage of the first year's annual rent." />} />
         </div>
       </div>
 
@@ -329,6 +314,10 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
                     rentTaxes,
                     annualAppreciation,
                     annualRentGrowth,
+                    acqPct,
+                    dispPct,
+                    maintPct,
+                    rentBrkPct,
                   });
                 }}
                 className="bg-primary text-canvas px-8 py-3.5 text-[11px] tracking-[0.14em] uppercase font-body font-medium transition-all duration-300 hover:bg-secondary hover:-translate-y-px cursor-pointer"
@@ -370,6 +359,9 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
                 units={units}
                 propType={propType}
                 timelineYears={timelineYears}
+                acqPct={acqPct}
+                dispPct={dispPct}
+                rentBrkPct={rentBrkPct}
               />
             )}
           </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useId } from "react";
+import type { ReactNode } from "react";
 
 interface Props {
   label: string;
@@ -11,9 +12,10 @@ interface Props {
   step?: number;
   hint?: string;
   placeholder?: string;
+  tooltip?: ReactNode;
 }
 
-export default function Input({ label, value, onChange, prefix, suffix, min, max, step, hint, placeholder }: Props) {
+export default function Input({ label, value, onChange, prefix, suffix, min, max, step, hint, placeholder, tooltip }: Props) {
   const [focused, setFocused] = useState(false);
   const [display, setDisplay] = useState(value === 0 ? "" : String(value));
   const id = useId();
@@ -24,8 +26,9 @@ export default function Input({ label, value, onChange, prefix, suffix, min, max
 
   return (
     <div className="flex-[1_1_180px] min-w-[160px]">
-      <label htmlFor={id} className="block text-[10px] tracking-[0.1em] uppercase text-text/45 mb-1.5 font-semibold font-body">
+      <label htmlFor={id} className="flex items-center text-[10px] tracking-[0.1em] uppercase text-text/45 mb-1.5 font-semibold font-body">
         {label}
+        {tooltip}
       </label>
       <div
         className={`flex items-center border bg-canvas overflow-hidden transition-colors duration-[250ms] ${focused ? "border-accent" : "border-mid"}`}
@@ -59,7 +62,7 @@ export default function Input({ label, value, onChange, prefix, suffix, min, max
           <span className="pr-3.5 py-3 text-[13px] text-warm font-body select-none">{suffix}</span>
         )}
       </div>
-      {hint && <div className="text-[10px] text-warm mt-1 opacity-60">{hint}</div>}
+      {hint && <div className="text-[10px] text-text/50 mt-1">{hint}</div>}
     </div>
   );
 }

@@ -5,9 +5,10 @@ import InfoTip from "./InfoTip";
 interface Props {
   result: CalcResult;
   units: number;
+  acqPct: number;
 }
 
-export default function TaxBreakdown({ result, units }: Props) {
+export default function TaxBreakdown({ result, units, acqPct }: Props) {
   const rows = [
     { label: "Broker & Legal (est.)", value: result.acqBrokerLegal, highlight: false },
     {
@@ -23,7 +24,7 @@ export default function TaxBreakdown({ result, units }: Props) {
         Acquisition Cost Breakdown
         <InfoTip
           definition="Buyer-side costs at purchase, including estimated broker/legal fees and NYC mansion tax applied per unit (per deed)."
-          formula="Total Acquisition = 2.00% × Total Purchase Price"
+          formula={`Total Acquisition = ${acqPct.toFixed(2)}% \u00d7 Total Purchase Price`}
         />
       </div>
       <div className="text-[11px] text-text/35 mb-3.5 font-body">

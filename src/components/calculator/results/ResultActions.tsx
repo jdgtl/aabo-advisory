@@ -77,14 +77,17 @@ export default function ResultActions({ inputs, userEmail }: Props) {
 
   return (
     <div className="flex items-center gap-6 mb-10">
-      <button onClick={handleDownload} disabled={downloadState === "loading"} className={linkClass}>
-        {downloadState === "loading" ? "Generating\u2026" : downloadState === "done" ? "Downloaded" : "Download PDF"}
-      </button>
       {userEmail && (
         <button onClick={handleEmail} disabled={emailState === "loading"} className={linkClass}>
-          {emailState === "loading" ? "Sending\u2026" : emailState === "sent" ? "Sent" : emailState === "error" ? "Failed \u2014 Try Again" : "Email Results"}
+          {emailState === "loading" ? "Sending\u2026" : emailState === "sent" ? "Sent" : emailState === "error" ? "Failed \u2014 Try Again" : "Email"}
         </button>
       )}
+      <button onClick={() => window.print()} className={linkClass}>
+        Print
+      </button>
+      <button onClick={handleDownload} disabled={downloadState === "loading"} className={linkClass}>
+        {downloadState === "loading" ? "Generating\u2026" : downloadState === "done" ? "Downloaded" : "Download"}
+      </button>
     </div>
   );
 }
