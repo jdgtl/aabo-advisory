@@ -2,6 +2,7 @@
 import Base from "@/layouts/Base.astro";
 import Nav from "@/components/sections/Nav.astro";
 import Footer from "@/components/sections/Footer.astro";
+import PortalRegister from "@/components/interactive/PortalRegister";
 ---
 
 <Base
@@ -58,6 +59,10 @@ import Footer from "@/components/sections/Footer.astro";
           Enter
         </button>
       </form>
+
+      <div class="text-center mt-6">
+        <PortalRegister client:load />
+      </div>
     </div>
   </main>
 
