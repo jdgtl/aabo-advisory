@@ -105,10 +105,10 @@ export default function NavClient() {
         aria-label={mobileOpen ? "Close menu" : "Open menu"}
       >
         <span
-          className={`block h-px w-5 bg-primary transition-all duration-300 ${mobileOpen ? "translate-y-[3.5px] rotate-45" : ""}`}
+          className={`block h-px w-5 bg-accent transition-all duration-300 ${mobileOpen ? "translate-y-[3.5px] rotate-45" : ""}`}
         />
         <span
-          className={`block h-px w-5 bg-primary transition-all duration-300 ${mobileOpen ? "-translate-y-[3.5px] -rotate-45" : ""}`}
+          className={`block h-px w-5 bg-accent transition-all duration-300 ${mobileOpen ? "-translate-y-[3.5px] -rotate-45" : ""}`}
         />
       </button>
     </>
