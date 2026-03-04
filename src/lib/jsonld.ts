@@ -192,7 +192,7 @@ export function webApplicationJsonLd() {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "Diplomatic Housing Buy vs. Rent Calculator",
+    name: "Diplomatic Housing Portfolio Calculator",
     description:
       "A multi-decade cost comparison tool for diplomatic missions evaluating whether to purchase or lease residential property in New York City.",
     applicationCategory: "FinanceApplication",

@@ -77,7 +77,7 @@ function buildHtml(inputs: PdfInputs): string {
   <!-- Header -->
   <div style="background:${C.primary};padding:28px 40px;display:flex;justify-content:space-between;align-items:center;">
     <div style="color:${C.accent};font-size:18px;font-weight:700;letter-spacing:0.12em;">AABO ADVISORY</div>
-    <div style="color:${C.warm};font-size:10px;letter-spacing:0.1em;">BUY VS. RENT ANALYSIS</div>
+    <div style="color:${C.warm};font-size:10px;letter-spacing:0.1em;">PORTFOLIO ANALYSIS</div>
   </div>
   <div style="height:3px;background:${C.accent};"></div>
 
@@ -186,7 +186,7 @@ function buildHtml(inputs: PdfInputs): string {
 
 function generateFilename(inputs: PdfInputs): string {
   const name = inputs.userName?.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase() ?? "analysis";
-  return `aabo-buy-vs-rent-${name}.pdf`;
+  return `aabo-portfolio-analysis-${name}.pdf`;
 }
 
 export async function generatePdfBase64(inputs: PdfInputs): Promise<string> {

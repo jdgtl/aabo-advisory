@@ -119,7 +119,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (brevoKey && emailHtml) {
       try {
         const attachments = pdfBase64
-          ? [{ content: pdfBase64, name: "aabo-buy-vs-rent-analysis.pdf" }]
+          ? [{ content: pdfBase64, name: "aabo-portfolio-analysis.pdf" }]
           : undefined;
 
         const emailResult = await sendHtmlEmail(brevoKey, {
@@ -127,7 +127,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
           toName: name,
           senderEmail,
           senderName,
-          subject: "Your Buy vs. Rent Analysis \u2014 AABO Advisory",
+          subject: "Your Portfolio Analysis \u2014 AABO Advisory",
           htmlContent: emailHtml,
           attachments,
         });

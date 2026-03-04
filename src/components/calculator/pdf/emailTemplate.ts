@@ -42,7 +42,7 @@ export function buildEmailHtml(inputs: EmailInputs): string {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Buy vs. Rent Analysis</title>
+  <title>Your Portfolio Analysis</title>
 </head>
 <body style="margin:0;padding:0;background-color:#f4f4f4;font-family:Georgia,'Times New Roman',Times,serif;">
 
@@ -60,7 +60,7 @@ export function buildEmailHtml(inputs: EmailInputs): string {
               <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td style="color:${C.accent};font-size:16px;font-weight:700;letter-spacing:0.12em;font-family:Georgia,'Times New Roman',serif;">AABO ADVISORY</td>
-                  <td align="right" style="color:${C.warm};font-size:10px;letter-spacing:0.1em;font-family:Georgia,'Times New Roman',serif;">BUY VS. RENT ANALYSIS</td>
+                  <td align="right" style="color:${C.warm};font-size:10px;letter-spacing:0.1em;font-family:Georgia,'Times New Roman',serif;">PORTFOLIO ANALYSIS</td>
                 </tr>
               </table>
             </td>
@@ -72,7 +72,7 @@ export function buildEmailHtml(inputs: EmailInputs): string {
             <td style="padding:28px 32px 20px;">
               <p style="margin:0 0 12px;font-size:15px;color:${C.primary};font-weight:700;">Dear ${firstName},</p>
               <p style="margin:0;font-size:13px;line-height:1.7;color:${C.text};opacity:0.7;">
-                Your buy vs. rent analysis is enclosed. A PDF copy is attached for your records.
+                Your portfolio analysis is enclosed. A PDF copy is attached for your records.
               </p>
             </td>
           </tr>
