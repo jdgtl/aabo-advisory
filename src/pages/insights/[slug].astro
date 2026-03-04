@@ -18,19 +18,26 @@ if (!article) {
 }
 
 const allSlugs = await reader.collections.articles.list();
-const otherArticles = (
+const allArticlesWithDates = (
   await Promise.all(
-    allSlugs
-      .filter((s) => s !== slug)
-      .map(async (s) => {
-        const a = await reader.collections.articles.read(s);
-        return a ? { slug: s, title: a.title, category: a.category } : null;
-      })
+    allSlugs.map(async (s) => {
+      const a = await reader.collections.articles.read(s);
+      return a ? { slug: s, title: a.title, category: a.category, date: a.date } : null;
+    })
   )
-).filter(Boolean) as { slug: string; title: string; category: string }[];
+).filter(Boolean) as { slug: string; title: string; category: string; date: string }[];
 
-const idx = allSlugs.indexOf(slug!);
-const docId = `AABO-2025-${String(idx + 1).padStart(3, "0")}`;
+const otherArticles = allArticlesWithDates
+  .filter((a) => a.slug !== slug)
+  .map(({ slug: s, title: t, category: c }) => ({ slug: s, title: t, category: c }));
+
+// Build doc ID from article year + sequential count within that year
+const articleYear = article.date?.slice(0, 4) ?? "2025";
+const sameYearArticles = allArticlesWithDates
+  .filter((a) => a.date?.startsWith(articleYear))
+  .sort((a, b) => a.date.localeCompare(b.date));
+const yearIndex = sameYearArticles.findIndex((a) => a.slug === slug) + 1;
+const docId = `AABO-${articleYear}-${String(yearIndex || 1).padStart(3, "0")}`;
 
 const content = await article.body;
 const rendered = Markdoc.renderers.html(Markdoc.transform(content.node));

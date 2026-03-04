@@ -68,6 +68,20 @@ export default function NavClient() {
     }
   }, [mobileOpen]);
 
+  /* ── close mobile drawer when clicking anchor links ── */
+  useEffect(() => {
+    const drawer = document.querySelector<HTMLElement>("[data-nav-drawer]");
+    if (!drawer) return;
+    const handleClick = (e: Event) => {
+      const target = e.target as HTMLAnchorElement;
+      if (target.tagName === "A" && target.getAttribute("href")?.includes("#")) {
+        setMobileOpen(false);
+      }
+    };
+    drawer.addEventListener("click", handleClick);
+    return () => drawer.removeEventListener("click", handleClick);
+  }, []);
+
   /* ── push active section to nav links ── */
   useEffect(() => {
     const nav = document.querySelector<HTMLElement>("[data-nav]");

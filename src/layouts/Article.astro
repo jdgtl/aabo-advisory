@@ -116,6 +116,10 @@ const jsonld = [
 
         {/* Sidebar */}
         <aside class="lg:sticky lg:top-[120px]">
+          <div class="mb-6 print-hide">
+            <ArticleActions title={title} slug={slug} client:visible />
+          </div>
+
           <RevealWrapper client:visible delay={0.2}>
             <div class="mb-10">
               <div class="text-[10px] tracking-[0.15em] uppercase text-accent mb-4 font-semibold">
@@ -150,14 +154,6 @@ const jsonld = [
             </nav>
           </RevealWrapper>
 
-          <RevealWrapper client:visible delay={0.4}>
-            <div class="mt-6 bg-primary p-6 print-hide">
-              <div class="text-[10px] tracking-[0.15em] uppercase text-accent mb-2 font-semibold">
-                Actions
-              </div>
-              <ArticleActions title={title} client:visible />
-            </div>
-          </RevealWrapper>
         </aside>
       </div>
     </div>
