@@ -57,6 +57,7 @@ export default function PortalRegister() {
       });
       if (!res.ok) throw new Error("Submission failed");
       setSubmitted(true);
+      setTimeout(() => setOpen(false), 2000);
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -86,28 +87,30 @@ export default function PortalRegister() {
             onClick={(e) => e.stopPropagation()}
             className="bg-canvas w-full max-w-[440px] max-h-[90vh] overflow-y-auto relative"
           >
-            <div className="pt-9 px-8 sm:px-10">
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="text-[10px] tracking-[0.2em] uppercase text-accent mb-2 font-semibold">
-                    Client Portal
+            {!submitted && (
+              <div className="pt-9 px-8 sm:px-10">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <div className="text-[10px] tracking-[0.2em] uppercase text-accent mb-2 font-semibold">
+                      Client Portal
+                    </div>
+                    <h2 className="font-heading text-[24px] font-bold text-primary leading-[1.2]">
+                      Register for Access
+                    </h2>
                   </div>
-                  <h2 className="font-heading text-[24px] font-bold text-primary leading-[1.2]">
-                    Register for Access
-                  </h2>
+                  <button
+                    onClick={() => setOpen(false)}
+                    aria-label="Close dialog"
+                    className="bg-transparent border-none cursor-pointer text-[22px] text-text/30 px-2 py-1 leading-none"
+                  >
+                    ×
+                  </button>
                 </div>
-                <button
-                  onClick={() => setOpen(false)}
-                  aria-label="Close dialog"
-                  className="bg-transparent border-none cursor-pointer text-[22px] text-text/30 px-2 py-1 leading-none"
-                >
-                  ×
-                </button>
+                <p className="text-sm leading-relaxed text-text/55 mt-3">
+                  We will review your request and follow up within one business day.
+                </p>
               </div>
-              <p className="text-sm leading-relaxed text-text/55 mt-3">
-                We will review your request and follow up within one business day.
-              </p>
-            </div>
+            )}
 
             {!submitted ? (
               <div className="pt-7 pb-10 px-8 sm:px-10">
@@ -152,19 +155,10 @@ export default function PortalRegister() {
               </div>
             ) : (
               <div className="py-12 px-10 text-center">
-                <div className="w-12 h-12 rounded-full border-2 border-accent flex items-center justify-center mx-auto mb-5 text-xl text-accent" aria-hidden="true">
+                <div className="w-12 h-12 rounded-full border-2 border-accent flex items-center justify-center mx-auto mb-4 text-xl text-accent" aria-hidden="true">
                   ✓
                 </div>
-                <h3 className="font-heading text-[22px] font-bold text-primary mb-2.5">Request Received</h3>
-                <p className="text-sm leading-relaxed text-text/60 mb-7">
-                  We will review your registration and follow up within one business day.
-                </p>
-                <button
-                  onClick={() => setOpen(false)}
-                  className="bg-transparent text-primary border-[1.5px] border-primary py-3 px-8 text-[11px] tracking-[0.14em] uppercase cursor-pointer font-body font-medium transition-all duration-300 hover:bg-primary hover:text-canvas"
-                >
-                  Close
-                </button>
+                <h3 className="font-heading text-[18px] font-bold text-primary">Request Received</h3>
               </div>
             )}
           </div>
