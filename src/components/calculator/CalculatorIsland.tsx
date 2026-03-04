@@ -1,8 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Calculator from "./Calculator";
 import LeadGate from "../interactive/LeadGate";
 import type { CalculatorData } from "../interactive/LeadGate";
 import { trackFullResultsViewed } from "@/lib/analytics";
+import { setUserEmail } from "./calculatorState";
 
 interface Props {
   cms: {
@@ -45,6 +46,11 @@ export default function CalculatorIsland({ cms }: Props) {
   });
   const [calcData, setCalcData] = useState<CalculatorData | undefined>();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(() => loadUserInfo());
+
+  // Sync user email to shared state for the sticky bar
+  useEffect(() => {
+    setUserEmail(userInfo?.email);
+  }, [userInfo?.email]);
 
   const handleRequestFullAnalysis = useCallback(
     (data?: CalculatorData) => {

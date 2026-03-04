@@ -3,6 +3,7 @@ import { runCalculation } from "./engine";
 import { defaults } from "./defaults";
 import { fmtFull } from "./formatters";
 import { trackCalculatorStarted, trackCTAClicked } from "@/lib/analytics";
+import { setCalculatorState } from "./calculatorState";
 import type { CalculatorData } from "../interactive/LeadGate";
 
 import DollarInput from "./inputs/DollarInput";
@@ -12,7 +13,6 @@ import InfoTip from "./results/InfoTip";
 
 import Verdict from "./results/Verdict";
 import MetricCard from "./results/MetricCard";
-import ResultActions from "./results/ResultActions";
 
 import SummaryChart from "./charts/SummaryChart";
 import AnnualChart from "./charts/AnnualChart";
@@ -105,6 +105,16 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
       acqPct, dispPct, maintPct, rentBrkPct,
     ],
   );
+
+  // Sync current state to shared ref so the sticky bar can read it
+  useEffect(() => {
+    setCalculatorState({
+      units, pricePerUnit, commonCharges, propertyTaxes, propType,
+      monthlyRent, otherCharges, rentTaxes, timelineYears,
+      annualAppreciation, annualRentGrowth, result,
+      userName, userOrg,
+    });
+  }, [result, userName, userOrg]);
 
   return (
     <div className="max-w-[1100px] mx-auto">
@@ -246,29 +256,6 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
           formula="Sale Value \u2212 (Broker Fees + NYC Tax + NYS Tax)"
         />
       </div>
-
-      {/* ── RESULT ACTIONS ── */}
-      {unlocked && (
-        <ResultActions
-          inputs={{
-            units,
-            pricePerUnit,
-            commonCharges,
-            propertyTaxes,
-            propType,
-            monthlyRent,
-            otherCharges,
-            rentTaxes,
-            timelineYears,
-            annualAppreciation,
-            annualRentGrowth,
-            result,
-            userName,
-            userOrg,
-          }}
-          userEmail={userEmail}
-        />
-      )}
 
       {/* ── GATED SECTION ── */}
       {!unlocked && onRequestFullAnalysis ? (
