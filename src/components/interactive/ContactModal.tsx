@@ -153,7 +153,7 @@ export default function ContactModal({ onClose }: Props) {
                   id="contact-org"
                   value={form.org}
                   onChange={set("org")}
-                  placeholder="Mission or entity"
+                  placeholder=""
                   className="w-full p-3.5 text-sm font-body bg-light border border-mid text-text outline-none transition-colors focus:border-accent"
                 />
               </div>
