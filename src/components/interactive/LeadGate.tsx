@@ -23,7 +23,7 @@ export interface CalculatorData {
 
 interface Props {
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (info: { name: string; email: string; org: string }) => void;
   cms?: {
     gateHeadline?: string;
     gateSubtext?: string;
@@ -105,6 +105,62 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
     setError(null);
     setLoading(true);
     try {
+      // Generate PDF + email HTML in parallel (if calculator data available)
+      let pdfBase64: string | undefined;
+      let emailHtml: string | undefined;
+
+      if (calculatorData) {
+        try {
+          const [{ runCalculation }, { generatePdfBase64 }, { buildEmailHtml }] = await Promise.all([
+            import("@/components/calculator/engine"),
+            import("@/components/calculator/pdf/generatePdf"),
+            import("@/components/calculator/pdf/emailTemplate"),
+          ]);
+
+          const result = runCalculation({
+            units: calculatorData.units,
+            pricePerUnit: calculatorData.pricePerUnit,
+            commonCharges: calculatorData.commonCharges,
+            propertyTaxes: calculatorData.propertyTaxes,
+            propType: calculatorData.propType,
+            monthlyRent: calculatorData.monthlyRent,
+            otherCharges: calculatorData.otherCharges,
+            rentTaxes: calculatorData.rentTaxes,
+            timelineYears: calculatorData.timeline,
+            appreciation: calculatorData.annualAppreciation / 100,
+            rentGrowth: calculatorData.annualRentGrowth / 100,
+          });
+
+          const pdfInputs = {
+            ...calculatorData,
+            timelineYears: calculatorData.timeline,
+            result,
+            userName: form.name,
+            userOrg: form.org || undefined,
+          };
+
+          const [pdf, html] = await Promise.all([
+            generatePdfBase64(pdfInputs),
+            Promise.resolve(buildEmailHtml({
+              units: calculatorData.units,
+              pricePerUnit: calculatorData.pricePerUnit,
+              timelineYears: calculatorData.timeline,
+              annualAppreciation: calculatorData.annualAppreciation,
+              annualRentGrowth: calculatorData.annualRentGrowth,
+              monthlyRent: calculatorData.monthlyRent,
+              result,
+              userName: form.name,
+              userOrg: form.org || undefined,
+            })),
+          ]);
+
+          pdfBase64 = pdf;
+          emailHtml = html;
+        } catch {
+          // PDF generation failed — still submit lead
+        }
+      }
+
       const res = await fetch("/api/calculator-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -113,12 +169,14 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
           turnstile_token: turnstileToken,
           calculatorData,
           repeat: (() => { try { return localStorage.getItem("aabo_calculator_submitted") === "1"; } catch { return false; } })(),
+          pdfBase64,
+          emailHtml,
         }),
       });
       if (!res.ok) throw new Error("Submission failed");
       try { localStorage.setItem("aabo_calculator_submitted", "1"); } catch {}
       trackLeadCaptured();
-      onSuccess();
+      onSuccess({ name: form.name, email: form.email, org: form.org });
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -146,7 +204,7 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
                 Full Analysis
               </div>
               <h2 className="font-heading text-2xl font-bold text-primary leading-[1.2]">
-                {cms?.gateHeadline ?? "Access the Full Analysis"}
+                {cms?.gateHeadline ?? "Your Detailed Analysis"}
               </h2>
             </div>
             <button
@@ -158,7 +216,7 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
             </button>
           </div>
           <p className="text-sm leading-relaxed text-text/55 mt-3">
-            {cms?.gateSubtext ?? "Enter your details to unlock the complete rent vs. buy comparison with detailed projections."}
+            {cms?.gateSubtext ?? "Provide your details to receive the complete analysis with year-by-year projections and a downloadable report."}
           </p>
         </div>
 
@@ -185,7 +243,7 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
                 id="gate-org"
                 value={form.org}
                 onChange={set("org")}
-                placeholder="Mission or entity"
+                placeholder=""
                 className="w-full p-3.5 text-sm font-body bg-light border border-mid text-text outline-none transition-colors focus:border-accent"
               />
             </div>
@@ -199,7 +257,7 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
               value={form.email}
               onChange={set("email")}
               type="email"
-              placeholder="your@email.com"
+              placeholder="youremail@email.com"
               required
               className="w-full p-3.5 text-sm font-body bg-light border border-mid text-text outline-none transition-colors focus:border-accent"
             />
@@ -213,7 +271,7 @@ export default function LeadGate({ onClose, onSuccess, cms, calculatorData }: Pr
             disabled={loading}
             className="w-full bg-primary text-canvas border-none py-4 px-8 text-xs tracking-[0.14em] uppercase cursor-pointer font-body font-medium transition-all duration-300 hover:bg-accent hover:text-primary disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {loading ? "Unlocking…" : (cms?.gateButtonText ?? "Unlock Calculator")}
+            {loading ? "Preparing your analysis…" : (cms?.gateButtonText ?? "Continue")}
           </button>
         </div>
       </div>

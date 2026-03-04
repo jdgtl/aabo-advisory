@@ -1,0 +1,65 @@
+---
+import Base from "@/layouts/Base.astro";
+import Nav from "@/components/sections/Nav.astro";
+import Footer from "@/components/sections/Footer.astro";
+---
+
+<Base
+  title="Client Portal — AABO Advisory"
+  description="Secure client portal for AABO Advisory."
+>
+  <Nav light />
+
+  <main id="main-content" class="min-h-[calc(100vh-200px)] flex items-center justify-center px-6 py-20">
+    <div class="w-full max-w-[400px]">
+      {/* Header */}
+      <div class="text-center mb-10">
+        <div class="text-[10px] tracking-[0.25em] uppercase text-accent mb-3 font-semibold">
+          Secure Access
+        </div>
+        <h1 class="font-heading text-3xl font-bold text-primary mb-2 leading-[1.15]">
+          Client Portal
+        </h1>
+        <p class="text-sm text-text/45 leading-relaxed">
+          Sign in to access your account.
+        </p>
+      </div>
+
+      {/* Login Form */}
+      <form class="flex flex-col gap-5" onsubmit="return false;">
+        <div>
+          <label for="portal-username" class="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium">
+            Username
+          </label>
+          <input
+            id="portal-username"
+            type="text"
+            autocomplete="username"
+            required
+            class="w-full p-3.5 text-sm font-body bg-light border border-mid text-text outline-none transition-colors focus:border-accent"
+          />
+        </div>
+        <div>
+          <label for="portal-password" class="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium">
+            Password
+          </label>
+          <input
+            id="portal-password"
+            type="password"
+            autocomplete="current-password"
+            required
+            class="w-full p-3.5 text-sm font-body bg-light border border-mid text-text outline-none transition-colors focus:border-accent"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-primary text-canvas border-none py-4 px-8 text-xs tracking-[0.14em] uppercase cursor-pointer font-body font-medium transition-all duration-300 hover:bg-accent hover:text-primary mt-2"
+        >
+          Enter
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <Footer />
+</Base>

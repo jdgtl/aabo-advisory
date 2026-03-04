@@ -39,7 +39,7 @@ export default function Verdict({ result, timelineYears }: Props) {
           <div className="flex items-center justify-end text-[10px] tracking-[0.12em] uppercase text-accent mb-1 font-semibold">
             Total Savings
             <InfoTip
-              definition="The total money saved over the hold period by choosing the cheaper option."
+              definition="The total money saved over the hold period by choosing the more cost-effective approach."
               formula="Total Cost of Renting − Net Cost of Buying"
             />
           </div>

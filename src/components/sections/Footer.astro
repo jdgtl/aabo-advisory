@@ -9,26 +9,55 @@ const motto = footerData?.motto ?? "Discretion · Precision · Stewardship";
 const location = settings?.location ?? "New York, NY";
 
 const navLinks = [
+  { href: "/#about", label: "About" },
   { href: "/#approach", label: "Approach" },
   { href: "/#services", label: "Advisory" },
   { href: "/insights", label: "Insights" },
-  { href: "/calculator", label: "Calculator" },
-  { href: "/#about", label: "About" },
+  { href: "/client", label: "Client Portal" },
+];
+
+const connectLinks = [
+  { href: "https://x.com/aaboadvisory", label: "X", external: true },
+  { href: "https://www.linkedin.com/company/aabo-advisory/", label: "LinkedIn", external: true },
+  { href: "https://www.instagram.com/aaboadvisory/", label: "Instagram", external: true },
+];
+
+const toolLinks = [
+  { href: "/calculator", label: "Buy vs. Rent Analysis" },
 ];
 
 const year = new Date().getFullYear();
 ---
 
 <footer class="bg-primary border-t border-canvas/[0.03] px-6 sm:px-10 md:px-16 lg:px-20">
-  <div class="max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-10 md:gap-[60px] items-start pt-12 pb-10">
-    {/* Brand */}
+  <div class="max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-[1fr_auto_auto_auto] gap-10 md:gap-[48px] items-start pt-12 pb-10">
+    {/* Brand + CTA */}
     <div>
       <div class="mb-3">
         <img src="/logo.svg" alt="AABO Advisory" class="h-[42px] w-auto" />
       </div>
-      <p class="text-xs text-warm/35 leading-relaxed max-w-[280px]">
+      <p class="text-xs text-warm/35 leading-relaxed max-w-[280px] mb-5">
         {tagline}
       </p>
+      <a
+        href="/#contact"
+        class="inline-block text-[11px] tracking-[0.12em] uppercase font-body font-medium text-accent border border-accent px-5 py-2.5 transition-all duration-300 hover:bg-accent hover:text-primary"
+      >
+        Schedule a Consultation
+      </a>
+    </div>
+
+    {/* Tools */}
+    <div>
+      <div class="text-[10px] tracking-[0.15em] uppercase text-accent mb-3.5 font-semibold">Tools</div>
+      <div class="flex flex-col gap-2.5">
+        <a
+          href="/calculator"
+          class="text-[13px] text-canvas/50 font-body transition-colors hover:text-accent"
+        >
+          Buy vs. Rent<br />Analysis
+        </a>
+      </div>
     </div>
 
     {/* Navigate */}
@@ -50,18 +79,16 @@ const year = new Date().getFullYear();
     <div>
       <div class="text-[10px] tracking-[0.15em] uppercase text-accent mb-3.5 font-semibold">Connect</div>
       <div class="flex flex-col gap-2.5">
-        <a href="/#contact" class="text-[13px] text-canvas/50 font-body transition-colors hover:text-accent">
-          Schedule a Consultation
-        </a>
-        <a href="https://www.linkedin.com/company/aabo-advisory/" target="_blank" rel="noopener noreferrer" class="text-[13px] text-canvas/50 font-body transition-colors hover:text-accent">
-          LinkedIn
-        </a>
-        <a href="https://x.com/aaboadvisory" target="_blank" rel="noopener noreferrer" class="text-[13px] text-canvas/50 font-body transition-colors hover:text-accent">
-          X
-        </a>
-        <a href="https://www.instagram.com/aaboadvisory/" target="_blank" rel="noopener noreferrer" class="text-[13px] text-canvas/50 font-body transition-colors hover:text-accent">
-          Instagram
-        </a>
+        {connectLinks.map((link) => (
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-[13px] text-canvas/50 font-body transition-colors hover:text-accent"
+          >
+            {link.label}
+          </a>
+        ))}
         <span class="text-[13px] text-canvas/50">{location}</span>
       </div>
     </div>

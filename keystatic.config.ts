@@ -184,6 +184,16 @@ export default config({
           { label: "Lead Gate" },
         ),
 
+        cta: fields.object(
+          {
+            label: fields.text({ label: "Section Label" }),
+            headline: fields.text({ label: "Headline" }),
+            description: fields.text({ label: "Description", multiline: true }),
+            buttonText: fields.text({ label: "Button Text" }),
+          },
+          { label: "Consultation CTA" },
+        ),
+
         disclaimerText: fields.text({
           label: "Disclaimer Text",
           multiline: true,

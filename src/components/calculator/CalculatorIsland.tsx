@@ -12,10 +12,31 @@ interface Props {
     gateHeadline?: string;
     gateSubtext?: string;
     gateButtonText?: string;
+    ctaLabel?: string;
+    ctaHeadline?: string;
+    ctaDescription?: string;
+    ctaButtonText?: string;
   };
 }
 
 const STORAGE_KEY = "aabo_calculator_unlocked";
+const USER_KEY = "aabo_calculator_user";
+
+interface UserInfo {
+  name: string;
+  email: string;
+  org: string;
+}
+
+function loadUserInfo(): UserInfo | null {
+  try {
+    const raw = localStorage.getItem(USER_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as UserInfo;
+  } catch {
+    return null;
+  }
+}
 
 export default function CalculatorIsland({ cms }: Props) {
   const [gateOpen, setGateOpen] = useState(false);
@@ -23,6 +44,7 @@ export default function CalculatorIsland({ cms }: Props) {
     try { return localStorage.getItem(STORAGE_KEY) === "1"; } catch { return false; }
   });
   const [calcData, setCalcData] = useState<CalculatorData | undefined>();
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(() => loadUserInfo());
 
   const handleRequestFullAnalysis = useCallback(
     (data?: CalculatorData) => {
@@ -40,12 +62,17 @@ export default function CalculatorIsland({ cms }: Props) {
         cms={cms}
         onRequestFullAnalysis={unlocked ? undefined : handleRequestFullAnalysis}
         unlocked={unlocked}
+        userName={userInfo?.name}
+        userEmail={userInfo?.email}
+        userOrg={userInfo?.org}
       />
 
       {gateOpen && (
         <LeadGate
           onClose={() => setGateOpen(false)}
-          onSuccess={() => {
+          onSuccess={(info) => {
+            setUserInfo(info);
+            try { localStorage.setItem(USER_KEY, JSON.stringify(info)); } catch {}
             setUnlocked(true);
             setGateOpen(false);
             try { localStorage.setItem(STORAGE_KEY, "1"); } catch {}

@@ -13,6 +13,12 @@
     "subtext": "Enter your details to unlock the complete rent vs. buy comparison with detailed projections.",
     "buttonText": "Unlock Calculator"
   },
+  "cta": {
+    "label": "Tailored Assessment",
+    "headline": "This analysis reflects general assumptions.",
+    "description": "For a confidential assessment tailored to your mission's specific situation, schedule a consultation.",
+    "buttonText": "Schedule a Consultation"
+  },
   "disclaimerText": "This calculator provides estimates for general informational purposes only. Actual costs may vary based on market conditions, financing terms, and other factors. This tool does not constitute financial advice. Consult with qualified advisors before making real estate decisions.",
   "faqs": [
     {

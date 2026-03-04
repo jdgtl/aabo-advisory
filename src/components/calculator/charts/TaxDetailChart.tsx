@@ -39,7 +39,7 @@ export default function TaxDetailChart({ result, pricePerUnit, units, propType, 
             Disposal Cost Breakdown
             <InfoTip
               definition="Seller-side costs when you sell the property, including broker/legal fees and NYC/NYS transfer taxes."
-              formula="Total Disposal = 6.50% × Projected Sale Value"
+              formula="Total Disposal = 7.50% \u00d7 Projected Sale Value"
             />
           </div>
           <div className="text-[11px] text-text/35 mb-3.5 font-body">
@@ -82,7 +82,7 @@ export default function TaxDetailChart({ result, pricePerUnit, units, propType, 
         <div className="bg-primary p-6 sm:p-7 flex-1">
           <div className="text-[10px] tracking-[0.15em] uppercase text-accent mb-1 font-semibold">NYC Mansion Tax Schedule</div>
           <div className="text-[11px] text-warm/50 mb-4">
-            Applied per unit at {fmtFull(pricePerUnit)}/unit &times; {units} units
+            Applied per unit at {fmtFull(pricePerUnit)}/unit \u00d7 {units} units
           </div>
           {MANSION_SCHEDULE.map((r, i) => {
             const act = pricePerUnit >= r.lo && pricePerUnit < r.hi;

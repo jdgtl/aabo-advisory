@@ -11,6 +11,8 @@ export interface RuntimeEnv {
   TURNSTILE_SECRET_KEY?: string;
   BREVO_API_KEY?: string;
   BREVO_LIST_ID?: string;
+  BREVO_SENDER_EMAIL?: string;
+  BREVO_SENDER_NAME?: string;
   PLAUSIBLE_DOMAIN?: string;
 }
 

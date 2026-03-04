@@ -12,7 +12,9 @@ type AnalyticsEvent =
   | "Contact:ModalOpened"
   | "Contact:Submitted"
   | "Article:Opened"
-  | "CTA:Clicked";
+  | "CTA:Clicked"
+  | "Calculator:PDFDownloaded"
+  | "Calculator:ResultsEmailed";
 
 type EventProps = Record<string, string | number | boolean>;
 
@@ -62,4 +64,12 @@ export function trackArticleOpened(title: string): void {
 
 export function trackCTAClicked(location: string): void {
   trackEvent("CTA:Clicked", { location });
+}
+
+export function trackPDFDownloaded(): void {
+  trackEvent("Calculator:PDFDownloaded");
+}
+
+export function trackResultsEmailed(): void {
+  trackEvent("Calculator:ResultsEmailed");
 }

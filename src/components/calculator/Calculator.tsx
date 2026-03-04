@@ -12,6 +12,7 @@ import InfoTip from "./results/InfoTip";
 
 import Verdict from "./results/Verdict";
 import MetricCard from "./results/MetricCard";
+import ResultActions from "./results/ResultActions";
 
 import SummaryChart from "./charts/SummaryChart";
 import AnnualChart from "./charts/AnnualChart";
@@ -35,33 +36,35 @@ interface Props {
     verdictBuyText?: string;
     verdictRentText?: string;
     disclaimerText?: string;
+    ctaLabel?: string;
+    ctaHeadline?: string;
+    ctaDescription?: string;
+    ctaButtonText?: string;
   };
   /** Callback when "View Full Analysis" is clicked (triggers lead gate) */
   onRequestFullAnalysis?: (data?: CalculatorData) => void;
   /** Whether full analysis is unlocked */
   unlocked?: boolean;
+  /** User info from lead gate */
+  userName?: string;
+  userEmail?: string;
+  userOrg?: string;
 }
 
-export default function Calculator({ cms, onRequestFullAnalysis, unlocked = false }: Props) {
-  const [units, setUnits] = useState<number>(0);
-  const [pricePerUnit, setPricePerUnit] = useState<number>(0);
-  const [commonCharges, setCommonCharges] = useState<number>(0);
-  const [propertyTaxes, setPropertyTaxes] = useState<number>(0);
-  const [singleUnitType, setSingleUnitType] = useState<string>("residential");
-  const [monthlyRent, setMonthlyRent] = useState<number>(0);
-  const [otherCharges, setOtherCharges] = useState<number>(0);
-  const [rentTaxes, setRentTaxes] = useState<number>(0);
-  const [timelineYears, setTimelineYears] = useState<number>(0);
-  const [annualAppreciation, setAnnualAppreciation] = useState<number>(0);
-  const [annualRentGrowth, setAnnualRentGrowth] = useState<number>(0);
+export default function Calculator({ cms, onRequestFullAnalysis, unlocked = false, userName, userEmail, userOrg }: Props) {
+  const [units, setUnits] = useState<number>(defaults.units);
+  const [pricePerUnit, setPricePerUnit] = useState<number>(defaults.pricePerUnit);
+  const [commonCharges, setCommonCharges] = useState<number>(defaults.commonCharges);
+  const [propertyTaxes, setPropertyTaxes] = useState<number>(defaults.propertyTaxes);
+  const [propType, setPropType] = useState<string>(defaults.propType);
+  const [monthlyRent, setMonthlyRent] = useState<number>(defaults.monthlyRent);
+  const [otherCharges, setOtherCharges] = useState<number>(defaults.otherCharges);
+  const [rentTaxes, setRentTaxes] = useState<number>(defaults.rentTaxes);
+  const [timelineYears, setTimelineYears] = useState<number>(defaults.timelineYears);
+  const [annualAppreciation, setAnnualAppreciation] = useState<number>(defaults.annualAppreciation);
+  const [annualRentGrowth, setAnnualRentGrowth] = useState<number>(defaults.annualRentGrowth);
   const [activeView, setActiveView] = useState<TabId>("summary");
   const hasTrackedStart = useRef(false);
-
-  // Derived property classification
-  const propType = units >= 2 ? "commercial" : singleUnitType;
-  const propTypeLabel = propType === "residential"
-    ? "Condos, Co-ops & 1\u20133 Family Houses"
-    : "Commercial & All Other Property";
 
   // Track calculator started when user first enters any value
   useEffect(() => {
@@ -100,17 +103,12 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_1px_1fr] gap-6 lg:gap-10 mb-8">
         {/* Purchase Scenario */}
         <div>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-7 h-7 bg-primary flex items-center justify-center text-[11px] text-accent font-bold font-heading">
-              B
-            </div>
-            <div>
-              <div className="text-sm font-bold text-primary font-heading">Purchase Scenario</div>
-              <div className="text-[11px] text-warm/60">Acquisition, carrying, and disposal</div>
-            </div>
+          <div className="border-l-[3px] border-primary pl-4 mb-6">
+            <div className="text-sm font-bold text-primary font-heading">Purchase Scenario</div>
+            <div className="text-[11px] text-warm/60">Acquisition, carrying costs, and disposal</div>
           </div>
           <div className="flex flex-wrap gap-4">
-            <Input label="Units" value={units} onChange={setUnits} min={1} max={50} step={1} placeholder="e.g. 9" />
+            <Input label="Units" value={units} onChange={setUnits} min={1} max={50} step={1} placeholder="e.g. 1" />
             <DollarInput label="Price per Unit" value={pricePerUnit} onChange={setPricePerUnit} placeholder="e.g. 2,000,000" />
             <DollarInput label="Common Charges /mo" value={commonCharges} onChange={setCommonCharges} placeholder="e.g. 1,200" />
             <DollarInput label="Property Taxes /mo" value={propertyTaxes} onChange={setPropertyTaxes} placeholder="e.g. 1,000" />
@@ -118,22 +116,16 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
             <div>
               <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1.5 font-medium">
                 Property Classification
-                <InfoTip definition="NYC classifies properties with 4+ units as commercial. For simplicity, this calculator treats 2+ units as commercial since most multi-unit acquisitions fall under commercial rates." />
+                <InfoTip definition="NYC classifies properties with 4+ units as commercial. Select the classification that applies to your property type." />
               </div>
-              {units >= 2 ? (
-                <div className="px-3 py-2.5 bg-light border border-mid text-sm text-text/70 font-body min-w-[180px]">
-                  {propTypeLabel}
-                </div>
-              ) : (
-                <SelectInput
-                  value={singleUnitType}
-                  onChange={setSingleUnitType}
-                  options={[
-                    { value: "residential", label: "Condos, Co-ops & 1\u20133 Family" },
-                    { value: "commercial", label: "Commercial & All Other" },
-                  ]}
-                />
-              )}
+              <SelectInput
+                value={propType}
+                onChange={setPropType}
+                options={[
+                  { value: "residential", label: "Condos, Co-ops & 1\u20133 Family" },
+                  { value: "commercial", label: "Commercial & All Other" },
+                ]}
+              />
             </div>
           </div>
         </div>
@@ -143,20 +135,15 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
 
         {/* Rental Scenario */}
         <div>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-7 h-7 bg-canvas border-[1.5px] border-primary flex items-center justify-center text-[11px] text-primary font-bold font-heading">
-              R
-            </div>
-            <div>
-              <div className="text-sm font-bold text-primary font-heading">Rental Scenario</div>
-              <div className="text-[11px] text-warm/60">Monthly obligations over time</div>
-            </div>
+          <div className="border-l-[3px] border-primary pl-4 mb-6">
+            <div className="text-sm font-bold text-primary font-heading">Rental Scenario</div>
+            <div className="text-[11px] text-warm/60">Monthly obligations and escalation</div>
           </div>
           <div className="flex flex-wrap gap-4">
-            <Input label="Units" value={units} onChange={setUnits} min={1} max={50} step={1} placeholder="e.g. 9" />
-            <DollarInput label="Monthly Rent /unit" value={monthlyRent} onChange={setMonthlyRent} placeholder="e.g. 8,000" />
+            <Input label="Units" value={units} onChange={setUnits} min={1} max={50} step={1} placeholder="e.g. 1" />
+            <DollarInput label="Monthly Rent per Unit" value={monthlyRent} onChange={setMonthlyRent} placeholder="e.g. 8,000" />
             <DollarInput label="Other Charges /mo" value={otherCharges} onChange={setOtherCharges} placeholder="0" />
-            <DollarInput label="Taxes /mo /unit" value={rentTaxes} onChange={setRentTaxes} placeholder="0" />
+            <DollarInput label="Taxes /mo" value={rentTaxes} onChange={setRentTaxes} placeholder="0" />
           </div>
         </div>
       </div>
@@ -174,7 +161,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
           <div>
             <div className="text-[10px] tracking-[0.08em] uppercase text-text/40 mb-3 font-semibold">Buy Assumptions</div>
             <div className="flex flex-wrap gap-4">
-              <Input label="Hold Period (Years)" value={timelineYears} onChange={setTimelineYears} suffix="yrs" min={1} max={30} step={1} placeholder="e.g. 16" />
+              <Input label="Hold Period (Years)" value={timelineYears} onChange={setTimelineYears} suffix="yrs" min={1} max={30} step={1} placeholder="e.g. 30" />
               <Input label="Annual Appreciation" value={annualAppreciation} onChange={setAnnualAppreciation} suffix="%" min={-5} max={15} step={0.25} hint="Property value growth" placeholder="e.g. 2.5" />
             </div>
           </div>
@@ -184,7 +171,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
           <div>
             <div className="text-[10px] tracking-[0.08em] uppercase text-text/40 mb-3 font-semibold">Rent Assumptions</div>
             <div className="flex flex-wrap gap-4">
-              <Input label="Hold Period (Years)" value={timelineYears} onChange={setTimelineYears} suffix="yrs" min={1} max={30} step={1} placeholder="e.g. 16" />
+              <Input label="Hold Period (Years)" value={timelineYears} onChange={setTimelineYears} suffix="yrs" min={1} max={30} step={1} placeholder="e.g. 30" />
               <Input label="Annual Rent Growth" value={annualRentGrowth} onChange={setAnnualRentGrowth} suffix="%" min={0} max={15} step={0.25} hint="Market rent escalation" placeholder="e.g. 2.75" />
             </div>
           </div>
@@ -212,7 +199,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
               Disposal Cost
               <InfoTip definition="Seller-side costs at sale: broker commission, legal fees, and NYC/NYS transfer taxes. Applied as a percentage of projected sale value." />
             </div>
-            <div className="text-lg font-bold text-primary font-heading">6.50%</div>
+            <div className="text-lg font-bold text-primary font-heading">7.50%</div>
           </div>
           <div className="flex-1 min-w-[140px] bg-canvas p-4 border border-mid">
             <div className="flex items-center text-[10px] tracking-[0.08em] uppercase text-text/45 mb-1 font-medium">
@@ -275,6 +262,29 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
         />
       </div>
 
+      {/* ── RESULT ACTIONS ── */}
+      {unlocked && (
+        <ResultActions
+          inputs={{
+            units,
+            pricePerUnit,
+            commonCharges,
+            propertyTaxes,
+            propType,
+            monthlyRent,
+            otherCharges,
+            rentTaxes,
+            timelineYears,
+            annualAppreciation,
+            annualRentGrowth,
+            result,
+            userName,
+            userOrg,
+          }}
+          userEmail={userEmail}
+        />
+      )}
+
       {/* ── GATED SECTION ── */}
       {!unlocked && onRequestFullAnalysis ? (
         <div className="relative mb-14">
@@ -293,13 +303,13 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-canvas/80 backdrop-blur-sm">
             <div className="text-center max-w-md px-4">
               <div className="text-[10px] tracking-[0.2em] uppercase text-accent mb-3 font-semibold">
-                Full Analysis
+                Detailed Analysis
               </div>
               <h3 className="font-heading text-2xl font-bold text-primary mb-3">
-                Unlock Detailed Projections
+                Detailed Projections
               </h3>
               <p className="text-sm text-text/55 mb-6 leading-relaxed">
-                Access all charts, year-by-year projections, and tax detail breakdowns.
+                Year-by-year projections, comparative charts, and a complete tax breakdown.
               </p>
               <button
                 onClick={() => {
@@ -376,7 +386,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
               <table className="w-full border-collapse text-xs font-body">
                 <thead>
                   <tr className="border-b-2 border-accent">
-                    {["Year", "Buy Annual", "Rent Annual", "Cum. Buy", "Cum. Rent", "Property Value", "Net Equity", "Advantage"].map(
+                    {["Year", "Buy Annual", "Rent Annual", "Cum. Buy", "Cum. Rent", "Est. Property Value", "Net Equity", "Advantage"].map(
                       (h, i) => (
                         <th
                           key={i}
@@ -415,13 +425,13 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
       <div className="bg-primary px-6 sm:px-10 py-8 sm:py-10 mb-10 flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8">
         <div className="flex-1">
           <div className="text-[10px] tracking-[0.2em] uppercase text-accent mb-2 font-semibold">
-            Personalized Guidance
+            {cms?.ctaLabel || "Tailored Assessment"}
           </div>
           <h3 className="font-heading text-xl sm:text-2xl font-bold text-canvas mb-2 leading-[1.2]">
-            This analysis is generalized.
+            {cms?.ctaHeadline || "This analysis reflects general assumptions."}
           </h3>
           <p className="text-sm leading-relaxed text-warm/70">
-            For a confidential assessment tailored to your mission's specific situation, schedule a consultation.
+            {cms?.ctaDescription || "For a confidential assessment tailored to your mission\u2019s specific situation, schedule a consultation."}
           </p>
         </div>
         <a
@@ -429,7 +439,7 @@ export default function Calculator({ cms, onRequestFullAnalysis, unlocked = fals
           onClick={() => trackCTAClicked("calculator-consultation")}
           className="shrink-0 bg-accent text-primary px-7 py-3.5 text-[11px] tracking-[0.14em] uppercase font-body font-medium transition-all duration-300 hover:bg-canvas hover:-translate-y-px"
         >
-          Schedule a Consultation
+          {cms?.ctaButtonText || "Schedule a Consultation"}
         </a>
       </div>
 

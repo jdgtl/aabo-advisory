@@ -1,6 +1,6 @@
 export const prerender = false;
 import type { APIRoute } from "astro";
-import { createOrUpdateContact } from "@/lib/brevo";
+import { createOrUpdateContact, sendHtmlEmail } from "@/lib/brevo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getRuntimeEnv } from "@/lib/runtime-env";
@@ -47,9 +47,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
       turnstile_token?: string;
       calculatorData?: CalculatorData;
       repeat?: boolean;
+      action?: "gate-submit" | "resend-email";
+      pdfBase64?: string;
+      emailHtml?: string;
     };
 
-    const { name, org, email, turnstile_token, calculatorData, repeat } = body;
+    const { name, org, email, turnstile_token, calculatorData, repeat, action = "gate-submit", pdfBase64, emailHtml } = body;
 
     // Validate required fields
     if (!name || !email) {
@@ -86,8 +89,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Brevo integration
     const brevoKey = env.BREVO_API_KEY ?? "";
     const listId = parseInt(env.BREVO_LIST_ID ?? "2", 10);
+    const senderEmail = env.BREVO_SENDER_EMAIL ?? "noreply@aaboadvisory.com";
+    const senderName = env.BREVO_SENDER_NAME ?? "AABO Advisory";
 
-    if (brevoKey) {
+    let emailSent = false;
+
+    if (brevoKey && action === "gate-submit") {
       await createOrUpdateContact(brevoKey, {
         email,
         name,
@@ -108,7 +115,30 @@ export const POST: APIRoute = async ({ request, locals }) => {
       });
     }
 
-    return new Response(JSON.stringify({ success: true }), { status: 200, headers });
+    // Send results email (for both gate-submit and resend-email)
+    if (brevoKey && emailHtml) {
+      try {
+        const attachments = pdfBase64
+          ? [{ content: pdfBase64, name: "aabo-buy-vs-rent-analysis.pdf" }]
+          : undefined;
+
+        const emailResult = await sendHtmlEmail(brevoKey, {
+          to: email,
+          toName: name,
+          senderEmail,
+          senderName,
+          subject: "Your Buy vs. Rent Analysis \u2014 AABO Advisory",
+          htmlContent: emailHtml,
+          attachments,
+        });
+        emailSent = emailResult.success;
+      } catch {
+        // Email failure should not block the response
+        emailSent = false;
+      }
+    }
+
+    return new Response(JSON.stringify({ success: true, emailSent }), { status: 200, headers });
   } catch (err) {
     console.error("Calculator lead error:", err);
     return new Response(JSON.stringify({ error: "Internal server error" }), {

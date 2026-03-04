@@ -66,6 +66,45 @@ export async function createOrUpdateContact(
   return { success: false };
 }
 
+interface SendHtmlEmailParams {
+  to: string;
+  toName?: string;
+  senderEmail: string;
+  senderName: string;
+  subject: string;
+  htmlContent: string;
+  attachments?: { content: string; name: string }[];
+}
+
+export async function sendHtmlEmail(
+  apiKey: string,
+  params: SendHtmlEmailParams,
+): Promise<{ success: boolean }> {
+  if (!apiKey) return { success: false };
+
+  const body: Record<string, unknown> = {
+    sender: { email: params.senderEmail, name: params.senderName },
+    to: [{ email: params.to, name: params.toName ?? params.to }],
+    subject: params.subject,
+    htmlContent: params.htmlContent,
+  };
+
+  if (params.attachments?.length) {
+    body.attachment = params.attachments;
+  }
+
+  const res = await fetch(`${BREVO_API}/smtp/email`, {
+    method: "POST",
+    headers: {
+      "api-key": apiKey,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  return { success: res.ok };
+}
+
 export async function sendTransactionalEmail(
   apiKey: string,
   to: string,
