@@ -74,17 +74,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     }
 
-    // Determine tags
-    const tags = ["calculator-lead"];
     const units = calculatorData?.units ?? 0;
     const priceRange = calculatorData?.priceRange ?? "";
     const priceNum = parseInt(priceRange.replace(/[^0-9]/g, ""), 10) || 0;
-    if (units > 5 || priceNum > 3_000_000) {
-      tags.push("high-value");
-    }
-    if (repeat) {
-      tags.push("repeat-lead");
-    }
+    const highValue = units > 5 || priceNum > 3_000_000;
 
     // Brevo integration
     const brevoKey = env.BREVO_API_KEY ?? "";
@@ -99,10 +92,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
         email,
         name,
         org,
-        tags,
         listIds: listId ? [listId] : [],
         attributes: {
           SOURCE: "calculator",
+          HIGH_VALUE: highValue ? "yes" : "no",
+          REPEAT_LEAD: repeat ? "yes" : "no",
           CALCULATOR_VERDICT: calculatorData?.verdict ?? "",
           CALCULATOR_SAVINGS: calculatorData?.savings ?? "",
           CALCULATOR_UNITS: units,

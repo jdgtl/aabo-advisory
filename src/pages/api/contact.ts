@@ -67,7 +67,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
         email,
         name,
         org,
-        tags: ["consultation-request"],
         listIds: listId ? [listId] : [],
         attributes: {
           SOURCE: "consultation",

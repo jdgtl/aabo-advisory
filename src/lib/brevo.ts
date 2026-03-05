@@ -4,7 +4,6 @@ interface CreateContactParams {
   email: string;
   name: string;
   org?: string;
-  tags: string[];
   listIds?: number[];
   attributes?: Record<string, string | number>;
 }

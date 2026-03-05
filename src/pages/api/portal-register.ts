@@ -56,7 +56,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       await createOrUpdateContact(brevoKey, {
         email,
         name,
-        tags: ["client-portal"],
         listIds: listId ? [listId] : [],
         attributes: {
           SOURCE: "client-portal",
