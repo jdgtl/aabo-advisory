@@ -15,10 +15,11 @@ export default config({
       slugField: "title",
       path: "src/content/articles/*",
       format: { contentField: "body" },
+      entryLayout: "content",
       previewUrl: "/insights/{slug}",
       schema: {
         title: fields.slug({ name: { label: "Title" } }),
-        draft: fields.checkbox({ label: "Draft", description: "Hidden from listings. Preview via direct URL: /insights/{slug}", defaultValue: true }),
+        draft: fields.checkbox({ label: "Draft", description: "Hidden from listings. Preview via /insights/{slug}", defaultValue: true }),
         featured: fields.checkbox({ label: "Featured", description: "Show on homepage grid.", defaultValue: false }),
         category: fields.select({
           label: "Category",
@@ -33,16 +34,16 @@ export default config({
         excerpt: fields.text({ label: "Excerpt", multiline: true }),
         keyTakeaway: fields.text({ label: "Key Takeaway", multiline: true }),
         publicationUrl: fields.url({
-          label: "Publication URL (Publitas)",
-          description: "Publitas flipbook URL — adds a button in the sidebar that opens the flipbook in a full-screen viewer.",
+          label: "Publication URL",
+          description: "Publitas flipbook URL — opens in a full-screen viewer.",
         }),
         publicationLabel: fields.text({
           label: "Publication Label",
-          description: "Small uppercase label above the link text (e.g. 'Publication', 'Newsletter', 'Report').",
+          description: "Small uppercase text (e.g. 'Publication', 'Newsletter', 'Report').",
         }),
         publicationLinkText: fields.text({
           label: "Publication Link Text",
-          description: "Clickable text shown on the button (e.g. 'View Interactive Flipbook', 'Read The Diplomat Q1').",
+          description: "Button text (e.g. 'View Interactive Flipbook', 'Read The Diplomat Q1').",
         }),
         body: fields.markdoc({ label: "Body" }),
       },

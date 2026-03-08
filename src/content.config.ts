@@ -4,12 +4,15 @@ const articles = defineCollection({
   type: "content",
   schema: z.object({
     title: z.string(),
+    draft: z.boolean().optional().default(true),
+    featured: z.boolean().optional().default(false),
     category: z.string(),
+    date: z.coerce.string(),
     excerpt: z.string(),
     keyTakeaway: z.string().optional().default(""),
-    date: z.coerce.string(),
-    readTime: z.string().optional(),
-    featured: z.boolean().optional().default(false),
+    publicationUrl: z.string().optional(),
+    publicationLabel: z.string().optional(),
+    publicationLinkText: z.string().optional(),
   }),
 });
 
