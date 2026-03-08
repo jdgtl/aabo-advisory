@@ -81,21 +81,25 @@ export default function ArticleBar({ title, slug, docId, category }: Props) {
 
       const clone = el.cloneNode(true) as HTMLElement;
       clone.style.cssText = "position:absolute;left:-9999px;top:0;background:white;color:#1A1A1A;width:800px;";
-      // Force all elements visible and print-safe
-      clone.querySelectorAll<HTMLElement>("*").forEach((child) => {
-        child.style.opacity = "1";
-        child.style.transform = "none";
-        child.style.color = "#1A1A1A";
-        child.style.background = "transparent";
-      });
-      // Hide non-content elements
-      clone.querySelectorAll<HTMLElement>("aside, nav, .print-hide, button, [data-publitas]").forEach((child) => {
-        child.style.display = "none";
-      });
-      // Style headings
-      clone.querySelectorAll<HTMLElement>("h1, h2, h3").forEach((child) => {
-        child.style.color = "#0F1B2D";
-      });
+
+      // Inject style override — !important beats Tailwind utilities
+      const styleTag = document.createElement("style");
+      styleTag.textContent = `
+        *, *::before, *::after {
+          color: #1A1A1A !important;
+          background: transparent !important;
+          opacity: 1 !important;
+          transform: none !important;
+          box-shadow: none !important;
+        }
+        h1, h2, h3 { color: #0F1B2D !important; }
+        .article-body h1, .article-body h2 { color: #B8965A !important; }
+        .article-body p:first-of-type::first-letter { color: #B8965A !important; }
+        aside, nav, .print-hide, button, [data-publitas] { display: none !important; }
+        .grid { display: block !important; }
+        .bg-light.p-5 { display: none !important; }
+      `;
+      clone.prepend(styleTag);
       document.body.appendChild(clone);
 
       try {
