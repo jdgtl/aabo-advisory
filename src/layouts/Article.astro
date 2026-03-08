@@ -266,11 +266,26 @@ const jsonld = [
   }
 
   @media print {
+    /* Nuclear reset — every element gets print-safe defaults */
+    *, *::before, *::after {
+      color: #1A1A1A !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      animation: none !important;
+      transition: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      background: white !important;
+    }
+
     /* Hide non-content elements */
-    nav,
-    footer,
-    aside,
-    .print-hide {
+    nav, footer, aside, .print-hide {
       display: none !important;
     }
 
@@ -280,14 +295,11 @@ const jsonld = [
       padding: 1.5rem 2rem 0;
     }
 
-    .print-logo {
-      height: 28px;
-      margin-bottom: 0.75rem;
-    }
+    .print-logo { height: 28px; margin-bottom: 0.75rem; }
 
     .print-meta {
       font-size: 10px;
-      color: #666;
+      color: #666 !important;
       letter-spacing: 0.05em;
       margin-bottom: 0.75rem;
     }
@@ -295,82 +307,27 @@ const jsonld = [
     .print-category {
       text-transform: uppercase;
       font-weight: 600;
-      color: #B8965A;
+      color: #B8965A !important;
       letter-spacing: 0.12em;
       font-size: 9px;
-      border: 1px solid #B8965A;
+      border: 1px solid #B8965A !important;
       padding: 1px 6px;
       margin-right: 4px;
     }
 
-    .print-separator {
-      margin: 0 0.35em;
-      color: #aaa;
-    }
+    .print-separator { margin: 0 0.35em; color: #aaa !important; }
+    .print-rule { border: none; border-top: 1px solid #ddd !important; margin: 0; }
 
-    .print-rule {
-      border: none;
-      border-top: 1px solid #ddd;
-      margin: 0;
-    }
+    /* Layout */
+    .grid { display: block !important; }
+    .bg-light.p-5.border-l-\[3px\] { display: none !important; }
+    .article-body { max-width: 100% !important; }
 
-    /* Layout: single column, full width */
-    body {
-      background: white !important;
-      color: #1A1A1A !important;
-    }
+    /* Headings get accent color */
+    .article-body h1, .article-body h2 { color: #B8965A !important; }
+    .article-body p:first-of-type::first-letter { color: #B8965A !important; }
 
-    #main-content {
-      background: white !important;
-    }
-
-    /* Force all text to dark for print */
-    #main-content * {
-      color: #1A1A1A !important;
-      background: transparent !important;
-      border-color: #ddd !important;
-    }
-
-    #main-content h1, #main-content h2, #main-content h3 {
-      color: #0F1B2D !important;
-    }
-
-    /* Force single-column layout */
-    .grid {
-      display: block !important;
-    }
-
-    /* Hide the sidebar summary card */
-    .bg-light.p-5.border-l-\[3px\] {
-      display: none !important;
-    }
-
-    /* Article body print styles */
-    .article-body h2 {
-      color: #B8965A !important;
-    }
-
-    .article-body p:first-of-type::first-letter {
-      color: #B8965A !important;
-    }
-
-    /* Clean up spacing */
-    .article-body {
-      max-width: 100% !important;
-    }
-
-    /* Remove animations/transitions */
-    * {
-      animation: none !important;
-      transition: none !important;
-      opacity: 1 !important;
-    }
-
-    /* Ensure RevealWrapper contents are visible */
-    [class*="RevealWrapper"],
-    [class*="reveal"] {
-      opacity: 1 !important;
-      transform: none !important;
-    }
+    /* Page title */
+    h1[data-article-title] { color: #0F1B2D !important; }
   }
 </style>
