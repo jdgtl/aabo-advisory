@@ -34,7 +34,15 @@ export default config({
         keyTakeaway: fields.text({ label: "Key Takeaway", multiline: true }),
         publicationUrl: fields.url({
           label: "Publication URL (Publitas)",
-          description: "Publitas flipbook URL — adds a 'View Publication' button that opens the flipbook in a full-screen viewer.",
+          description: "Publitas flipbook URL — adds a button in the sidebar that opens the flipbook in a full-screen viewer.",
+        }),
+        publicationLabel: fields.text({
+          label: "Publication Label",
+          description: "Small uppercase label above the link text (e.g. 'Publication', 'Newsletter', 'Report').",
+        }),
+        publicationLinkText: fields.text({
+          label: "Publication Link Text",
+          description: "Clickable text shown on the button (e.g. 'View Interactive Flipbook', 'Read The Diplomat Q1').",
         }),
         body: fields.markdoc({ label: "Body" }),
       },

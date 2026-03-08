@@ -12,6 +12,8 @@ interface Props {
   excerpt: string;
   keyTakeaway?: string;
   publicationUrl?: string;
+  publicationLabel?: string;
+  publicationLinkText?: string;
   date: string;
   readTime: string;
   docId: string;
@@ -23,7 +25,7 @@ interface Props {
   }[];
 }
 
-const { title, category, excerpt, keyTakeaway, publicationUrl, date, readTime, docId, slug, otherArticles } = Astro.props;
+const { title, category, excerpt, keyTakeaway, publicationUrl, publicationLabel, publicationLinkText, date, readTime, docId, slug, otherArticles } = Astro.props;
 
 const jsonld = [
   articleJsonLd({
@@ -137,10 +139,10 @@ const jsonld = [
                 </svg>
                 <div>
                   <div class="text-[10px] tracking-[0.15em] uppercase text-accent font-semibold mb-0.5">
-                    Publication
+                    {publicationLabel || "Publication"}
                   </div>
                   <div class="text-[13px] text-primary font-medium leading-[1.3] group-hover:text-canvas transition-colors duration-300">
-                    View Interactive Flipbook
+                    {publicationLinkText || "View Interactive Flipbook"}
                   </div>
                 </div>
               </button>
