@@ -270,13 +270,7 @@ const jsonld = [
     nav,
     footer,
     aside,
-    .print-hide,
-    [data-reveal] {
-      display: none !important;
-    }
-
-    /* Hide the classification bar and the entire nav/footer components */
-    .bg-primary.border-b {
+    .print-hide {
       display: none !important;
     }
 
@@ -328,6 +322,17 @@ const jsonld = [
 
     #main-content {
       background: white !important;
+    }
+
+    /* Force all text to dark for print */
+    #main-content * {
+      color: #1A1A1A !important;
+      background: transparent !important;
+      border-color: #ddd !important;
+    }
+
+    #main-content h1, #main-content h2, #main-content h3 {
+      color: #0F1B2D !important;
     }
 
     /* Force single-column layout */

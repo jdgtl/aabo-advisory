@@ -83,6 +83,17 @@ export default function ArticleBar({ title, slug, docId, category }: Props) {
       clone.style.position = "absolute";
       clone.style.left = "-9999px";
       clone.style.top = "0";
+      clone.style.background = "white";
+      clone.style.color = "#1A1A1A";
+      // Force all RevealWrapper elements visible and fix colors for PDF
+      clone.querySelectorAll<HTMLElement>("*").forEach((child) => {
+        child.style.opacity = "1";
+        child.style.transform = "none";
+      });
+      // Hide non-content elements in clone
+      clone.querySelectorAll<HTMLElement>("aside, nav, .print-hide, button").forEach((child) => {
+        child.style.display = "none";
+      });
       document.body.appendChild(clone);
 
       try {
