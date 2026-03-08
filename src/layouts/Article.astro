@@ -11,6 +11,7 @@ interface Props {
   category: string;
   excerpt: string;
   keyTakeaway?: string;
+  publicationUrl?: string;
   date: string;
   readTime: string;
   docId: string;
@@ -22,7 +23,7 @@ interface Props {
   }[];
 }
 
-const { title, category, excerpt, keyTakeaway, date, readTime, docId, slug, otherArticles } = Astro.props;
+const { title, category, excerpt, keyTakeaway, publicationUrl, date, readTime, docId, slug, otherArticles } = Astro.props;
 
 const jsonld = [
   articleJsonLd({
@@ -122,6 +123,29 @@ const jsonld = [
               </div>
             </div>
           </RevealWrapper>
+
+          {publicationUrl && (
+            <RevealWrapper client:visible delay={0.25}>
+              <button
+                data-publitas={publicationUrl}
+                class="w-full mb-10 flex items-center gap-4 border-[1.5px] border-primary px-5 py-4
+                       text-left transition-all duration-300 ease-[cubic-bezier(.4,0,.2,1)]
+                       hover:bg-primary hover:text-canvas group cursor-pointer"
+              >
+                <svg class="w-5 h-5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                </svg>
+                <div>
+                  <div class="text-[10px] tracking-[0.15em] uppercase text-accent font-semibold mb-0.5">
+                    Publication
+                  </div>
+                  <div class="text-[13px] text-primary font-medium leading-[1.3] group-hover:text-canvas transition-colors duration-300">
+                    View Interactive Flipbook
+                  </div>
+                </div>
+              </button>
+            </RevealWrapper>
+          )}
 
           <RevealWrapper client:visible delay={0.3}>
             <nav aria-label="Related articles" class="bg-primary p-6">

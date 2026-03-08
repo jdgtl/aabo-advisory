@@ -1,0 +1,86 @@
+---
+/**
+ * Global Publitas flipbook modal — triggered by any element with
+ * data-publitas="<publication-url>".
+ *
+ * Add once in Base.astro; works from articles, CTAs, images, etc.
+ */
+---
+
+<div
+  id="publitas-modal"
+  class="fixed inset-0 z-[9999] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 ease-[cubic-bezier(.4,0,.2,1)]"
+  aria-hidden="true"
+  role="dialog"
+  aria-label="Publication viewer"
+>
+  {/* Backdrop */}
+  <div class="absolute inset-0 bg-primary/92" data-publitas-close />
+
+  {/* Close button */}
+  <button
+    data-publitas-close
+    class="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 w-10 h-10 flex items-center justify-center
+           text-canvas/70 hover:text-canvas transition-colors duration-200 cursor-pointer"
+    aria-label="Close publication"
+  >
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+      <line x1="2" y1="2" x2="18" y2="18" />
+      <line x1="18" y1="2" x2="2" y2="18" />
+    </svg>
+  </button>
+
+  {/* Iframe container */}
+  <div class="relative w-[98vw] h-[98vh] sm:w-[96vw] sm:h-[96vh]">
+    <iframe
+      id="publitas-frame"
+      class="w-full h-full border-0 rounded-sm bg-primary/50"
+      allow="fullscreen"
+      loading="lazy"
+    ></iframe>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const modal = document.getElementById("publitas-modal");
+    const frame = document.getElementById("publitas-frame");
+    if (!modal || !frame) return;
+
+    function open(url) {
+      // Ensure URL ends with a slash for proper Publitas embedding
+      frame.src = url.replace(/\/?$/, "/");
+      modal.classList.remove("opacity-0", "pointer-events-none");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function close() {
+      modal.classList.add("opacity-0", "pointer-events-none");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      // Clear iframe after transition
+      setTimeout(function () { frame.src = ""; }, 300);
+    }
+
+    // Trigger: any element with data-publitas="<url>"
+    document.addEventListener("click", function (e) {
+      var trigger = e.target.closest("[data-publitas]");
+      if (trigger) {
+        e.preventDefault();
+        open(trigger.getAttribute("data-publitas"));
+        return;
+      }
+      if (e.target.closest("[data-publitas-close]")) {
+        close();
+      }
+    });
+
+    // Close on Escape
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && modal.getAttribute("aria-hidden") === "false") {
+        close();
+      }
+    });
+  })();
+</script>

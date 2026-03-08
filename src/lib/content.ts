@@ -48,7 +48,9 @@ export async function getAllArticles() {
       return article ? { slug, ...article } : null;
     })
   );
-  return articles.filter(Boolean) as NonNullable<(typeof articles)[number]>[];
+  return articles
+    .filter(Boolean)
+    .filter((a) => !a!.draft) as NonNullable<(typeof articles)[number]>[];
 }
 
 export async function getArticle(slug: string) {

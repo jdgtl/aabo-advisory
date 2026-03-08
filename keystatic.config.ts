@@ -15,8 +15,11 @@ export default config({
       slugField: "title",
       path: "src/content/articles/*",
       format: { contentField: "body" },
+      previewUrl: "/insights/{slug}",
       schema: {
         title: fields.slug({ name: { label: "Title" } }),
+        draft: fields.checkbox({ label: "Draft", description: "Hidden from listings. Preview via direct URL: /insights/{slug}", defaultValue: true }),
+        featured: fields.checkbox({ label: "Featured", description: "Show on homepage grid.", defaultValue: false }),
         category: fields.select({
           label: "Category",
           options: [
@@ -26,10 +29,13 @@ export default config({
           ],
           defaultValue: "Insights",
         }),
+        date: fields.date({ label: "Date", validation: { isRequired: true } }),
         excerpt: fields.text({ label: "Excerpt", multiline: true }),
         keyTakeaway: fields.text({ label: "Key Takeaway", multiline: true }),
-        date: fields.date({ label: "Date", validation: { isRequired: true } }),
-        featured: fields.checkbox({ label: "Featured", defaultValue: false }),
+        publicationUrl: fields.url({
+          label: "Publication URL (Publitas)",
+          description: "Publitas flipbook URL — adds a 'View Publication' button that opens the flipbook in a full-screen viewer.",
+        }),
         body: fields.markdoc({ label: "Body" }),
       },
     }),
