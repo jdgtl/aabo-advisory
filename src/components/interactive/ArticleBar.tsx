@@ -77,22 +77,24 @@ export default function ArticleBar({ title, slug, docId, category }: Props) {
     try {
       const html2pdf = (await import("html2pdf.js")).default;
       const el = document.getElementById("main-content");
-      if (!el) return;
+      if (!el) { console.error("PDF: #main-content not found"); return; }
 
       const clone = el.cloneNode(true) as HTMLElement;
-      clone.style.position = "absolute";
-      clone.style.left = "-9999px";
-      clone.style.top = "0";
-      clone.style.background = "white";
-      clone.style.color = "#1A1A1A";
-      // Force all RevealWrapper elements visible and fix colors for PDF
+      clone.style.cssText = "position:absolute;left:-9999px;top:0;background:white;color:#1A1A1A;width:800px;";
+      // Force all elements visible and print-safe
       clone.querySelectorAll<HTMLElement>("*").forEach((child) => {
         child.style.opacity = "1";
         child.style.transform = "none";
+        child.style.color = "#1A1A1A";
+        child.style.background = "transparent";
       });
-      // Hide non-content elements in clone
-      clone.querySelectorAll<HTMLElement>("aside, nav, .print-hide, button").forEach((child) => {
+      // Hide non-content elements
+      clone.querySelectorAll<HTMLElement>("aside, nav, .print-hide, button, [data-publitas]").forEach((child) => {
         child.style.display = "none";
+      });
+      // Style headings
+      clone.querySelectorAll<HTMLElement>("h1, h2, h3").forEach((child) => {
+        child.style.color = "#0F1B2D";
       });
       document.body.appendChild(clone);
 
@@ -102,7 +104,7 @@ export default function ArticleBar({ title, slug, docId, category }: Props) {
             margin: [10, 10, 10, 10],
             filename: `${title.replace(/[^a-zA-Z0-9]+/g, "-").toLowerCase()}.pdf`,
             image: { type: "jpeg", quality: 0.95 },
-            html2canvas: { scale: 2, useCORS: true },
+            html2canvas: { scale: 2, useCORS: true, logging: true },
             jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
           })
           .from(clone)
@@ -110,6 +112,8 @@ export default function ArticleBar({ title, slug, docId, category }: Props) {
       } finally {
         document.body.removeChild(clone);
       }
+    } catch (err) {
+      console.error("PDF generation failed:", err);
     } finally {
       setGenerating(false);
     }
