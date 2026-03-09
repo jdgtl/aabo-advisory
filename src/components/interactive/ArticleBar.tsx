@@ -99,7 +99,7 @@ export default function ArticleBar({ title, slug, docId, category }: Props) {
         .grid { display: block !important; }
         .bg-light.p-5 { display: none !important; }
       `;
-      clone.prepend(styleTag);
+      clone.insertBefore(styleTag, clone.firstChild);
       document.body.appendChild(clone);
 
       try {
