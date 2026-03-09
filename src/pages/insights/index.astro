@@ -16,6 +16,7 @@ const insightsBreadcrumbs = breadcrumbJsonLd([
 
 const page = await getInsightsPage();
 const rawArticles = await getAllArticles();
+rawArticles.sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
 
 const articles = await Promise.all(
   rawArticles.map(async (a) => {
