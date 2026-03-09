@@ -104,6 +104,34 @@ export async function sendHtmlEmail(
   return { success: res.ok };
 }
 
+export async function trackEvent(
+  apiKey: string,
+  email: string,
+  eventName: string,
+  eventProperties?: Record<string, unknown>,
+  contactProperties?: Record<string, string | number>,
+): Promise<{ success: boolean }> {
+  if (!apiKey) return { success: true };
+
+  const body: Record<string, unknown> = {
+    event_name: eventName,
+    identifiers: { email_id: email },
+  };
+  if (eventProperties) body.event_properties = eventProperties;
+  if (contactProperties) body.contact_properties = contactProperties;
+
+  const res = await fetch(`${BREVO_API}/events`, {
+    method: "POST",
+    headers: {
+      "api-key": apiKey,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  return { success: res.ok || res.status === 204 };
+}
+
 export async function sendTransactionalEmail(
   apiKey: string,
   to: string,

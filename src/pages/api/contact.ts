@@ -1,6 +1,6 @@
 export const prerender = false;
 import type { APIRoute } from "astro";
-import { createOrUpdateContact } from "@/lib/brevo";
+import { createOrUpdateContact, trackEvent } from "@/lib/brevo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getRuntimeEnv } from "@/lib/runtime-env";
@@ -72,6 +72,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
           SOURCE: "consultation",
           MESSAGE: message,
         },
+      });
+
+      await trackEvent(brevoKey, email, "consultation_requested", {
+        organization: org ?? "",
       });
     }
 

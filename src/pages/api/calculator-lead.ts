@@ -1,6 +1,6 @@
 export const prerender = false;
 import type { APIRoute } from "astro";
-import { createOrUpdateContact, sendHtmlEmail } from "@/lib/brevo";
+import { createOrUpdateContact, sendHtmlEmail, trackEvent } from "@/lib/brevo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getRuntimeEnv } from "@/lib/runtime-env";
@@ -106,6 +106,18 @@ export const POST: APIRoute = async ({ request, locals }) => {
           CALCULATOR_PROPERTY_TYPE: calculatorData?.propType ?? "",
           LAST_CALCULATOR_DATE: new Date().toISOString().split("T")[0],
         },
+      });
+
+      // Fire custom event for Brevo automation triggers
+      await trackEvent(brevoKey, email, "calculator_lead_submitted", {
+        verdict: calculatorData?.verdict ?? "",
+        savings: calculatorData?.savings ?? "",
+        units,
+        price_per_unit: calculatorData?.pricePerUnit ?? 0,
+        monthly_rent: calculatorData?.monthlyRent ?? 0,
+        timeline: calculatorData?.timeline ?? 0,
+        property_type: calculatorData?.propType ?? "",
+        high_value: highValue,
       });
     }
 

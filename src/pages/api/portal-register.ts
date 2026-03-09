@@ -1,6 +1,6 @@
 export const prerender = false;
 import type { APIRoute } from "astro";
-import { createOrUpdateContact } from "@/lib/brevo";
+import { createOrUpdateContact, trackEvent } from "@/lib/brevo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getRuntimeEnv } from "@/lib/runtime-env";
@@ -61,6 +61,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
           SOURCE: "client-portal",
         },
       });
+
+      await trackEvent(brevoKey, email, "portal_access_requested");
     }
 
     return new Response(JSON.stringify({ success: true }), { status: 200, headers });
