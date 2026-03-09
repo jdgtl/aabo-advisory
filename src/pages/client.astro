@@ -27,7 +27,7 @@ import PortalRegister from "@/components/interactive/PortalRegister";
       </div>
 
       {/* Login Form */}
-      <form class="flex flex-col gap-5" onsubmit="return false;">
+      <form id="portal-login" class="flex flex-col gap-5">
         <div>
           <label for="portal-username" class="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium">
             Username
@@ -52,6 +52,7 @@ import PortalRegister from "@/components/interactive/PortalRegister";
             class="w-full p-3.5 text-sm font-body bg-light border border-mid text-text outline-none transition-colors focus:border-accent"
           />
         </div>
+        <p id="portal-error" class="text-xs text-red text-center hidden" role="alert"></p>
         <button
           type="submit"
           class="w-full bg-primary text-canvas border-none py-4 px-8 text-xs tracking-[0.14em] uppercase cursor-pointer font-body font-medium transition-all duration-300 hover:bg-accent hover:text-primary mt-2"
@@ -59,6 +60,15 @@ import PortalRegister from "@/components/interactive/PortalRegister";
           Enter
         </button>
       </form>
+
+      <script is:inline>
+        document.getElementById("portal-login").addEventListener("submit", function (e) {
+          e.preventDefault();
+          var err = document.getElementById("portal-error");
+          err.textContent = "Invalid credentials. Please check your username and password.";
+          err.classList.remove("hidden");
+        });
+      </script>
 
       <div class="text-center mt-6">
         <PortalRegister client:load />

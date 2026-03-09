@@ -194,10 +194,22 @@ export async function generatePdfBase64(inputs: PdfInputs): Promise<string> {
   const html = buildHtml(inputs);
 
   const container = document.createElement("div");
-  container.style.position = "absolute";
-  container.style.left = "-9999px";
-  container.style.top = "0";
+  container.style.cssText = "position:absolute;left:-9999px;top:0;background:white;width:210mm;";
   container.innerHTML = html;
+
+  // Override Tailwind globals that bleed into the offscreen container
+  const styleTag = document.createElement("style");
+  styleTag.textContent = `
+    #pdf-render *, #pdf-render *::before, #pdf-render *::after {
+      opacity: 1 !important;
+      transform: none !important;
+      box-shadow: none !important;
+      animation: none !important;
+      transition: none !important;
+    }
+  `;
+  container.id = "pdf-render";
+  container.insertBefore(styleTag, container.firstChild);
   document.body.appendChild(container);
 
   try {
@@ -226,10 +238,22 @@ export async function downloadPdf(inputs: PdfInputs): Promise<void> {
   const html = buildHtml(inputs);
 
   const container = document.createElement("div");
-  container.style.position = "absolute";
-  container.style.left = "-9999px";
-  container.style.top = "0";
+  container.style.cssText = "position:absolute;left:-9999px;top:0;background:white;width:210mm;";
   container.innerHTML = html;
+
+  // Override Tailwind globals that bleed into the offscreen container
+  const styleTag = document.createElement("style");
+  styleTag.textContent = `
+    #pdf-download *, #pdf-download *::before, #pdf-download *::after {
+      opacity: 1 !important;
+      transform: none !important;
+      box-shadow: none !important;
+      animation: none !important;
+      transition: none !important;
+    }
+  `;
+  container.id = "pdf-download";
+  container.insertBefore(styleTag, container.firstChild);
   document.body.appendChild(container);
 
   try {

@@ -88,24 +88,20 @@ export default function PortalRegister() {
             className="bg-canvas w-full max-w-[440px] max-h-[90vh] overflow-y-auto relative"
           >
             {!submitted && (
-              <div className="pt-9 px-8 sm:px-10">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <div className="text-[10px] tracking-[0.2em] uppercase text-accent mb-2 font-semibold">
-                      Client Portal
-                    </div>
-                    <h2 className="font-heading text-[24px] font-bold text-primary leading-[1.2]">
-                      Register for Access
-                    </h2>
-                  </div>
-                  <button
-                    onClick={() => setOpen(false)}
-                    aria-label="Close dialog"
-                    className="bg-transparent border-none cursor-pointer text-[22px] text-text/30 px-2 py-1 leading-none"
-                  >
-                    ×
-                  </button>
+              <div className="pt-9 px-8 sm:px-10 text-center relative">
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Close dialog"
+                  className="absolute top-4 right-4 bg-transparent border-none cursor-pointer text-[22px] text-text/30 px-2 py-1 leading-none"
+                >
+                  ×
+                </button>
+                <div className="text-[10px] tracking-[0.2em] uppercase text-accent mb-2 font-semibold">
+                  Client Portal
                 </div>
+                <h2 className="font-heading text-[24px] font-bold text-primary leading-[1.2]">
+                  Register for Access
+                </h2>
                 <p className="text-sm leading-relaxed text-text/55 mt-3">
                   We will review your request and follow up within one business day.
                 </p>
@@ -113,9 +109,12 @@ export default function PortalRegister() {
             )}
 
             {!submitted ? (
-              <div className="pt-7 pb-10 px-8 sm:px-10">
+              <form
+                onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}
+                className="pt-7 pb-10 px-8 sm:px-10"
+              >
                 <div className="mb-4">
-                  <label htmlFor="reg-name" className="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium">
+                  <label htmlFor="reg-name" className="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium text-center">
                     Name
                   </label>
                   <input
@@ -128,7 +127,7 @@ export default function PortalRegister() {
                   />
                 </div>
                 <div className="mb-7">
-                  <label htmlFor="reg-email" className="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium">
+                  <label htmlFor="reg-email" className="text-[11px] tracking-[0.1em] uppercase text-text/50 mb-1.5 block font-medium text-center">
                     Email
                   </label>
                   <input
@@ -146,13 +145,13 @@ export default function PortalRegister() {
                   <p className="text-xs text-red mb-3" role="alert">{error}</p>
                 )}
                 <button
-                  onClick={handleSubmit}
+                  type="submit"
                   disabled={loading}
                   className="w-full bg-primary text-canvas border-none py-4 px-8 text-xs tracking-[0.14em] uppercase cursor-pointer font-body font-medium transition-all duration-300 hover:bg-accent hover:text-primary disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {loading ? "Submitting…" : "Register"}
                 </button>
-              </div>
+              </form>
             ) : (
               <div className="py-12 px-10 text-center">
                 <div className="w-12 h-12 rounded-full border-2 border-accent flex items-center justify-center mx-auto mb-4 text-xl text-accent" aria-hidden="true">
