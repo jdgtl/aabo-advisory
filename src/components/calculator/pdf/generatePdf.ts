@@ -69,11 +69,6 @@ function buildHtml(inputs: PdfInputs): string {
   `).join("");
 
   return `
-<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;font-family:Georgia,'Times New Roman',serif;color:${C.text};background:#fff;width:210mm;">
-
   <!-- Header -->
   <div style="background:${C.primary};padding:28px 40px;display:flex;justify-content:space-between;align-items:center;">
     <div style="color:${C.accent};font-size:18px;font-weight:700;letter-spacing:0.12em;">AABO ADVISORY</div>
@@ -179,9 +174,7 @@ function buildHtml(inputs: PdfInputs): string {
   <div style="background:${C.primary};padding:16px 40px;font-size:9px;color:${C.warm};opacity:0.6;letter-spacing:0.06em;">
     AABO Advisory &middot; aaboadvisory.com &middot; Confidential
   </div>
-
-</body>
-</html>`;
+`;
 }
 
 function generateFilename(inputs: PdfInputs): string {
@@ -194,18 +187,19 @@ export async function generatePdfBase64(inputs: PdfInputs): Promise<string> {
   const html = buildHtml(inputs);
 
   const container = document.createElement("div");
-  container.style.cssText = "position:absolute;left:-9999px;top:0;background:white;width:210mm;";
+  container.style.cssText = "position:absolute;left:-9999px;top:0;margin:0;padding:0;font-family:Georgia,'Times New Roman',serif;color:#1A1A1A;background:white;width:210mm;";
   container.innerHTML = html;
 
   // Override Tailwind globals that bleed into the offscreen container
   const styleTag = document.createElement("style");
   styleTag.textContent = `
-    #pdf-render *, #pdf-render *::before, #pdf-render *::after {
+    #pdf-render, #pdf-render *, #pdf-render *::before, #pdf-render *::after {
       opacity: 1 !important;
       transform: none !important;
       box-shadow: none !important;
       animation: none !important;
       transition: none !important;
+      visibility: visible !important;
     }
   `;
   container.id = "pdf-render";
@@ -238,18 +232,19 @@ export async function downloadPdf(inputs: PdfInputs): Promise<void> {
   const html = buildHtml(inputs);
 
   const container = document.createElement("div");
-  container.style.cssText = "position:absolute;left:-9999px;top:0;background:white;width:210mm;";
+  container.style.cssText = "position:absolute;left:-9999px;top:0;margin:0;padding:0;font-family:Georgia,'Times New Roman',serif;color:#1A1A1A;background:white;width:210mm;";
   container.innerHTML = html;
 
   // Override Tailwind globals that bleed into the offscreen container
   const styleTag = document.createElement("style");
   styleTag.textContent = `
-    #pdf-download *, #pdf-download *::before, #pdf-download *::after {
+    #pdf-download, #pdf-download *, #pdf-download *::before, #pdf-download *::after {
       opacity: 1 !important;
       transform: none !important;
       box-shadow: none !important;
       animation: none !important;
       transition: none !important;
+      visibility: visible !important;
     }
   `;
   container.id = "pdf-download";
