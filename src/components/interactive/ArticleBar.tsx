@@ -15,19 +15,20 @@ export default function ArticleBar({ title, slug, docId, category }: Props) {
   const titleRef = useRef<HTMLDivElement>(null);
   const prevShowTitle = useRef(false);
 
-  // Track nav height via ResizeObserver (no scroll re-renders)
+  // Track nav height via ResizeObserver — target sticky wrapper, not inner nav
   useEffect(() => {
-    const nav = document.querySelector<HTMLElement>("[data-nav]");
+    const navInner = document.querySelector<HTMLElement>("[data-nav]");
+    const stickyWrapper = navInner?.closest<HTMLElement>(".sticky");
     const bar = barRef.current;
-    if (!nav || !bar) return;
+    if (!stickyWrapper || !bar) return;
 
     const sync = () => {
-      bar.style.top = `${nav.getBoundingClientRect().height}px`;
+      bar.style.top = `${stickyWrapper.getBoundingClientRect().height}px`;
     };
     sync();
 
     const ro = new ResizeObserver(sync);
-    ro.observe(nav);
+    ro.observe(stickyWrapper);
     return () => ro.disconnect();
   }, []);
 

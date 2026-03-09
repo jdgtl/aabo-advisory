@@ -12,19 +12,20 @@ export default function CalculatorBar() {
   // Subscribe to userEmail changes from CalculatorIsland
   useEffect(() => onUserEmailChange(setUserEmail), []);
 
-  // Stick below nav via ResizeObserver
+  // Stick below nav via ResizeObserver — target the sticky wrapper, not inner nav
   useEffect(() => {
-    const nav = document.querySelector<HTMLElement>("[data-nav]");
+    const navInner = document.querySelector<HTMLElement>("[data-nav]");
+    const stickyWrapper = navInner?.closest<HTMLElement>(".sticky");
     const bar = barRef.current;
-    if (!nav || !bar) return;
+    if (!stickyWrapper || !bar) return;
 
     const sync = () => {
-      bar.style.top = `${nav.getBoundingClientRect().height}px`;
+      bar.style.top = `${stickyWrapper.getBoundingClientRect().height}px`;
     };
     sync();
 
     const ro = new ResizeObserver(sync);
-    ro.observe(nav);
+    ro.observe(stickyWrapper);
     return () => ro.disconnect();
   }, []);
 
