@@ -22,13 +22,15 @@ const allArticlesWithDates = (
   await Promise.all(
     allSlugs.map(async (s) => {
       const a = await reader.collections.articles.read(s);
-      return a ? { slug: s, title: a.title, category: a.category, date: a.date } : null;
+      return a ? { slug: s, title: a.title, category: a.category, date: a.date, draft: a.draft } : null;
     })
   )
-).filter(Boolean) as { slug: string; title: string; category: string; date: string }[];
+).filter(Boolean) as { slug: string; title: string; category: string; date: string; draft: boolean }[];
 
 const otherArticles = allArticlesWithDates
-  .filter((a) => a.slug !== slug)
+  .filter((a) => a.slug !== slug && !a.draft)
+  .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""))
+  .slice(0, 5)
   .map(({ slug: s, title: t, category: c }) => ({ slug: s, title: t, category: c }));
 
 // Build doc ID from article year + sequential count within that year
