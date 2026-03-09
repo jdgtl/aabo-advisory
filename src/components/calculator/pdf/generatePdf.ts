@@ -33,6 +33,92 @@ const C = {
   red: "#8B3A3A",
 };
 
+/* ── SVG Chart builders ── */
+
+function buildCumulativeChart(data: CalcResult["yearlyData"]): string {
+  const W = 680, H = 200, PAD = { top: 20, right: 20, bottom: 30, left: 70 };
+  const plotW = W - PAD.left - PAD.right;
+  const plotH = H - PAD.top - PAD.bottom;
+
+  const allVals = data.flatMap((d) => [d.cumBuySpend, d.cumRentSpend, d.propertyValue]);
+  const maxVal = Math.max(...allVals);
+  const minVal = 0;
+
+  const x = (i: number) => PAD.left + (i / (data.length - 1)) * plotW;
+  const y = (v: number) => PAD.top + plotH - ((v - minVal) / (maxVal - minVal)) * plotH;
+
+  const line = (key: keyof typeof data[0]) =>
+    data.map((d, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(d[key] as number).toFixed(1)}`).join(" ");
+
+  const gridLines = [0, 0.25, 0.5, 0.75, 1].map((pct) => {
+    const val = minVal + pct * (maxVal - minVal);
+    const yPos = y(val);
+    return `<line x1="${PAD.left}" y1="${yPos}" x2="${W - PAD.right}" y2="${yPos}" stroke="${C.mid}" stroke-width="0.5"/>
+      <text x="${PAD.left - 8}" y="${yPos + 3}" text-anchor="end" font-size="8" fill="${C.text}" opacity="0.4">${fmt(val)}</text>`;
+  }).join("");
+
+  const xLabels = data.map((d, i) => {
+    if (data.length > 15 && i % 5 !== 0 && i !== data.length - 1) return "";
+    return `<text x="${x(i)}" y="${H - 4}" text-anchor="middle" font-size="8" fill="${C.text}" opacity="0.5">Yr ${d.year}</text>`;
+  }).join("");
+
+  return `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="display:block;">
+    ${gridLines}
+    ${xLabels}
+    <path d="${line("cumBuySpend")}" fill="none" stroke="${C.primary}" stroke-width="2.5"/>
+    <path d="${line("cumRentSpend")}" fill="none" stroke="${C.accent}" stroke-width="2.5"/>
+    <path d="${line("propertyValue")}" fill="none" stroke="${C.green}" stroke-width="1.5" stroke-dasharray="6,3"/>
+    <!-- Legend -->
+    <rect x="${PAD.left}" y="${PAD.top - 14}" width="10" height="3" fill="${C.primary}"/>
+    <text x="${PAD.left + 14}" y="${PAD.top - 10}" font-size="8" fill="${C.text}" opacity="0.6">Cum. Buy Cost</text>
+    <rect x="${PAD.left + 100}" y="${PAD.top - 14}" width="10" height="3" fill="${C.accent}"/>
+    <text x="${PAD.left + 114}" y="${PAD.top - 10}" font-size="8" fill="${C.text}" opacity="0.6">Cum. Rent Cost</text>
+    <rect x="${PAD.left + 200}" y="${PAD.top - 14}" width="10" height="3" fill="${C.green}" opacity="0.6"/>
+    <text x="${PAD.left + 214}" y="${PAD.top - 10}" font-size="8" fill="${C.text}" opacity="0.6">Property Value</text>
+  </svg>`;
+}
+
+function buildAdvantageChart(data: CalcResult["yearlyData"]): string {
+  const W = 680, H = 160, PAD = { top: 16, right: 20, bottom: 30, left: 70 };
+  const plotW = W - PAD.left - PAD.right;
+  const plotH = H - PAD.top - PAD.bottom;
+
+  const vals = data.map((d) => d.advantage);
+  const maxAbs = Math.max(...vals.map(Math.abs), 1);
+
+  const barW = Math.min(plotW / data.length - 2, 30);
+  const zeroY = PAD.top + plotH * (maxAbs / (2 * maxAbs));
+
+  const bars = data.map((d, i) => {
+    const cx = PAD.left + (i + 0.5) * (plotW / data.length);
+    const barH = (Math.abs(d.advantage) / maxAbs) * (plotH / 2);
+    const isPos = d.advantage >= 0;
+    const barY = isPos ? zeroY - barH : zeroY;
+    const color = isPos ? C.green : C.red;
+    const label = data.length > 15 && i % 5 !== 0 && i !== data.length - 1 ? "" :
+      `<text x="${cx}" y="${H - 4}" text-anchor="middle" font-size="8" fill="${C.text}" opacity="0.5">Yr ${d.year}</text>`;
+    return `<rect x="${cx - barW / 2}" y="${barY}" width="${barW}" height="${barH}" fill="${color}" opacity="0.8" rx="1"/>
+      ${label}`;
+  }).join("");
+
+  return `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="display:block;">
+    <line x1="${PAD.left}" y1="${zeroY}" x2="${W - PAD.right}" y2="${zeroY}" stroke="${C.mid}" stroke-width="1"/>
+    <text x="${PAD.left - 8}" y="${zeroY + 3}" text-anchor="end" font-size="8" fill="${C.text}" opacity="0.4">$0</text>
+    <text x="${PAD.left - 8}" y="${PAD.top + 8}" text-anchor="end" font-size="8" fill="${C.green}" opacity="0.6">+${fmt(maxAbs)}</text>
+    <text x="${PAD.left - 8}" y="${H - PAD.bottom}" text-anchor="end" font-size="8" fill="${C.red}" opacity="0.6">-${fmt(maxAbs)}</text>
+    ${bars}
+    <!-- Legend -->
+    <rect x="${PAD.left}" y="${PAD.top - 12}" width="10" height="3" fill="${C.green}" opacity="0.8"/>
+    <text x="${PAD.left + 14}" y="${PAD.top - 8}" font-size="8" fill="${C.text}" opacity="0.6">Buy Advantage</text>
+    <rect x="${PAD.left + 100}" y="${PAD.top - 12}" width="10" height="3" fill="${C.red}" opacity="0.8"/>
+    <text x="${PAD.left + 114}" y="${PAD.top - 8}" font-size="8" fill="${C.text}" opacity="0.6">Rent Advantage</text>
+  </svg>`;
+}
+
+/* ── Main HTML builder ── */
+
 function buildHtml(inputs: PdfInputs): string {
   const { result, units, pricePerUnit, timelineYears, annualAppreciation, annualRentGrowth } = inputs;
   const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
@@ -67,6 +153,9 @@ function buildHtml(inputs: PdfInputs): string {
       <td style="padding:6px 8px;text-align:right;font-weight:700;color:${d.advantage >= 0 ? C.green : C.red};">${d.advantage >= 0 ? "+" : ""}${fmtFull(d.advantage)}</td>
     </tr>
   `).join("");
+
+  const cumulativeChart = buildCumulativeChart(result.yearlyData);
+  const advantageChart = buildAdvantageChart(result.yearlyData);
 
   return `<!DOCTYPE html>
 <html>
@@ -146,6 +235,22 @@ function buildHtml(inputs: PdfInputs): string {
         `).join("")}
       </tr>
     </table>
+  </div>
+
+  <!-- Cumulative Cost Chart -->
+  <div style="padding:0 40px 20px;">
+    <div style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:${C.accent};margin-bottom:10px;font-weight:600;">Cumulative Cost Comparison</div>
+    <div style="background:${C.light};padding:16px;border:1px solid ${C.mid};">
+      ${cumulativeChart}
+    </div>
+  </div>
+
+  <!-- Advantage Chart -->
+  <div style="padding:0 40px 24px;">
+    <div style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:${C.accent};margin-bottom:10px;font-weight:600;">Annual Buy vs. Rent Advantage</div>
+    <div style="background:${C.light};padding:16px;border:1px solid ${C.mid};">
+      ${advantageChart}
+    </div>
   </div>
 
   <!-- Year-by-Year Table -->
@@ -253,4 +358,17 @@ export async function downloadPdf(inputs: PdfInputs): Promise<void> {
   } finally {
     cleanup();
   }
+}
+
+export function printReport(inputs: PdfInputs): void {
+  const html = buildHtml(inputs);
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) return;
+  printWindow.document.open();
+  printWindow.document.write(html);
+  printWindow.document.close();
+  printWindow.onload = () => {
+    printWindow.print();
+    printWindow.onafterprint = () => printWindow.close();
+  };
 }

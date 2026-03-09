@@ -28,6 +28,13 @@ export default function CalculatorBar() {
     return () => ro.disconnect();
   }, []);
 
+  async function handlePrint() {
+    const inputs = getCalculatorState();
+    if (!inputs) return;
+    const { printReport } = await import("./pdf/generatePdf");
+    printReport(inputs);
+  }
+
   async function handleDownload() {
     if (downloadState === "loading") return;
     const inputs = getCalculatorState();
@@ -125,7 +132,7 @@ export default function CalculatorBar() {
               </button>
             )}
             <div className="w-px h-4 bg-accent/25" />
-            <button onClick={() => window.print()} className={actionClass}>
+            <button onClick={handlePrint} className={actionClass}>
               Print
             </button>
             <div className="w-px h-4 bg-accent/25" />
