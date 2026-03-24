@@ -3,4 +3,4 @@ Allow: /
 Disallow: /api/
 Disallow: /keystatic/
 
-Sitemap: https://aaboadvisory.com/sitemap-index.xml
+Sitemap: https://aaboadvisory.com/sitemap.xml
