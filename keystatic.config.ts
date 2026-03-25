@@ -1,4 +1,7 @@
 import { config, fields, collection, singleton } from "@keystatic/core";
+import { getTagOptions } from "./src/lib/newsletter-tags";
+
+const tagOptions = getTagOptions();
 
 export default config({
   storage: {
@@ -46,6 +49,70 @@ export default config({
           label: "Publication Link Text",
           description: "Button text (e.g. 'View Interactive Flipbook', 'Read The Diplomat Q1').",
         }),
+        body: fields.markdoc({ label: "Body" }),
+      },
+    }),
+
+    "daily-digests": collection({
+      label: "Daily Digests",
+      slugField: "title",
+      path: "src/content/daily-digests/*",
+      format: { contentField: "body" },
+      entryLayout: "content",
+      previewUrl: "/newsletter/daily/{slug}",
+      columns: ["date", "draft"],
+      schema: {
+        title: fields.slug({ name: { label: "Title" } }),
+        date: fields.date({ label: "Date", validation: { isRequired: true } }),
+        excerpt: fields.text({ label: "Excerpt", multiline: true }),
+        tags: fields.multiselect({
+          label: "Tags",
+          options: tagOptions,
+        }),
+        draft: fields.checkbox({ label: "Draft", defaultValue: true }),
+        body: fields.markdoc({ label: "Body" }),
+      },
+    }),
+
+    "weekly-summaries": collection({
+      label: "Weekly Summaries",
+      slugField: "title",
+      path: "src/content/weekly-summaries/*",
+      format: { contentField: "body" },
+      entryLayout: "content",
+      previewUrl: "/newsletter/weekly/{slug}",
+      columns: ["date", "draft"],
+      schema: {
+        title: fields.slug({ name: { label: "Title" } }),
+        date: fields.date({ label: "Date", validation: { isRequired: true } }),
+        excerpt: fields.text({ label: "Excerpt", multiline: true }),
+        tags: fields.multiselect({
+          label: "Tags",
+          options: tagOptions,
+        }),
+        draft: fields.checkbox({ label: "Draft", defaultValue: true }),
+        body: fields.markdoc({ label: "Body" }),
+      },
+    }),
+
+    "quarterly-reports": collection({
+      label: "Quarterly Reports",
+      slugField: "title",
+      path: "src/content/quarterly-reports/*",
+      format: { contentField: "body" },
+      entryLayout: "content",
+      previewUrl: "/newsletter/quarterly/{slug}",
+      columns: ["quarter", "date", "draft"],
+      schema: {
+        title: fields.slug({ name: { label: "Title" } }),
+        quarter: fields.text({ label: "Quarter", description: "e.g. Q1 2026" }),
+        date: fields.date({ label: "Date", validation: { isRequired: true } }),
+        excerpt: fields.text({ label: "Excerpt", multiline: true }),
+        tags: fields.multiselect({
+          label: "Tags",
+          options: tagOptions,
+        }),
+        draft: fields.checkbox({ label: "Draft", defaultValue: true }),
         body: fields.markdoc({ label: "Body" }),
       },
     }),
@@ -250,6 +317,37 @@ export default config({
         }),
         contactEmail: fields.text({ label: "Contact Email" }),
         location: fields.text({ label: "Location" }),
+      },
+    }),
+
+    newsletterPage: singleton({
+      label: "Newsletter Page",
+      path: "src/content/newsletter-page",
+      format: { data: "json" },
+      schema: {
+        headline: fields.text({ label: "Headline" }),
+        subtext: fields.text({ label: "Subtext" }),
+        dailyDescription: fields.text({ label: "Daily Digest Description", multiline: true }),
+        weeklyDescription: fields.text({ label: "Weekly Summary Description", multiline: true }),
+        quarterlyDescription: fields.text({ label: "Quarterly Reports Description", multiline: true }),
+      },
+    }),
+
+    newsletterTags: singleton({
+      label: "Newsletter Tags",
+      path: "src/content/newsletter-tags",
+      format: { data: "json" },
+      schema: {
+        tags: fields.array(
+          fields.object({
+            label: fields.text({ label: "Label" }),
+            value: fields.text({ label: "Value (slug)" }),
+          }),
+          {
+            label: "Tags",
+            itemLabel: (props) => props.fields.label.value,
+          },
+        ),
       },
     }),
   },

@@ -1,0 +1,12 @@
+{
+  "tags": [
+    { "label": "Renovation & Capital Works", "value": "renovation" },
+    { "label": "Security & Hardening", "value": "security" },
+    { "label": "Procurement & Contracts", "value": "procurement" },
+    { "label": "Lease vs. Own", "value": "lease-vs-own" },
+    { "label": "Market Data", "value": "market-data" },
+    { "label": "Regulatory & Compliance", "value": "regulatory" },
+    { "label": "Sustainability", "value": "sustainability" },
+    { "label": "Portfolio Strategy", "value": "portfolio-strategy" }
+  ]
+}
