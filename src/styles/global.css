@@ -94,3 +94,95 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
 }
+
+/* Shared content body styles — used by articles and newsletters */
+.article-body p:first-of-type::first-letter {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 3rem;
+  float: left;
+  line-height: 0.8;
+  margin-right: 0.75rem;
+  margin-top: 0.25rem;
+  color: var(--color-accent, #B8965A);
+}
+
+.article-body p:first-of-type {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--color-text, #1A1A1A);
+  opacity: 0.85;
+  margin-bottom: 1.75rem;
+}
+
+.article-body p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-text, #1A1A1A);
+  opacity: 0.78;
+  margin-bottom: 1.5rem;
+}
+
+.article-body h1 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-primary, #0F1B2D);
+  margin: 0 0 1.25rem;
+  line-height: 1.25;
+}
+
+.article-body h2 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary, #0F1B2D);
+  margin: 2.5rem 0 1rem;
+  line-height: 1.3;
+}
+
+.article-body h3 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary, #0F1B2D);
+  margin: 2rem 0 0.75rem;
+  line-height: 1.3;
+}
+
+.article-body blockquote {
+  border-left: 2px solid var(--color-accent, #B8965A);
+  padding-left: 1.25rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: var(--color-primary, #0F1B2D);
+}
+
+.article-body ul {
+  margin: 1rem 0 1.5rem;
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.article-body ol {
+  margin: 1rem 0 1.5rem;
+  padding-left: 1.5rem;
+  list-style-type: decimal;
+}
+
+.article-body li {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--color-text, #1A1A1A);
+  opacity: 0.78;
+  margin-bottom: 0.5rem;
+}
+
+.article-body a {
+  color: var(--color-accent, #B8965A);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.article-body a:hover {
+  opacity: 0.8;
+}
