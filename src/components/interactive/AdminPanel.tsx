@@ -172,7 +172,7 @@ export default function AdminPanel({ newsletters }: { newsletters: NewsletterIte
                         <button
                           onClick={() => handleSend(item)}
                           disabled={state.sending}
-                          className="text-sm font-medium px-4 py-1.5 rounded-lg bg-brand text-white hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="text-sm font-medium px-4 py-1.5 bg-accent text-primary hover:bg-accent-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {state.sending ? "Sending..." : "Send"}
                         </button>
