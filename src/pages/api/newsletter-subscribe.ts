@@ -58,7 +58,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       attributes: {
         NEWSLETTER_SUBSCRIBER: "true",
         NEWSLETTER_TOKEN: token,
-        NEWSLETTER_INTERESTS: JSON.stringify(interests ?? []),
+        NEWSLETTER_INTERESTS: (interests ?? []).join(","),
       },
     });
 
