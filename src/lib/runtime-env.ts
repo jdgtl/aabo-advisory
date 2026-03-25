@@ -14,6 +14,21 @@ export interface RuntimeEnv {
   BREVO_SENDER_EMAIL?: string;
   BREVO_SENDER_NAME?: string;
   PLAUSIBLE_DOMAIN?: string;
+
+  // Newsletter Brevo lists
+  BREVO_LIST_DAILY?: string;
+  BREVO_LIST_WEEKLY?: string;
+  BREVO_LIST_QUARTERLY?: string;
+
+  // ClickUp integration
+  CLICKUP_API_TOKEN?: string;
+  CLICKUP_CHANNEL_ID?: string;
+
+  // GitHub integration
+  GITHUB_TOKEN?: string;
+
+  // Ingest webhook
+  INGEST_WEBHOOK_SECRET?: string;
 }
 
 export function getRuntimeEnv(locals: Record<string, unknown>): RuntimeEnv {
