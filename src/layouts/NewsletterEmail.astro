@@ -6,6 +6,11 @@ interface Props {
 }
 
 const { title, typeLabel, date } = Astro.props;
+
+// Brevo template variables — must survive as literal strings in the output HTML.
+// Wrapping in a JS variable prevents Astro/esbuild from trying to evaluate them.
+const brevoToken = "{{ params.NEWSLETTER_TOKEN }}";
+const brevoUnsubscribe = "{{ unsubscribe }}";
 ---
 
 <!DOCTYPE html>
@@ -39,8 +44,8 @@ const { title, typeLabel, date } = Astro.props;
             <td style="padding:24px 32px;background:#1a2a3a;color:#ffffff;font-size:12px;line-height:1.6;">
               <p style="margin:0 0 12px;">AABO Advisory — Diplomatic Property Intelligence</p>
               <p style="margin:0 0 12px;">
-                <a href="https://aaboadvisory.com/newsletter/preferences?token={{ params.NEWSLETTER_TOKEN }}" style="color:#8b7d6b;">Manage your preferences</a> |
-                {{ unsubscribe }}
+                <a href={`https://aaboadvisory.com/newsletter/preferences?token=${brevoToken}`} style="color:#8b7d6b;">Manage your preferences</a> |
+                <Fragment set:html={brevoUnsubscribe} />
               </p>
               <p style="margin:0;color:#666;">New York, NY</p>
             </td>
