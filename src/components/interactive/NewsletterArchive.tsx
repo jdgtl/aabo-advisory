@@ -51,10 +51,10 @@ export default function NewsletterArchive({ newsletters, tags }: Props) {
     const token = params.get("token");
     if (!token) return;
     fetch(`/api/newsletter-preferences?token=${encodeURIComponent(token)}`)
-      .then((res) => (res.ok ? res.json() : null))
+      .then((res) => (res.ok ? (res.json() as Promise<{ interests?: string[] }>) : null))
       .then((data) => {
-        if (data?.tags && Array.isArray(data.tags)) {
-          setActiveTags(data.tags);
+        if (data?.interests && Array.isArray(data.interests)) {
+          setActiveTags(data.interests);
         }
       })
       .catch(() => {});

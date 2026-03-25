@@ -26,7 +26,8 @@ async function readCollection(
       const entry = await reader.collections[collectionName].read(slug, { resolveLinkedFiles: true });
       if (!entry || entry.draft) return null;
 
-      const content = await entry.body;
+      const rawBody = entry.body;
+      const content = typeof rawBody === "function" ? await rawBody() : rawBody;
       const html = Markdoc.renderers.html(Markdoc.transform(content.node));
 
       return {
