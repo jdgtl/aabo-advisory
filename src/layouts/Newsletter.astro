@@ -1,0 +1,58 @@
+---
+import Base from "@/layouts/Base.astro";
+import Nav from "@/components/sections/Nav.astro";
+import Footer from "@/components/sections/Footer.astro";
+import RevealWrapper from "@/components/ui/RevealWrapper";
+import LineReveal from "@/components/ui/LineReveal.astro";
+
+interface Props {
+  title: string;
+  type: "daily" | "weekly" | "quarterly";
+  typeLabel: string;
+  date: string;
+  readTime: string;
+  tags: readonly string[];
+  excerpt: string;
+}
+
+const { title, type, typeLabel, date, readTime, tags, excerpt } = Astro.props;
+---
+
+<Base title={`${title} — AABO Advisory`} description={excerpt}>
+  <Nav />
+  <main id="main-content" class="bg-canvas min-h-screen">
+    <div class="px-6 md:px-12 lg:px-20 pt-14 lg:pt-[60px] pb-10 lg:pb-12">
+      <div class="max-w-[800px] mx-auto">
+        <RevealWrapper client:visible>
+          <div class="flex items-center gap-3 mb-4">
+            <span class="px-2 py-0.5 border border-accent/30 text-[9px] tracking-[0.12em] uppercase text-accent font-semibold">
+              {typeLabel}
+            </span>
+            <span class="text-[11px] text-warm/50">{date}</span>
+            <span class="text-[11px] text-warm/50">{readTime}</span>
+          </div>
+          <h1 class="font-heading text-[28px] sm:text-[36px] lg:text-[42px] font-bold text-primary leading-[1.15] mb-4">
+            {title}
+          </h1>
+          <LineReveal width={48} class="mb-5" />
+          {tags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mb-6">
+              {tags.map((tag) => (
+                <span class="px-2 py-0.5 bg-light text-[10px] tracking-[0.1em] uppercase text-text/50 font-medium">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </RevealWrapper>
+      </div>
+    </div>
+
+    <div class="px-6 md:px-12 lg:px-20 pb-16 lg:pb-20">
+      <div class="max-w-[800px] mx-auto prose prose-neutral">
+        <slot />
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Base>

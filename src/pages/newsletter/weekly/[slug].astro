@@ -1,0 +1,36 @@
+---
+import Newsletter from "@/layouts/Newsletter.astro";
+import { reader, calcReadTime } from "@/lib/content";
+import { formatFullDate } from "@/lib/date-utils";
+import Markdoc from "@markdoc/markdoc";
+
+export async function getStaticPaths() {
+  const slugs = await reader.collections["weekly-summaries"].list();
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const entry = await reader.collections["weekly-summaries"].read(slug!, {
+  resolveLinkedFiles: true,
+});
+
+if (!entry) {
+  return Astro.redirect("/newsletter");
+}
+
+const content = await entry.body;
+const rendered = Markdoc.renderers.html(Markdoc.transform(content.node));
+const readTime = calcReadTime(rendered.replace(/<[^>]*>/g, ""));
+---
+
+<Newsletter
+  title={entry.title}
+  type="weekly"
+  typeLabel="Weekly Summary"
+  date={formatFullDate(entry.date)}
+  readTime={readTime}
+  tags={entry.tags ?? []}
+  excerpt={entry.excerpt ?? ""}
+>
+  <Fragment set:html={rendered} />
+</Newsletter>
