@@ -81,9 +81,9 @@ export default function NewsletterSubscribe({
         body: JSON.stringify({
           name: form.name,
           email: form.email,
-          types: chosenTypes,
-          tags: selectedTags,
-          turnstile_token: turnstileToken,
+          lists: chosenTypes,
+          interests: selectedTags,
+          turnstileToken,
         }),
       });
       if (!res.ok) throw new Error("Submission failed");
