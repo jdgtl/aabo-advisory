@@ -43,10 +43,18 @@ export default defineConfig({
         const match = item.url.match(/\/insights\/([^/]+)\/?$/);
         if (match && articleDates.has(match[1])) {
           item.lastmod = new Date(articleDates.get(match[1])).toISOString();
-        } else {
-          // Static pages get the build date
-          item.lastmod = new Date().toISOString();
+          return item;
         }
+
+        // Match newsletter URLs (daily, weekly, quarterly)
+        const newsletterMatch = item.url.match(/\/newsletter\/(daily|weekly|quarterly)\/([^/]+)\/?$/);
+        if (newsletterMatch) {
+          item.lastmod = new Date().toISOString();
+          return item;
+        }
+
+        // Static pages get the build date
+        item.lastmod = new Date().toISOString();
         return item;
       },
     }),
