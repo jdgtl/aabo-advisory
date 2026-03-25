@@ -18,8 +18,9 @@ export async function checkRateLimit(
   kv: KVNamespace | undefined,
   ip: string,
   endpoint: string,
+  maxRequests: number = MAX_REQUESTS,
 ): Promise<RateLimitResult> {
-  if (!kv) return { allowed: true, remaining: MAX_REQUESTS };
+  if (!kv) return { allowed: true, remaining: maxRequests };
 
   const key = `rl:${ip}:${endpoint}`;
   const now = Date.now();
@@ -31,7 +32,7 @@ export async function checkRateLimit(
   const windowStart = now - WINDOW_SECONDS * 1000;
   const recent = timestamps.filter((t: number) => t > windowStart);
 
-  if (recent.length >= MAX_REQUESTS) {
+  if (recent.length >= maxRequests) {
     const oldest = recent[0];
     const retryAfter = Math.ceil((oldest + WINDOW_SECONDS * 1000 - now) / 1000);
     return { allowed: false, remaining: 0, retryAfter };
@@ -43,5 +44,5 @@ export async function checkRateLimit(
     expirationTtl: WINDOW_SECONDS,
   });
 
-  return { allowed: true, remaining: MAX_REQUESTS - recent.length };
+  return { allowed: true, remaining: maxRequests - recent.length };
 }
