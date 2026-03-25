@@ -132,6 +132,52 @@ export async function trackEvent(
   return { success: res.ok || res.status === 204 };
 }
 
+export async function addContactToLists(
+  apiKey: string,
+  email: string,
+  listIds: number[],
+): Promise<{ success: boolean }> {
+  if (!apiKey || listIds.length === 0) return { success: true };
+  const res = await fetch(`${BREVO_API}/contacts/${encodeURIComponent(email)}`, {
+    method: "PUT",
+    headers: { "api-key": apiKey, "Content-Type": "application/json" },
+    body: JSON.stringify({ listIds }),
+  });
+  return { success: res.ok || res.status === 204 };
+}
+
+export async function removeContactFromLists(
+  apiKey: string,
+  email: string,
+  listIds: number[],
+): Promise<{ success: boolean }> {
+  if (!apiKey || listIds.length === 0) return { success: true };
+  const results = await Promise.all(
+    listIds.map(async (listId) => {
+      const res = await fetch(`${BREVO_API}/contacts/lists/${listId}/contacts/remove`, {
+        method: "POST",
+        headers: { "api-key": apiKey, "Content-Type": "application/json" },
+        body: JSON.stringify({ emails: [email] }),
+      });
+      return res.ok || res.status === 204;
+    }),
+  );
+  return { success: results.every(Boolean) };
+}
+
+export async function getContact(
+  apiKey: string,
+  email: string,
+): Promise<{ success: boolean; contact?: { listIds: number[]; attributes: Record<string, unknown> } }> {
+  if (!apiKey) return { success: false };
+  const res = await fetch(`${BREVO_API}/contacts/${encodeURIComponent(email)}`, {
+    headers: { "api-key": apiKey },
+  });
+  if (!res.ok) return { success: false };
+  const data = await res.json() as { listIds: number[]; attributes: Record<string, unknown> };
+  return { success: true, contact: data };
+}
+
 export async function sendTransactionalEmail(
   apiKey: string,
   to: string,
