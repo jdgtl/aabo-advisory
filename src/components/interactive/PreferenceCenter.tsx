@@ -47,7 +47,7 @@ export default function PreferenceCenter() {
     fetch(`/api/newsletter-preferences?token=${encodeURIComponent(t)}`)
       .then(async (res) => {
         if (!res.ok) {
-          const body = await res.json().catch(() => ({} as Record<string, string>));
+          const body = (await res.json().catch(() => ({}))) as { error?: string };
           throw new Error(body.error || "Failed to load preferences.");
         }
         return res.json() as Promise<PreferencesData>;
@@ -85,7 +85,7 @@ export default function PreferenceCenter() {
         body: JSON.stringify({ token, lists, interests }),
       });
       if (!res.ok) {
-        const body = await res.json().catch(() => ({} as Record<string, string>));
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(body.error || "Failed to save preferences.");
       }
       setSuccess(true);
@@ -117,7 +117,7 @@ export default function PreferenceCenter() {
         }),
       });
       if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(body.error || "Failed to unsubscribe.");
       }
       setUnsubscribed(true);
