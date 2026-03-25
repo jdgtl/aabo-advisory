@@ -1,0 +1,63 @@
+---
+import Base from "@/layouts/Base.astro";
+import Nav from "@/components/sections/Nav.astro";
+import Footer from "@/components/sections/Footer.astro";
+import RevealWrapper from "@/components/ui/RevealWrapper";
+import LineReveal from "@/components/ui/LineReveal.astro";
+import NewsletterSubscribe from "@/components/interactive/NewsletterSubscribe";
+import NewsletterArchive from "@/components/interactive/NewsletterArchive";
+import { getAllNewsletters, getNewsletterPage } from "@/lib/newsletter";
+import { getNewsletterTags } from "@/lib/newsletter-tags";
+
+const page = await getNewsletterPage();
+const newsletters = await getAllNewsletters();
+const tags = getNewsletterTags();
+---
+
+<Base
+  title={`${page?.headline ?? "Newsletter"} — AABO Advisory`}
+  description={page?.subtext ?? ""}
+>
+  <Nav />
+  <main id="main-content" class="bg-canvas min-h-screen">
+    {/* Header */}
+    <div class="px-6 md:px-12 lg:px-20 pt-14 lg:pt-[60px] pb-10 lg:pb-12">
+      <div class="max-w-[1100px] mx-auto">
+        <RevealWrapper client:visible>
+          <div class="text-[10px] tracking-[0.25em] uppercase text-accent mb-4 font-semibold">
+            {page?.subtext ?? "Diplomatic Housing Intelligence"}
+          </div>
+          <h1 class="font-heading text-[32px] sm:text-[40px] lg:text-[48px] font-bold text-primary leading-[1.12] mb-4">
+            {page?.headline ?? "Newsletter"}
+          </h1>
+          <LineReveal width={48} class="mb-8" />
+        </RevealWrapper>
+      </div>
+    </div>
+
+    {/* Subscribe form */}
+    <div class="px-6 md:px-12 lg:px-20 pb-12">
+      <div class="max-w-[1100px] mx-auto">
+        <NewsletterSubscribe
+          client:load
+          dailyDescription={page?.dailyDescription ?? ""}
+          weeklyDescription={page?.weeklyDescription ?? ""}
+          quarterlyDescription={page?.quarterlyDescription ?? ""}
+          tags={tags}
+        />
+      </div>
+    </div>
+
+    {/* Archive */}
+    <div class="px-6 md:px-12 lg:px-20 pb-16 lg:pb-20">
+      <div class="max-w-[1100px] mx-auto">
+        <NewsletterArchive
+          client:load
+          newsletters={newsletters}
+          tags={tags}
+        />
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Base>
