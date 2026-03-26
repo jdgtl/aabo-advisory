@@ -5,7 +5,7 @@ interface CreateContactParams {
   name: string;
   org?: string;
   listIds?: number[];
-  attributes?: Record<string, string | number>;
+  attributes?: Record<string, string | number | string[]>;
 }
 
 export async function createOrUpdateContact(
@@ -17,7 +17,7 @@ export async function createOrUpdateContact(
   const [firstName, ...rest] = params.name.split(" ");
   const lastName = rest.join(" ");
 
-  const attributes: Record<string, string | number> = {
+  const attributes: Record<string, string | number | string[]> = {
     FIRSTNAME: firstName,
     LASTNAME: lastName,
     COMPANY: params.org ?? "",

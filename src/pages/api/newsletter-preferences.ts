@@ -76,7 +76,9 @@ export const GET: APIRoute = async ({ request, locals }) => {
     // Parse interests from contact attributes (stored as comma-separated string for Brevo multiple-choice)
     let interests: string[] = [];
     const rawInterests = attributes["NEWSLETTER_INTERESTS"];
-    if (typeof rawInterests === "string" && rawInterests) {
+    if (Array.isArray(rawInterests)) {
+      interests = rawInterests as string[];
+    } else if (typeof rawInterests === "string" && rawInterests) {
       interests = rawInterests.split(",").map((s) => s.trim()).filter(Boolean);
     }
 
@@ -180,7 +182,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         email,
         name: fullName,
         attributes: {
-          NEWSLETTER_INTERESTS: interests.join(","),
+          NEWSLETTER_INTERESTS: interests,
         },
       });
     }
