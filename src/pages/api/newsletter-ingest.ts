@@ -55,28 +55,20 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    if (type !== "daily" && type !== "weekly") {
+    if (type !== "weekly") {
       return new Response(
-        JSON.stringify({ error: "type must be 'daily' or 'weekly'" }),
+        JSON.stringify({ error: "type must be 'weekly'" }),
         { status: 400, headers },
       );
     }
 
     // Generate slug
-    let slug: string;
-    if (type === "daily") {
-      slug = date; // e.g. 2026-03-24
-    } else {
-      const year = new Date(`${date}T12:00:00Z`).getUTCFullYear();
-      const week = getISOWeek(date);
-      slug = `${year}-w${String(week).padStart(2, "0")}`; // e.g. 2026-w12
-    }
+    const year = new Date(`${date}T12:00:00Z`).getUTCFullYear();
+    const week = getISOWeek(date);
+    const slug = `${year}-w${String(week).padStart(2, "0")}`; // e.g. 2026-w12
 
     // Determine content directory and file path
-    const dir =
-      type === "daily"
-        ? "src/content/daily-digests"
-        : "src/content/weekly-summaries";
+    const dir = "src/content/weekly-summaries";
     const filePath = `${dir}/${slug}.mdoc`;
 
     const githubToken = env.GITHUB_TOKEN ?? "";

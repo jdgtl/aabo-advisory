@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 interface NewsletterItem {
   slug: string;
-  type: "daily" | "weekly" | "quarterly";
+  type: "weekly" | "quarterly";
   title: string;
   date: string;
   dateFormatted: string;
@@ -13,13 +13,11 @@ interface NewsletterItem {
 }
 
 const TYPE_TO_COLLECTION: Record<string, string> = {
-  daily: "daily-digests",
   weekly: "weekly-summaries",
   quarterly: "quarterly-reports",
 };
 
 const TYPE_LABELS: Record<string, string> = {
-  daily: "Daily Digest",
   weekly: "Weekly Summary",
   quarterly: "Quarterly Reports",
 };
@@ -113,7 +111,7 @@ export default function AdminPanel({ newsletters }: { newsletters: NewsletterIte
     }
   }
 
-  const grouped = (["daily", "weekly", "quarterly"] as const).map((type) => ({
+  const grouped = (["weekly", "quarterly"] as const).map((type) => ({
     type,
     label: TYPE_LABELS[type],
     items: newsletters.filter((n) => n.type === type).sort((a, b) => b.date.localeCompare(a.date)),

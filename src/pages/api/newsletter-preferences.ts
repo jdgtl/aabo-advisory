@@ -65,12 +65,10 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
     const { listIds, attributes } = contactResult.contact;
 
-    const dailyListId = parseInt(env.BREVO_LIST_DAILY ?? "0", 10);
     const weeklyListId = parseInt(env.BREVO_LIST_WEEKLY ?? "0", 10);
     const quarterlyListId = parseInt(env.BREVO_LIST_QUARTERLY ?? "0", 10);
 
     const lists = {
-      daily: dailyListId > 0 && listIds.includes(dailyListId),
       weekly: weeklyListId > 0 && listIds.includes(weeklyListId),
       quarterly: quarterlyListId > 0 && listIds.includes(quarterlyListId),
     };
@@ -124,7 +122,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     const body = (await request.json()) as {
       token?: string;
-      lists?: { daily?: boolean; weekly?: boolean; quarterly?: boolean };
+      lists?: { weekly?: boolean; quarterly?: boolean };
       interests?: string[];
     };
 
@@ -147,7 +145,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Handle list add/remove operations
     if (lists) {
-      const dailyListId = parseInt(env.BREVO_LIST_DAILY ?? "0", 10);
       const weeklyListId = parseInt(env.BREVO_LIST_WEEKLY ?? "0", 10);
       const quarterlyListId = parseInt(env.BREVO_LIST_QUARTERLY ?? "0", 10);
 
@@ -155,7 +152,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       const toRemove: number[] = [];
 
       const listMap: Array<{ id: number; enabled: boolean | undefined }> = [
-        { id: dailyListId, enabled: lists.daily },
         { id: weeklyListId, enabled: lists.weekly },
         { id: quarterlyListId, enabled: lists.quarterly },
       ];

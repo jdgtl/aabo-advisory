@@ -7,28 +7,24 @@ interface NewsletterTag {
 }
 
 interface Props {
-  dailyDescription: string;
   weeklyDescription: string;
   quarterlyDescription: string;
   tags: NewsletterTag[];
 }
 
 const NEWSLETTER_TYPES = [
-  { key: "daily", label: "Daily Digest" },
   { key: "weekly", label: "Weekly Summary" },
   { key: "quarterly", label: "Quarterly Report" },
 ] as const;
 
 export default function NewsletterSubscribe({
-  dailyDescription,
   weeklyDescription,
   quarterlyDescription,
   tags,
 }: Props) {
   const [form, setForm] = useState({ name: "", email: "" });
   const [types, setTypes] = useState<Record<string, boolean>>({
-    daily: true,
-    weekly: false,
+    weekly: true,
     quarterly: false,
   });
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -39,7 +35,6 @@ export default function NewsletterSubscribe({
   const onTurnstileToken = useCallback((t: string) => setTurnstileToken(t), []);
 
   const descriptions: Record<string, string> = {
-    daily: dailyDescription,
     weekly: weeklyDescription,
     quarterly: quarterlyDescription,
   };

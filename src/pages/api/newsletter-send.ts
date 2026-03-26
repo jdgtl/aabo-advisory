@@ -5,7 +5,6 @@ import { getRuntimeEnv } from "@/lib/runtime-env";
 const BREVO_API = "https://api.brevo.com/v3";
 
 const COLLECTION_TO_TYPE: Record<string, string> = {
-  "daily-digests": "daily",
   "weekly-summaries": "weekly",
   "quarterly-reports": "quarterly",
 };
@@ -57,7 +56,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Map collection to Brevo list ID
     const listMap: Record<string, string | undefined> = {
-      "daily-digests": env.BREVO_LIST_DAILY,
       "weekly-summaries": env.BREVO_LIST_WEEKLY,
       "quarterly-reports": env.BREVO_LIST_QUARTERLY,
     };

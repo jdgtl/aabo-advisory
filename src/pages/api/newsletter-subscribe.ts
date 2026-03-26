@@ -63,7 +63,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
 
     const listMap: Record<string, string | undefined> = {
-      daily: env.BREVO_LIST_DAILY,
       weekly: env.BREVO_LIST_WEEKLY,
       quarterly: env.BREVO_LIST_QUARTERLY,
     };

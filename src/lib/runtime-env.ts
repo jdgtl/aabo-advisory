@@ -16,7 +16,6 @@ export interface RuntimeEnv {
   PLAUSIBLE_DOMAIN?: string;
 
   // Newsletter Brevo lists
-  BREVO_LIST_DAILY?: string;
   BREVO_LIST_WEEKLY?: string;
   BREVO_LIST_QUARTERLY?: string;
 

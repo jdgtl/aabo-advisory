@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 interface NewsletterItem {
   slug: string;
-  type: "daily" | "weekly" | "quarterly";
+  type: "weekly" | "quarterly";
   title: string;
   date: string;
   dateFormatted: string;
@@ -24,19 +24,16 @@ interface Props {
 
 const TYPE_FILTERS = [
   { slug: "all", label: "All" },
-  { slug: "daily", label: "Daily Digest" },
   { slug: "weekly", label: "Weekly Summary" },
   { slug: "quarterly", label: "Quarterly Report" },
 ] as const;
 
 const TYPE_LABELS: Record<string, string> = {
-  daily: "Daily",
   weekly: "Weekly",
   quarterly: "Quarterly",
 };
 
 const TYPE_PATHS: Record<string, string> = {
-  daily: "daily",
   weekly: "weekly",
   quarterly: "quarterly",
 };

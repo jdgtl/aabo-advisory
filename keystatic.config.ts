@@ -53,27 +53,6 @@ export default config({
       },
     }),
 
-    "daily-digests": collection({
-      label: "Daily Digests",
-      slugField: "title",
-      path: "src/content/daily-digests/*",
-      format: { contentField: "body" },
-      entryLayout: "content",
-      previewUrl: "/newsletter/daily/{slug}",
-      columns: ["date", "draft"],
-      schema: {
-        title: fields.slug({ name: { label: "Title" } }),
-        date: fields.date({ label: "Date", validation: { isRequired: true } }),
-        excerpt: fields.text({ label: "Excerpt", multiline: true }),
-        tags: fields.multiselect({
-          label: "Tags",
-          options: tagOptions,
-        }),
-        draft: fields.checkbox({ label: "Draft", defaultValue: true }),
-        body: fields.markdoc({ label: "Body" }),
-      },
-    }),
-
     "weekly-summaries": collection({
       label: "Weekly Summaries",
       slugField: "title",
@@ -327,7 +306,6 @@ export default config({
       schema: {
         headline: fields.text({ label: "Headline" }),
         subtext: fields.text({ label: "Subtext" }),
-        dailyDescription: fields.text({ label: "Daily Digest Description", multiline: true }),
         weeklyDescription: fields.text({ label: "Weekly Summary Description", multiline: true }),
         quarterlyDescription: fields.text({ label: "Quarterly Reports Description", multiline: true }),
       },

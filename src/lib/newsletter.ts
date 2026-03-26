@@ -2,7 +2,7 @@ import { reader, calcReadTime } from "./content";
 import { formatFullDate } from "./date-utils";
 import Markdoc from "@markdoc/markdoc";
 
-export type NewsletterType = "daily" | "weekly" | "quarterly";
+export type NewsletterType = "weekly" | "quarterly";
 
 export interface NewsletterItem {
   slug: string;
@@ -17,7 +17,7 @@ export interface NewsletterItem {
 }
 
 async function readCollection(
-  collectionName: "daily-digests" | "weekly-summaries" | "quarterly-reports",
+  collectionName: "weekly-summaries" | "quarterly-reports",
   type: NewsletterType,
 ): Promise<NewsletterItem[]> {
   const slugs = await reader.collections[collectionName].list();
@@ -47,18 +47,13 @@ async function readCollection(
 }
 
 export async function getAllNewsletters(): Promise<NewsletterItem[]> {
-  const [daily, weekly, quarterly] = await Promise.all([
-    readCollection("daily-digests", "daily"),
+  const [weekly, quarterly] = await Promise.all([
     readCollection("weekly-summaries", "weekly"),
     readCollection("quarterly-reports", "quarterly"),
   ]);
-  return [...daily, ...weekly, ...quarterly].sort(
+  return [...weekly, ...quarterly].sort(
     (a, b) => b.date.localeCompare(a.date),
   );
-}
-
-export async function getDailyDigests() {
-  return readCollection("daily-digests", "daily");
 }
 
 export async function getWeeklySummaries() {

@@ -7,13 +7,12 @@ interface NewsletterTag {
 
 interface PreferencesData {
   email: string;
-  lists: { daily: boolean; weekly: boolean; quarterly: boolean };
+  lists: { weekly: boolean; quarterly: boolean };
   interests: string[];
   availableTags: NewsletterTag[];
 }
 
 const NEWSLETTER_TYPES = [
-  { key: "daily", label: "Daily Digest" },
   { key: "weekly", label: "Weekly Summary" },
   { key: "quarterly", label: "Quarterly Report" },
 ] as const;
@@ -29,7 +28,6 @@ export default function PreferenceCenter() {
 
   // Local editable state
   const [lists, setLists] = useState<Record<string, boolean>>({
-    daily: false,
     weekly: false,
     quarterly: false,
   });
@@ -55,7 +53,6 @@ export default function PreferenceCenter() {
       .then((json) => {
         setData(json);
         setLists({
-          daily: json.lists.daily ?? false,
           weekly: json.lists.weekly ?? false,
           quarterly: json.lists.quarterly ?? false,
         });
@@ -112,7 +109,7 @@ export default function PreferenceCenter() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           token,
-          lists: { daily: false, weekly: false, quarterly: false },
+          lists: { weekly: false, quarterly: false },
           interests: [],
         }),
       });
