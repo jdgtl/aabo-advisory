@@ -1,20 +1,30 @@
 ---
 export const prerender = false;
 
-import Base from "@/layouts/Base.astro";
-import Nav from "@/components/sections/Nav.astro";
-import Footer from "@/components/sections/Footer.astro";
 import PreferenceCenter from "@/components/interactive/PreferenceCenter";
 ---
 
-<Base title="Newsletter Preferences — AABO Advisory" description="Manage your newsletter subscriptions">
-  <Nav />
-  <main id="main-content" class="bg-canvas min-h-screen">
-    <div class="px-6 md:px-12 lg:px-20 pt-14 lg:pt-[60px] pb-16 lg:pb-20">
-      <div class="max-w-[600px] mx-auto">
-        <PreferenceCenter client:load />
-      </div>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Newsletter Preferences — AABO Advisory</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/fonts/dm-sans-v17-latin-regular.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body class="bg-canvas text-text font-body antialiased">
+  <header class="bg-primary px-6 md:px-12 py-5">
+    <a href="/">
+      <img src="/logo.svg" alt="AABO Advisory" class="h-[36px] w-auto" />
+    </a>
+  </header>
+  <main class="min-h-screen px-6 md:px-12 lg:px-20 pt-14 lg:pt-[60px] pb-16 lg:pb-20">
+    <div class="max-w-[600px] mx-auto">
+      <PreferenceCenter client:load />
     </div>
   </main>
-  <Footer />
-</Base>
+  <footer class="bg-primary px-6 md:px-12 py-8 text-center">
+    <p class="text-[11px] text-warm/25">&copy; {new Date().getFullYear()} Aabo Advisory</p>
+  </footer>
+</body>
+</html>
