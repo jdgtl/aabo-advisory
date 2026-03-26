@@ -1,6 +1,6 @@
 export const prerender = false;
 import type { APIRoute } from "astro";
-import { createOrUpdateContact, addContactToLists, trackEvent, sendHtmlEmail } from "@/lib/brevo";
+import { createOrUpdateContact, addContactToLists, trackEvent, sendTransactionalEmail } from "@/lib/brevo";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getRuntimeEnv } from "@/lib/runtime-env";
@@ -83,15 +83,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       interests: (interests ?? []).join(","),
     });
 
-    const siteUrl = "https://aaboadvisory.com";
-    const preferencesUrl = `${siteUrl}/newsletter/preferences?token=${token}`;
-    await sendHtmlEmail(brevoKey, {
-      to: email,
-      toName: name,
-      senderEmail: env.BREVO_SENDER_EMAIL ?? "insights@aaboadvisory.com",
-      senderName: env.BREVO_SENDER_NAME ?? "Aabo Insights",
-      subject: "Welcome to the AABO Advisory Newsletter",
-      htmlContent: `<p>Thank you for subscribing. You can manage your preferences anytime: <a href="${preferencesUrl}">Manage preferences</a></p>`,
+    // Send welcome email via Brevo transactional template (ID: 2)
+    await sendTransactionalEmail(brevoKey, email, 2, {
+      FIRSTNAME: name.split(" ")[0],
+      NEWSLETTER_TOKEN: token,
     });
 
     return new Response(JSON.stringify({ success: true }), { status: 200, headers });
