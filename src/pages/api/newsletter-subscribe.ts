@@ -88,8 +88,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     await sendHtmlEmail(brevoKey, {
       to: email,
       toName: name,
-      senderEmail: env.BREVO_SENDER_EMAIL ?? "newsletter@aaboadvisory.com",
-      senderName: env.BREVO_SENDER_NAME ?? "AABO Advisory",
+      senderEmail: env.BREVO_SENDER_EMAIL ?? "insights@aaboadvisory.com",
+      senderName: env.BREVO_SENDER_NAME ?? "Aabo Insights",
       subject: "Welcome to the AABO Advisory Newsletter",
       htmlContent: `<p>Thank you for subscribing. You can manage your preferences anytime: <a href="${preferencesUrl}">Manage preferences</a></p>`,
     });
