@@ -3,6 +3,7 @@ import type { APIRoute } from "astro";
 import { getRuntimeEnv } from "@/lib/runtime-env";
 import { getNewsletterTags } from "@/lib/newsletter-tags";
 import { fileExists, createFile } from "@/lib/github";
+import { quillDeltaToMarkdown } from "@/lib/quill-to-markdown";
 
 /** Get ISO week number from a date string (YYYY-MM-DD). */
 function getISOWeek(dateStr: string): number {
@@ -27,45 +28,148 @@ function suggestTags(content: string): string[] {
   return matched;
 }
 
+const MONTHS: Record<string, number> = {
+  january: 0, february: 1, march: 2, april: 3, may: 4, june: 5,
+  july: 6, august: 7, september: 8, october: 9, november: 10, december: 11,
+};
+
+/**
+ * Extract a date from a task title like "Weekly Summary — Week of March 23–29, 2026".
+ * Returns the end date as YYYY-MM-DD, or null if unparseable.
+ */
+function extractDateFromTitle(title: string): string | null {
+  // Match patterns like "March 23–29, 2026" or "March 23-29, 2026"
+  const rangeMatch = title.match(
+    /(\w+)\s+\d{1,2}\s*[–\-]\s*(\d{1,2}),?\s*(\d{4})/,
+  );
+  if (rangeMatch) {
+    const monthName = rangeMatch[1].toLowerCase();
+    const endDay = parseInt(rangeMatch[2], 10);
+    const year = parseInt(rangeMatch[3], 10);
+    const monthIndex = MONTHS[monthName];
+    if (monthIndex !== undefined) {
+      const mm = String(monthIndex + 1).padStart(2, "0");
+      const dd = String(endDay).padStart(2, "0");
+      return `${year}-${mm}-${dd}`;
+    }
+  }
+
+  // Match single date like "March 29, 2026"
+  const singleMatch = title.match(/(\w+)\s+(\d{1,2}),?\s*(\d{4})/);
+  if (singleMatch) {
+    const monthName = singleMatch[1].toLowerCase();
+    const day = parseInt(singleMatch[2], 10);
+    const year = parseInt(singleMatch[3], 10);
+    const monthIndex = MONTHS[monthName];
+    if (monthIndex !== undefined) {
+      const mm = String(monthIndex + 1).padStart(2, "0");
+      const dd = String(day).padStart(2, "0");
+      return `${year}-${mm}-${dd}`;
+    }
+  }
+
+  return null;
+}
+
+/** Format today as YYYY-MM-DD. */
+function todayISO(): string {
+  const d = new Date();
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(d.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${dd}`;
+}
+
 export const POST: APIRoute = async ({ request, locals }) => {
   const headers = { "Content-Type": "application/json" };
 
   try {
     const env = getRuntimeEnv(locals as Record<string, unknown>);
 
-    // Webhook secret verification
-    const secret = request.headers.get("X-Webhook-Secret");
+    // Auth: accept X-Webhook-Secret header or ?secret= query param
+    const headerSecret = request.headers.get("X-Webhook-Secret");
+    const url = new URL(request.url);
+    const querySecret = url.searchParams.get("secret");
+    const secret = headerSecret || querySecret;
+
     if (!secret || secret !== env.INGEST_WEBHOOK_SECRET) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers });
     }
 
-    const body = await request.json() as {
-      type?: string;
-      title?: string;
-      date?: string;
-      content?: string;
-    };
+    const body = await request.json() as Record<string, unknown>;
 
-    const { type, title, date, content } = body;
+    // Determine mode: ClickUp webhook (has task_id) vs direct content
+    const taskId = body.task_id as string | undefined;
 
-    if (!type || !title || !date || !content) {
-      return new Response(
-        JSON.stringify({ error: "type, title, date, and content are required" }),
-        { status: 400, headers },
-      );
-    }
+    let type = "weekly";
+    let title: string;
+    let date: string;
+    let content: string;
 
-    if (type !== "weekly") {
-      return new Response(
-        JSON.stringify({ error: "type must be 'weekly'" }),
-        { status: 400, headers },
-      );
+    if (taskId) {
+      // --- Mode 1: ClickUp webhook ---
+      const clickupToken = env.CLICKUP_API_TOKEN ?? "";
+      if (!clickupToken) {
+        return new Response(
+          JSON.stringify({ error: "CLICKUP_API_TOKEN not configured" }),
+          { status: 500, headers },
+        );
+      }
+
+      const taskRes = await fetch(`https://api.clickup.com/api/v2/task/${taskId}`, {
+        headers: { Authorization: clickupToken },
+      });
+
+      if (!taskRes.ok) {
+        return new Response(
+          JSON.stringify({ error: `ClickUp API error: ${taskRes.status}` }),
+          { status: 502, headers },
+        );
+      }
+
+      const task = (await taskRes.json()) as {
+        name: string;
+        description: string;
+        status: { status: string };
+      };
+
+      // Only process tasks that are "ready to publish"
+      if (task.status.status.toLowerCase() !== "ready to publish") {
+        return new Response(
+          JSON.stringify({ skipped: true, reason: `Status is "${task.status.status}", not "ready to publish"` }),
+          { status: 200, headers },
+        );
+      }
+
+      title = task.name;
+      date = extractDateFromTitle(title) ?? todayISO();
+      content = quillDeltaToMarkdown(task.description);
+    } else {
+      // --- Mode 2: Direct content (fallback / testing) ---
+      type = (body.type as string) ?? "";
+      title = (body.title as string) ?? "";
+      date = (body.date as string) ?? "";
+      content = (body.content as string) ?? "";
+
+      if (!type || !title || !date || !content) {
+        return new Response(
+          JSON.stringify({ error: "type, title, date, and content are required" }),
+          { status: 400, headers },
+        );
+      }
+
+      if (type !== "weekly") {
+        return new Response(
+          JSON.stringify({ error: "type must be 'weekly'" }),
+          { status: 400, headers },
+        );
+      }
     }
 
     // Generate slug
     const year = new Date(`${date}T12:00:00Z`).getUTCFullYear();
     const week = getISOWeek(date);
-    const slug = `${year}-w${String(week).padStart(2, "0")}`; // e.g. 2026-w12
+    const slug = `${year}-w${String(week).padStart(2, "0")}`;
 
     // Determine content directory and file path
     const dir = "src/content/weekly-summaries";
