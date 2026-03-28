@@ -7,7 +7,7 @@ export async function fileExists(
   branch = "main",
 ): Promise<boolean> {
   const res = await fetch(`${GITHUB_API}/repos/${REPO}/contents/${path}?ref=${branch}`, {
-    headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github.v3+json" },
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github.v3+json", "User-Agent": "aabo-advisory" },
   });
   return res.ok;
 }
@@ -32,6 +32,7 @@ export async function createFile(
       Authorization: `Bearer ${token}`,
       Accept: "application/vnd.github.v3+json",
       "Content-Type": "application/json",
+      "User-Agent": "aabo-advisory",
     },
     body: JSON.stringify({ message, content: encoded, branch }),
   });
