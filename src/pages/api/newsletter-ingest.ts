@@ -98,8 +98,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     const body = await request.json() as Record<string, unknown>;
 
+    // Handle ClickUp webhook test pings
+    if (body.event === "test" || (!body.task_id && !body.type)) {
+      return new Response(JSON.stringify({ ok: true, message: "Webhook connected" }), { status: 200, headers });
+    }
+
     // Determine mode: ClickUp webhook (has task_id) vs direct content
-    const taskId = body.task_id as string | undefined;
+    // Read task_id from body, URL query param, or nested ClickUp payload
+    const payload = body.payload as Record<string, unknown> | undefined;
+    const taskId = (body.task_id ?? url.searchParams.get("task_id") ?? payload?.id) as string | undefined;
 
     let type = "weekly";
     let title: string;
