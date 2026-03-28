@@ -19,7 +19,13 @@ export async function createFile(
   message: string,
   branch = "main",
 ): Promise<{ success: boolean }> {
-  const encoded = btoa(String.fromCharCode(...new TextEncoder().encode(content)));
+  // Base64 encode — chunked to avoid stack overflow on large content
+  const bytes = new TextEncoder().encode(content);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  const encoded = btoa(binary);
   const res = await fetch(`${GITHUB_API}/repos/${REPO}/contents/${path}`, {
     method: "PUT",
     headers: {
@@ -29,5 +35,9 @@ export async function createFile(
     },
     body: JSON.stringify({ message, content: encoded, branch }),
   });
+  if (!res.ok && res.status !== 201) {
+    const errBody = await res.text().catch(() => "");
+    console.error(`GitHub createFile ${res.status}: ${errBody}`);
+  }
   return { success: res.ok || res.status === 201 };
 }
