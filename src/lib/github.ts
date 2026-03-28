@@ -18,7 +18,7 @@ export async function createFile(
   content: string,
   message: string,
   branch = "main",
-): Promise<{ success: boolean }> {
+): Promise<{ success: boolean; error?: string }> {
   // Base64 encode — chunked to avoid stack overflow on large content
   const bytes = new TextEncoder().encode(content);
   let binary = "";
@@ -38,6 +38,7 @@ export async function createFile(
   if (!res.ok && res.status !== 201) {
     const errBody = await res.text().catch(() => "");
     console.error(`GitHub createFile ${res.status}: ${errBody}`);
+    return { success: false, error: `GitHub ${res.status}: ${errBody.slice(0, 200)}` };
   }
-  return { success: res.ok || res.status === 201 };
+  return { success: true };
 }

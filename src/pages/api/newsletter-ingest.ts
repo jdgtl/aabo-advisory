@@ -229,9 +229,9 @@ ${content}
     const result = await createFile(githubToken, filePath, fileContent, commitMessage);
 
     if (!result.success) {
-      console.error("GitHub createFile failed for", filePath);
+      console.error("GitHub createFile failed for", filePath, result.error);
       return new Response(
-        JSON.stringify({ error: "Failed to commit file to GitHub" }),
+        JSON.stringify({ error: "Failed to commit file to GitHub", detail: result.error }),
         { status: 500, headers },
       );
     }
