@@ -60,16 +60,16 @@ export default config({
       format: { contentField: "body" },
       entryLayout: "content",
       previewUrl: "/newsletter/weekly/{slug}",
-      columns: ["date", "draft"],
+      columns: ["tags", "date", "draft"],
       schema: {
         title: fields.slug({ name: { label: "Title" } }),
+        draft: fields.checkbox({ label: "Draft", description: "Hidden from listings. Preview via /newsletter/weekly/{slug}", defaultValue: true }),
         date: fields.date({ label: "Date", validation: { isRequired: true } }),
         excerpt: fields.text({ label: "Excerpt", multiline: true }),
         tags: fields.multiselect({
           label: "Tags",
           options: tagOptions,
         }),
-        draft: fields.checkbox({ label: "Draft", defaultValue: true }),
         body: fields.markdoc({ label: "Body" }),
       },
     }),
