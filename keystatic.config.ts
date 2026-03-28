@@ -60,7 +60,7 @@ export default config({
       format: { contentField: "body" },
       entryLayout: "content",
       previewUrl: "/newsletter/weekly/{slug}",
-      columns: ["tags", "date", "draft"],
+      columns: ["date", "draft"],
       schema: {
         title: fields.slug({ name: { label: "Title" } }),
         draft: fields.checkbox({ label: "Draft", description: "Hidden from listings. Preview via /newsletter/weekly/{slug}", defaultValue: true }),
