@@ -6,7 +6,6 @@ const tagOptions = getTagOptions();
 export default config({
   storage: {
     kind: "cloud",
-    branchPrefix: "x-never/",
   },
   cloud: {
     project: "sauce-creative/aabo-advisory",
