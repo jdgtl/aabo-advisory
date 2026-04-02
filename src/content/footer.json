@@ -9,6 +9,10 @@
     {
       "label": "News",
       "href": "/newsletter"
+    },
+    {
+      "label": "Client Portal",
+      "href": "/client"
     }
   ],
   "navLinks": [
