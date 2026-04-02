@@ -2,6 +2,7 @@
 import Label from "@/components/ui/Label.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper";
 import { getHomepage } from "@/lib/content";
+import { renderLinks } from "@/lib/markdown-links";
 
 const hp = await getHomepage();
 const about = hp?.about;
@@ -32,7 +33,7 @@ const paragraphs = about?.paragraphs ?? [
             "text-sm lg:text-base leading-[1.85] text-text/80",
             i < paragraphs.length - 1 ? "mb-5" : "",
           ]}>
-            {para}
+            <Fragment set:html={renderLinks(para)} />
           </p>
         </RevealWrapper>
       ))}

@@ -2,6 +2,7 @@
 import LineReveal from "@/components/ui/LineReveal.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper";
 import { getHomepage } from "@/lib/content";
+import { renderLinks } from "@/lib/markdown-links";
 
 const hp = await getHomepage();
 const hero = hp?.hero;
@@ -39,13 +40,13 @@ const headlineParts = headline.split("\n");
 
     <RevealWrapper client:visible delay={0.1}>
       <p class="text-base sm:text-lg lg:text-[19px] leading-[1.65] text-warm max-w-[560px] mb-5">
-        {subtext}
+        <Fragment set:html={renderLinks(subtext)} />
       </p>
     </RevealWrapper>
 
     <RevealWrapper client:visible delay={0.2}>
       <p class="text-sm lg:text-base leading-[1.75] text-text/70 max-w-[540px] mb-12">
-        {description}
+        <Fragment set:html={renderLinks(description)} />
       </p>
     </RevealWrapper>
 

@@ -1,5 +1,6 @@
 ---
 import { getFooter, getSiteSettings } from "@/lib/content";
+import { renderLinks } from "@/lib/markdown-links";
 
 const footerData = await getFooter();
 const settings = await getSiteSettings();
@@ -8,7 +9,12 @@ const tagline = footerData?.tagline ?? "Sovereign-grade real estate advisory for
 const motto = footerData?.motto ?? "Discretion · Precision · Stewardship";
 const location = settings?.location ?? "New York, NY";
 
-const navLinks = [
+const toolLinks = footerData?.toolLinks?.length ? footerData.toolLinks : [
+  { href: "/calculator", label: "Portfolio Calculator" },
+  { href: "/newsletter", label: "News" },
+];
+
+const navLinks = footerData?.navLinks?.length ? footerData.navLinks : [
   { href: "/#about", label: "About" },
   { href: "/#approach", label: "Approach" },
   { href: "/#services", label: "Advisory" },
@@ -16,15 +22,10 @@ const navLinks = [
   { href: "/client", label: "Client Portal" },
 ];
 
-const connectLinks = [
-  { href: "https://x.com/aaboadvisory", label: "X", external: true },
-  { href: "https://www.linkedin.com/company/aabo-advisory/", label: "LinkedIn", external: true },
-  { href: "https://www.instagram.com/aaboadvisory/", label: "Instagram", external: true },
-];
-
-const toolLinks = [
-  { href: "/calculator", label: "Portfolio Calculator" },
-  { href: "/newsletter", label: "News" },
+const connectLinks = footerData?.connectLinks?.length ? footerData.connectLinks : [
+  { href: "https://x.com/aaboadvisory", label: "X" },
+  { href: "https://www.linkedin.com/company/aabo-advisory/", label: "LinkedIn" },
+  { href: "https://www.instagram.com/aaboadvisory/", label: "Instagram" },
 ];
 
 const year = new Date().getFullYear();
@@ -38,7 +39,7 @@ const year = new Date().getFullYear();
         <img src="/logo.svg" alt="AABO Advisory" class="h-[42px] w-auto" />
       </div>
       <p class="text-xs text-warm/35 leading-relaxed max-w-[280px] mb-5">
-        {tagline}
+        <Fragment set:html={renderLinks(tagline)} />
       </p>
       <a
         href="/#contact"
@@ -85,8 +86,7 @@ const year = new Date().getFullYear();
         {connectLinks.map((link) => (
           <a
             href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
+            {...(link.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
             class="text-[13px] text-canvas/50 font-body transition-colors hover:text-accent"
           >
             {link.label}

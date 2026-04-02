@@ -1,6 +1,7 @@
 ---
 import Label from "@/components/ui/Label.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper";
+import { renderLinks } from "@/lib/markdown-links";
 
 interface FAQItem {
   question: string;
@@ -43,7 +44,7 @@ const { label = "Frequently Asked Questions", headline = "Common Questions", faq
             </button>
             <div class="overflow-hidden transition-[max-height] duration-300 ease-[cubic-bezier(.4,0,.2,1)] max-h-0" data-faq-content>
               <div class="pb-5 pr-8 text-sm leading-[1.85] text-text/75">
-                {faq.answer}
+                <Fragment set:html={renderLinks(faq.answer)} />
               </div>
             </div>
           </div>

@@ -280,6 +280,36 @@ export default config({
       schema: {
         tagline: fields.text({ label: "Tagline" }),
         motto: fields.text({ label: "Motto" }),
+        toolLinks: fields.array(
+          fields.object({
+            label: fields.text({ label: "Text" }),
+            href: fields.text({ label: "Link" }),
+          }),
+          {
+            label: "Tools Links",
+            itemLabel: (props) => props.fields.label.value,
+          },
+        ),
+        navLinks: fields.array(
+          fields.object({
+            label: fields.text({ label: "Text" }),
+            href: fields.text({ label: "Link" }),
+          }),
+          {
+            label: "Navigate Links",
+            itemLabel: (props) => props.fields.label.value,
+          },
+        ),
+        connectLinks: fields.array(
+          fields.object({
+            label: fields.text({ label: "Text" }),
+            href: fields.text({ label: "Link" }),
+          }),
+          {
+            label: "Connect Links",
+            itemLabel: (props) => props.fields.label.value,
+          },
+        ),
       },
     }),
 

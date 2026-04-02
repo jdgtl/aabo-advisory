@@ -6,6 +6,7 @@ import FAQ from "@/components/sections/FAQ.astro";
 import CalculatorIsland from "@/components/calculator/CalculatorIsland";
 import CalculatorBar from "@/components/calculator/CalculatorBar";
 import { getCalculatorPage } from "@/lib/content";
+import { renderLinks } from "@/lib/markdown-links";
 import { webApplicationJsonLd, faqPageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 
 const cms = await getCalculatorPage();
@@ -64,7 +65,7 @@ const jsonld = [
           Portfolio Calculator
         </h1>
         <p class="text-base leading-[1.7] text-text/55 max-w-[580px]">
-          {pageDescription}
+          <Fragment set:html={renderLinks(pageDescription)} />
         </p>
       </div>
     </div>

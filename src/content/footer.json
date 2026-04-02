@@ -1,4 +1,20 @@
 {
   "tagline": "Sovereign-grade real estate advisory for diplomatic missions in global capitals.",
-  "motto": "Discretion · Precision · Stewardship"
+  "motto": "Discretion · Precision · Stewardship",
+  "toolLinks": [
+    { "label": "Portfolio Calculator", "href": "/calculator" },
+    { "label": "News", "href": "/newsletter" }
+  ],
+  "navLinks": [
+    { "label": "About", "href": "/#about" },
+    { "label": "Approach", "href": "/#approach" },
+    { "label": "Advisory", "href": "/#services" },
+    { "label": "Insights", "href": "/insights" },
+    { "label": "Client Portal", "href": "/client" }
+  ],
+  "connectLinks": [
+    { "label": "X", "href": "https://x.com/aaboadvisory" },
+    { "label": "LinkedIn", "href": "https://www.linkedin.com/company/aabo-advisory/" },
+    { "label": "Instagram", "href": "https://www.instagram.com/aaboadvisory/" }
+  ]
 }

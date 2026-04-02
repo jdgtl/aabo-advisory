@@ -3,6 +3,7 @@ import Label from "@/components/ui/Label.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper";
 import Card from "@/components/ui/Card";
 import { getHomepage } from "@/lib/content";
+import { renderLinks } from "@/lib/markdown-links";
 
 const hp = await getHomepage();
 const approach = hp?.approach;
@@ -51,7 +52,7 @@ const cards = approach?.cards ?? [
               {item.title}
             </h3>
             <p class="text-sm leading-[1.75] text-text/75">
-              {item.text}
+              <Fragment set:html={renderLinks(item.text)} />
             </p>
           </Card>
         </RevealWrapper>

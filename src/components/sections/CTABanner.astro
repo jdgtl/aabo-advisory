@@ -1,5 +1,6 @@
 ---
 import { getHomepage } from "@/lib/content";
+import { renderLinks } from "@/lib/markdown-links";
 
 const hp = await getHomepage();
 const ctaData = hp?.cta;
@@ -18,7 +19,7 @@ const buttonText = ctaData?.buttonText ?? "Schedule a Consultation";
       {headline}
     </h2>
     <p class="text-sm text-warm/60 max-w-[380px] mx-auto leading-[1.7] mb-8">
-      {subtext}
+      <Fragment set:html={renderLinks(subtext)} />
     </p>
     <a
       href="/#contact"

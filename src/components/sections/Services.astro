@@ -2,6 +2,7 @@
 import Label from "@/components/ui/Label.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper";
 import { getHomepage } from "@/lib/content";
+import { renderLinks } from "@/lib/markdown-links";
 
 const hp = await getHomepage();
 const services = hp?.services;
@@ -47,7 +48,7 @@ const pillars = services?.pillars ?? [
 
     <RevealWrapper client:visible delay={0.15}>
       <p class="text-sm lg:text-base text-warm/80 max-w-[520px] leading-[1.7] mb-10 lg:mb-14">
-        {subtext}
+        <Fragment set:html={renderLinks(subtext)} />
       </p>
     </RevealWrapper>
 
