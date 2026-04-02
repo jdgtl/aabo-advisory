@@ -179,7 +179,7 @@ function EmailModal({ onClose }: { onClose: () => void }) {
       return;
     }
 
-    const subject = encodeURIComponent("Portfolio Calculator — AABO Advisory");
+    const subject = encodeURIComponent("Portfolio Calculator — Aabo Advisory");
     const body = encodeURIComponent(
       `I thought you might find this useful:\n\nPortfolio Calculator\nhttps://aaboadvisory.com/calculator`
     );

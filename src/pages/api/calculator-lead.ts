@@ -83,7 +83,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const brevoKey = env.BREVO_API_KEY ?? "";
     const listId = parseInt(env.BREVO_LIST_ID ?? "2", 10);
     const senderEmail = env.BREVO_SENDER_EMAIL ?? "noreply@aaboadvisory.com";
-    const senderName = env.BREVO_SENDER_NAME ?? "AABO Advisory";
+    const senderName = env.BREVO_SENDER_NAME ?? "Aabo Advisory";
 
     let emailSent = false;
 
@@ -133,7 +133,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
           toName: name,
           senderEmail,
           senderName,
-          subject: "Your Portfolio Analysis \u2014 AABO Advisory",
+          subject: "Your Portfolio Analysis \u2014 Aabo Advisory",
           htmlContent: emailHtml,
           attachments,
         });

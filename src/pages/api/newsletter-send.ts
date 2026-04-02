@@ -82,7 +82,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         subject: title,
         sender: {
           email: env.BREVO_SENDER_EMAIL ?? "newsletter@aaboadvisory.com",
-          name: env.BREVO_SENDER_NAME ?? "AABO Advisory",
+          name: env.BREVO_SENDER_NAME ?? "Aabo Advisory",
         },
         htmlContent,
         recipients: { listIds: [listId] },

@@ -20,7 +20,7 @@ export const fonts = {
 } as const;
 
 export const site = {
-  name: "AABO Advisory",
+  name: "Aabo Advisory",
   tagline: "Diplomatic Real Estate Advisory",
   url: "https://aaboadvisory.com",
 } as const;

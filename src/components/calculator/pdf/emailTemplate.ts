@@ -146,7 +146,7 @@ export function buildEmailHtml(inputs: EmailInputs): string {
           <!-- Footer -->
           <tr>
             <td style="background-color:${C.primary};padding:14px 32px;font-size:9px;color:${C.warm};opacity:0.6;letter-spacing:0.06em;font-family:Georgia,'Times New Roman',serif;">
-              AABO Advisory &middot; aaboadvisory.com &middot; Confidential
+              Aabo Advisory &middot; aaboadvisory.com &middot; Confidential
             </td>
           </tr>
 

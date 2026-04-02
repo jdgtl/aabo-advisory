@@ -285,7 +285,7 @@ function buildHtml(inputs: PdfInputs): string {
 
   <!-- Footer -->
   <div style="background:${C.primary};padding:16px 40px;font-size:9px;color:${C.warm};opacity:0.6;letter-spacing:0.06em;">
-    AABO Advisory &middot; aaboadvisory.com &middot; Confidential
+    Aabo Advisory &middot; aaboadvisory.com &middot; Confidential
   </div>
 </body>
 </html>`;
