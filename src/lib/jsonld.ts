@@ -52,7 +52,8 @@ export function webSiteJsonLd() {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: ORG_NAME,
+    name: "Aabo Advisory",
+    alternateName: ["AABO Advisory", "Aabo Advisory LLC"],
     url: SITE_URL,
   });
 }
