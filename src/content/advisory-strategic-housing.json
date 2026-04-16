@@ -1,0 +1,48 @@
+{
+  "seo": {
+    "title": "Strategic Housing Advisory | Aabo Advisory",
+    "description": "Institutional-grade real estate advisory for diplomatic missions — portfolio strategy, rent vs. buy analysis, financial modeling, and long-term staff housing planning."
+  },
+  "hero": {
+    "numeral": "I",
+    "title": "Strategic Housing Advisory",
+    "subtitle": "Portfolio Performance and Optimization",
+    "intro": "Every diplomatic mission operates a real estate portfolio. Residences, offices, and representational spaces represent significant sovereign capital deployed across some of the world's most complex markets. Yet many missions manage these assets without the analytical frameworks that private organizations and institutional investors would consider fundamental.",
+    "introSecondary": "Strategic Housing Advisory brings institutional-grade analysis to diplomatic real estate. We help missions and headquarters see their property holdings not as a series of isolated transactions, but as a portfolio with measurable performance, identifiable inefficiencies, and strategic optionality. The goal is not to impose a corporate model on sovereign operations. It is to give decision-makers the clarity and tools needed to act with confidence."
+  },
+  "services": [
+    {
+      "headline": "Rent vs. Buy Analysis",
+      "body": "The decision to rent or purchase diplomatic property is among the most consequential a mission will make — and among the least reversible. Financial modelling compares the total cost of ownership against long-term leasing, accounting for variables that general market tools ignore: diplomatic tax exemptions, maintenance obligations unique to sovereign-owned buildings, currency exposure, and the political calculus of asset ownership in a host country. The output is not a spreadsheet. It is a clear recommendation rooted in your mission's specific mandate, timeline, and fiscal framework."
+    },
+    {
+      "headline": "Portfolio Strategy",
+      "body": "Often property is accumulated without a governing strategy, rather inherited from a predecessor or decided on a temporary need. These assets become the portfolio by default. We work with missions and headquarters to build intentional portfolio strategies: defining the optimal mix of owned and leased assets, identifying underperforming holdings, evaluating consolidation opportunities, and aligning real estate decisions with broader institutional objectives. Every property should serve a purpose. We help you determine what that purpose is and what action to take in order to optimize the portfolio performance."
+    },
+    {
+      "headline": "Financial Modeling & Policy Support",
+      "body": "Diplomatic property decisions require financial analysis calibrated to sovereign realities. Standard commercial models do not account for the fiscal structures, approval processes, or time horizons that govern how government acquires and holds real estate. We build custom financial models for acquisitions, disposals, and major capital expenditures — and we translate them into the language that policy officers and treasury departments require. When a headquarters needs to justify an acquisition to a parliamentary budget committee, the supporting analysis must be unassailable."
+    },
+    {
+      "headline": "Long-Term Planning for Staff Housing",
+      "body": "Staff housing is typically the largest line item in a mission's real estate budget and the most operationally sensitive. Rotating personnel every three to four years creates a continuous cycle of demand that many manage reactively. We help missions plan proactively: forecasting staffing changes, mapping housing supply in target neighborhoods, modeling budget scenarios across economic cycles, and building frameworks that outlast any single rotation. The result is a housing program that serves the institution — not just the current occupant."
+    }
+  ],
+  "pullQuote": {
+    "text": "A diplomatic portfolio is not a collection of addresses. It is an expression of institutional strategy, built over decades and measured across generations of service. The question is never simply where to house staff — it is how to position mission and assets for the next thirty years of service."
+  },
+  "cta": {
+    "headline": "Discuss your portfolio strategy",
+    "buttonText": "Schedule a Consultation"
+  },
+  "crossLinks": [
+    {
+      "label": "Read: A 30-Year Lens for HQ Approval",
+      "href": "/insights/a-30-year-lens-for-hq-approval"
+    },
+    {
+      "label": "Next: Transaction & Representation →",
+      "href": "/advisory/transaction-representation"
+    }
+  ]
+}
