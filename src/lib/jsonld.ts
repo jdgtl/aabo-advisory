@@ -109,6 +109,30 @@ export function professionalServiceJsonLd() {
   });
 }
 
+/* ── 3b. Service (advisory pillar pages) ── */
+
+export interface ServicePageJsonLdInput {
+  name: string;
+  description: string;
+  url: string;
+}
+
+export function servicePageJsonLd(input: ServicePageJsonLdInput) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: input.name,
+    description: input.description,
+    url: input.url,
+    provider: {
+      "@type": "ProfessionalService",
+      name: ORG_NAME,
+      url: SITE_URL,
+    },
+    areaServed,
+  });
+}
+
 /* ── 4. Article (insight/dossier pages) ── */
 
 export interface ArticleJsonLdInput {
