@@ -9,10 +9,15 @@ const { light = false } = Astro.props;
 
 const sectionLinks = [
   { href: "/#approach", id: "approach", label: "Approach" },
-  { href: "/#services", id: "services", label: "Advisory" },
   { href: "/insights", id: "insights", label: "Insights" },
   { href: "/#about", id: "about", label: "About" },
   { href: "/client", id: "client", label: "Client Portal" },
+];
+
+const advisoryPillars = [
+  { numeral: "I", title: "Strategic Housing Advisory", href: "/advisory/strategic-housing" },
+  { numeral: "II", title: "Transaction & Representation", href: "/advisory/transaction-representation" },
+  { numeral: "III", title: "Operational Stewardship", href: "/advisory/operational-stewardship" },
 ];
 ---
 
@@ -34,6 +39,68 @@ const sectionLinks = [
 
     {/* Desktop links */}
     <div class="hidden md:flex gap-7 items-center">
+      {/* Approach */}
+      <a
+        href="/#approach"
+        data-nav-link="approach"
+        class:list={[
+          "text-xs tracking-[0.06em] font-body pb-0.5 border-b-[1.5px] border-transparent transition-all duration-300",
+          light
+            ? "text-accent hover:border-accent [&.nav-link-active]:border-accent"
+            : "text-accent hover:border-accent [&.nav-link-active]:border-accent",
+        ]}
+      >
+        Approach
+      </a>
+
+      {/* Advisory dropdown group */}
+      <div data-advisory-dropdown class="relative">
+        <a
+          href="/#services"
+          data-nav-link="services"
+          data-advisory-trigger
+          aria-haspopup="menu"
+          aria-expanded="false"
+          class:list={[
+            "text-xs tracking-[0.06em] font-body pb-0.5 border-b-[1.5px] border-transparent transition-all duration-300 inline-flex items-center gap-1.5",
+            light
+              ? "text-accent hover:border-accent [&.nav-link-active]:border-accent"
+              : "text-accent hover:border-accent [&.nav-link-active]:border-accent",
+          ]}
+        >
+          Advisory
+          <svg
+            aria-hidden="true"
+            width="8"
+            height="5"
+            viewBox="0 0 8 5"
+            class="transition-transform duration-300"
+            data-advisory-chevron
+          >
+            <path d="M0 0 L4 4 L8 0" stroke="currentColor" stroke-width="1.2" fill="none" />
+          </svg>
+        </a>
+
+        <div
+          data-advisory-menu
+          role="menu"
+          aria-label="Advisory pillars"
+          class="hidden absolute right-0 top-full mt-3 min-w-[300px] bg-primary border border-accent/15 shadow-xl py-2"
+        >
+          {advisoryPillars.map((p) => (
+            <a
+              role="menuitem"
+              href={p.href}
+              class="block px-5 py-3 text-xs tracking-[0.04em] text-accent hover:bg-canvas/[0.04] transition-colors duration-200"
+            >
+              <span class="font-heading text-accent-light mr-2">{p.numeral}.</span>
+              {p.title}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Other top-level links */}
       {sectionLinks.map((link) => (
         <a
           href={link.href}
@@ -48,6 +115,7 @@ const sectionLinks = [
           {link.label}
         </a>
       ))}
+
       <a
         href="/#contact"
         class:list={[
@@ -67,9 +135,74 @@ const sectionLinks = [
 
   {/* Mobile drawer */}
   <div data-nav-drawer class:list={[
-    "fixed inset-x-0 top-[57px] bottom-0 flex-col items-center pt-12 gap-6 hidden md:!hidden z-50",
+    "fixed inset-x-0 top-[57px] bottom-0 flex-col items-center pt-12 gap-6 hidden md:!hidden z-50 overflow-y-auto",
     light ? "bg-canvas" : "bg-primary",
   ]}>
+    <a
+      href="/#approach"
+      data-nav-link="approach"
+      class:list={[
+        "text-sm tracking-[0.06em] font-body transition-colors",
+        light
+          ? "text-accent hover:text-primary [&.nav-link-active]:text-primary"
+          : "text-accent hover:text-canvas [&.nav-link-active]:text-canvas",
+      ]}
+    >
+      Approach
+    </a>
+
+    {/* Advisory mobile expandable */}
+    <div data-advisory-mobile class="flex flex-col items-center gap-3">
+      <div class="flex items-center gap-3">
+        <a
+          href="/#services"
+          data-nav-link="services"
+          class:list={[
+            "text-sm tracking-[0.06em] font-body transition-colors",
+            light
+              ? "text-accent hover:text-primary [&.nav-link-active]:text-primary"
+              : "text-accent hover:text-canvas [&.nav-link-active]:text-canvas",
+          ]}
+        >
+          Advisory
+        </a>
+        <button
+          type="button"
+          data-advisory-mobile-toggle
+          aria-label="Expand Advisory submenu"
+          aria-expanded="false"
+          class="p-1"
+        >
+          <svg
+            aria-hidden="true"
+            width="10"
+            height="6"
+            viewBox="0 0 10 6"
+            class="transition-transform duration-300"
+            data-advisory-mobile-chevron
+          >
+            <path d="M0 0 L5 5 L10 0" stroke="currentColor" stroke-width="1.2" fill="none" />
+          </svg>
+        </button>
+      </div>
+      <ul data-advisory-mobile-list class="hidden flex-col items-center gap-2.5">
+        {advisoryPillars.map((p) => (
+          <li>
+            <a
+              href={p.href}
+              class:list={[
+                "text-xs tracking-[0.04em] font-body transition-colors",
+                light ? "text-accent/80 hover:text-primary" : "text-accent/80 hover:text-canvas",
+              ]}
+            >
+              <span class="font-heading mr-1.5">{p.numeral}.</span>
+              {p.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
     {sectionLinks.map((link) => (
       <a
         href={link.href}
@@ -84,6 +217,7 @@ const sectionLinks = [
         {link.label}
       </a>
     ))}
+
     <a
       href="/#contact"
       class:list={[
