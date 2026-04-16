@@ -1,0 +1,54 @@
+---
+interface Props {
+  active: "I" | "II" | "III";
+}
+
+const { active } = Astro.props;
+
+const pillars = [
+  { numeral: "I", name: "Strategic Housing Advisory", href: "/advisory/strategic-housing" },
+  { numeral: "II", name: "Transaction & Representation", href: "/advisory/transaction-representation" },
+  { numeral: "III", name: "Operational Stewardship", href: "/advisory/operational-stewardship" },
+] as const;
+---
+
+<nav
+  aria-label="Pillar pages"
+  class="bg-canvas border-b border-accent/20 px-6 md:px-12 lg:px-20 py-4"
+>
+  <div class="max-w-[1100px] mx-auto flex items-center justify-between gap-4">
+    <a
+      href="/#services"
+      class="text-[12px] tracking-[0.08em] text-primary/70 hover:text-primary transition-colors duration-300"
+    >
+      ← Back to Advisory Services
+    </a>
+
+    <ul class="flex items-center gap-5 sm:gap-7">
+      {pillars.map((p) => {
+        const isActive = p.numeral === active;
+        return (
+          <li>
+            {isActive ? (
+              <span
+                class="font-heading text-[15px] text-primary border-b-[1.5px] border-accent pb-0.5"
+                aria-current="page"
+                title={p.name}
+              >
+                {p.numeral}
+              </span>
+            ) : (
+              <a
+                href={p.href}
+                class="font-heading text-[15px] text-primary/50 hover:text-primary transition-colors duration-300"
+                title={p.name}
+              >
+                {p.numeral}
+              </a>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</nav>
