@@ -1,0 +1,77 @@
+---
+import Base from "@/layouts/Base.astro";
+import Nav from "@/components/sections/Nav.astro";
+import Footer from "@/components/sections/Footer.astro";
+import RevealWrapper from "@/components/ui/RevealWrapper";
+import PillarSecondaryNav from "@/components/sections/advisory/PillarSecondaryNav.astro";
+import PillarHero from "@/components/sections/advisory/PillarHero.astro";
+import ServiceBox from "@/components/sections/advisory/ServiceBox.astro";
+import PullQuote from "@/components/sections/advisory/PullQuote.astro";
+import PillarCTA from "@/components/sections/advisory/PillarCTA.astro";
+import TransactionTimeline from "@/components/sections/advisory/TransactionTimeline.astro";
+import { getAdvisoryTransactionRepresentation } from "@/lib/content";
+import { servicePageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
+import { site } from "@/lib/constants";
+
+const data = await getAdvisoryTransactionRepresentation();
+
+if (!data) {
+  throw new Error("Missing advisoryTransactionRepresentation singleton");
+}
+
+const pageUrl = `${site.url}/advisory/transaction-representation`;
+const jsonld = [
+  servicePageJsonLd({
+    name: data.hero.title,
+    description: data.seo.description,
+    url: pageUrl,
+  }),
+  breadcrumbJsonLd([
+    { name: "Home", url: site.url },
+    { name: "Advisory Services", url: `${site.url}/#services` },
+    { name: data.hero.title },
+  ]),
+];
+---
+
+<Base
+  title={data.seo.title}
+  description={data.seo.description}
+  jsonld={jsonld}
+>
+  <Nav />
+  <PillarSecondaryNav active="II" />
+
+  <main id="main-content" class="bg-canvas">
+    <PillarHero
+      numeral={data.hero.numeral}
+      title={data.hero.title}
+      subtitle={data.hero.subtitle}
+      intro={data.hero.intro}
+      introSecondary={data.hero.introSecondary}
+    />
+
+    <TransactionTimeline />
+
+    <section class="bg-light px-6 md:px-12 lg:px-20 py-16 lg:py-24">
+      <div class="max-w-[880px] mx-auto">
+        {data.services.map((service, i) => (
+          <RevealWrapper client:visible delay={0.08 * i}>
+            <ServiceBox headline={service.headline} body={service.body} index={i} />
+          </RevealWrapper>
+        ))}
+      </div>
+    </section>
+
+    <PullQuote text={data.pullQuote.text} />
+
+    <PillarCTA
+      headline={data.cta.headline}
+      buttonText={data.cta.buttonText}
+      crossLinks={[...data.crossLinks]}
+      pillarSlug="transaction-representation"
+    />
+  </main>
+
+  <Footer />
+</Base>
