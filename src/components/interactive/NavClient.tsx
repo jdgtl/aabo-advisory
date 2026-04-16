@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { trackAdvisoryNavDropdownOpened } from "@/lib/analytics";
 
 const NAV_SECTIONS = ["home", "approach", "services", "insights", "about"];
 
@@ -10,6 +11,7 @@ export default function NavClient() {
     const path = window.location.pathname;
     if (path.startsWith("/insights")) return "insights";
     if (path.startsWith("/calculator")) return "calculator";
+    if (path.startsWith("/advisory")) return "services";
     return "home";
   });
 
@@ -73,8 +75,11 @@ export default function NavClient() {
     const drawer = document.querySelector<HTMLElement>("[data-nav-drawer]");
     if (!drawer) return;
     const handleClick = (e: Event) => {
-      const target = e.target as HTMLAnchorElement;
-      if (target.tagName === "A" && target.getAttribute("href")?.includes("#")) {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest("a") as HTMLAnchorElement | null;
+      if (!anchor) return;
+      const href = anchor.getAttribute("href") ?? "";
+      if (href.includes("#") || href.startsWith("/advisory") || href.startsWith("/insights") || href.startsWith("/newsletter") || href.startsWith("/client") || href.startsWith("/calculator")) {
         setMobileOpen(false);
       }
     };
@@ -94,6 +99,109 @@ export default function NavClient() {
       }
     });
   }, [activeSection]);
+
+  /* ── desktop Advisory dropdown (hover + keyboard) ── */
+  useEffect(() => {
+    const group = document.querySelector<HTMLElement>("[data-advisory-dropdown]");
+    if (!group) return;
+    const trigger = group.querySelector<HTMLAnchorElement>("[data-advisory-trigger]");
+    const menu = group.querySelector<HTMLElement>("[data-advisory-menu]");
+    const chevron = group.querySelector<SVGElement>("[data-advisory-chevron]");
+    if (!trigger || !menu) return;
+
+    let openTimer: number | undefined;
+    let closeTimer: number | undefined;
+    let announced = false;
+
+    const open = () => {
+      window.clearTimeout(closeTimer);
+      menu.classList.remove("hidden");
+      trigger.setAttribute("aria-expanded", "true");
+      chevron?.style.setProperty("transform", "rotate(180deg)");
+      if (!announced) {
+        trackAdvisoryNavDropdownOpened("desktop");
+        announced = true;
+      }
+    };
+    const close = () => {
+      menu.classList.add("hidden");
+      trigger.setAttribute("aria-expanded", "false");
+      chevron?.style.removeProperty("transform");
+    };
+
+    const onEnter = () => {
+      window.clearTimeout(closeTimer);
+      openTimer = window.setTimeout(open, 100);
+    };
+    const onLeave = () => {
+      window.clearTimeout(openTimer);
+      closeTimer = window.setTimeout(close, 200);
+    };
+
+    group.addEventListener("mouseenter", onEnter);
+    group.addEventListener("mouseleave", onLeave);
+
+    const onFocusIn = () => open();
+    const onFocusOut = (e: FocusEvent) => {
+      if (!group.contains(e.relatedTarget as Node)) close();
+    };
+    group.addEventListener("focusin", onFocusIn);
+    group.addEventListener("focusout", onFocusOut);
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        close();
+        trigger.focus();
+      }
+    };
+    group.addEventListener("keydown", onKey);
+
+    return () => {
+      group.removeEventListener("mouseenter", onEnter);
+      group.removeEventListener("mouseleave", onLeave);
+      group.removeEventListener("focusin", onFocusIn);
+      group.removeEventListener("focusout", onFocusOut);
+      group.removeEventListener("keydown", onKey);
+      window.clearTimeout(openTimer);
+      window.clearTimeout(closeTimer);
+    };
+  }, []);
+
+  /* ── mobile Advisory expandable sub-list ── */
+  useEffect(() => {
+    const group = document.querySelector<HTMLElement>("[data-advisory-mobile]");
+    if (!group) return;
+    const toggle = group.querySelector<HTMLButtonElement>(
+      "[data-advisory-mobile-toggle]",
+    );
+    const list = group.querySelector<HTMLElement>("[data-advisory-mobile-list]");
+    const chevron = group.querySelector<SVGElement>(
+      "[data-advisory-mobile-chevron]",
+    );
+    if (!toggle || !list) return;
+
+    let open = false;
+    let announced = false;
+    const onClick = () => {
+      open = !open;
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) {
+        list.classList.remove("hidden");
+        list.classList.add("flex");
+        chevron?.style.setProperty("transform", "rotate(180deg)");
+        if (!announced) {
+          trackAdvisoryNavDropdownOpened("mobile");
+          announced = true;
+        }
+      } else {
+        list.classList.add("hidden");
+        list.classList.remove("flex");
+        chevron?.style.removeProperty("transform");
+      }
+    };
+    toggle.addEventListener("click", onClick);
+    return () => toggle.removeEventListener("click", onClick);
+  }, []);
 
   return (
     <>
