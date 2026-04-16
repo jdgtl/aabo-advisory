@@ -16,7 +16,7 @@ import { site } from "@/lib/constants";
 const data = await getAdvisoryTransactionRepresentation();
 
 if (!data) {
-  throw new Error("Missing advisoryTransactionRepresentation singleton");
+  return new Response(null, { status: 404 });
 }
 
 const pageUrl = `${site.url}/advisory/transaction-representation`;

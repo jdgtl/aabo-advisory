@@ -13,7 +13,15 @@ const advisorySchema = {
   ),
   hero: fields.object(
     {
-      numeral: fields.text({ label: "Numeral (I / II / III)" }),
+      numeral: fields.select({
+        label: "Numeral",
+        options: [
+          { label: "I", value: "I" },
+          { label: "II", value: "II" },
+          { label: "III", value: "III" },
+        ],
+        defaultValue: "I",
+      }),
       title: fields.text({ label: "Title" }),
       subtitle: fields.text({ label: "Subtitle" }),
       intro: fields.text({ label: "Intro Paragraph 1", multiline: true }),
@@ -47,7 +55,11 @@ const advisorySchema = {
   crossLinks: fields.array(
     fields.object({
       label: fields.text({ label: "Label" }),
-      href: fields.text({ label: "Href" }),
+      href: fields.text({
+        label: "Href",
+        description:
+          "Absolute path, e.g. /advisory/operational-stewardship or /insights/<slug>.",
+      }),
     }),
     {
       label: "Cross Links",

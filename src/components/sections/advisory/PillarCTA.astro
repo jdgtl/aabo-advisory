@@ -1,4 +1,6 @@
 ---
+import type { PillarId } from "@/lib/analytics";
+
 interface CrossLink {
   label: string;
   href: string;
@@ -8,7 +10,7 @@ interface Props {
   headline: string;
   buttonText: string;
   crossLinks: CrossLink[];
-  pillarSlug: string;
+  pillarSlug: PillarId;
 }
 
 const { headline, buttonText, crossLinks, pillarSlug } = Astro.props;
@@ -32,7 +34,7 @@ const { headline, buttonText, crossLinks, pillarSlug } = Astro.props;
       {buttonText}
     </a>
 
-    {crossLinks.length > 0 && (
+    {crossLinks?.length > 0 && (
       <ul class="mt-10 flex flex-col sm:flex-row sm:flex-wrap justify-center gap-4 sm:gap-6 text-[13px]">
         {crossLinks.map((link) => (
           <li>
@@ -56,14 +58,28 @@ const { headline, buttonText, crossLinks, pillarSlug } = Astro.props;
   import {
     trackAdvisoryCTAClicked,
     trackAdvisoryCrossLinkClicked,
+    type PillarId,
   } from "@/lib/analytics";
+
+  const PILLAR_IDS: readonly PillarId[] = [
+    "strategic-housing",
+    "transaction-representation",
+    "operational-stewardship",
+  ];
+
+  function asPillarId(value: string | undefined): PillarId | null {
+    return value && (PILLAR_IDS as readonly string[]).includes(value)
+      ? (value as PillarId)
+      : null;
+  }
 
   function wireAdvisoryCTA() {
     document.querySelectorAll<HTMLAnchorElement>("[data-advisory-cta]").forEach((el) => {
       if (el.dataset.wired === "1") return;
       el.dataset.wired = "1";
       el.addEventListener("click", () => {
-        const pillar = el.dataset.pillar ?? "unknown";
+        const pillar = asPillarId(el.dataset.pillar);
+        if (!pillar) return;
         trackAdvisoryCTAClicked(pillar, "cta-banner");
       });
     });
@@ -72,7 +88,8 @@ const { headline, buttonText, crossLinks, pillarSlug } = Astro.props;
       if (el.dataset.wired === "1") return;
       el.dataset.wired = "1";
       el.addEventListener("click", () => {
-        const pillar = el.dataset.pillar ?? "unknown";
+        const pillar = asPillarId(el.dataset.pillar);
+        if (!pillar) return;
         const href = el.getAttribute("href") ?? "";
         const label = el.dataset.label ?? "";
         trackAdvisoryCrossLinkClicked(pillar, href, label);

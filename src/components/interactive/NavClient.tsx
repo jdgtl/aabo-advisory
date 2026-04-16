@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { trackAdvisoryNavDropdownOpened } from "@/lib/analytics";
 
 const NAV_SECTIONS = ["home", "approach", "services", "insights", "about"];
@@ -6,6 +6,7 @@ const NAV_SECTIONS = ["home", "approach", "services", "insights", "about"];
 export default function NavClient() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const collapseAdvisorySublistRef = useRef<(() => void) | null>(null);
   const [activeSection, setActiveSection] = useState(() => {
     if (typeof window === "undefined") return "home";
     const path = window.location.pathname;
@@ -70,18 +71,13 @@ export default function NavClient() {
     }
   }, [mobileOpen]);
 
-  /* ── close mobile drawer when clicking anchor links ── */
   useEffect(() => {
     const drawer = document.querySelector<HTMLElement>("[data-nav-drawer]");
     if (!drawer) return;
     const handleClick = (e: Event) => {
-      const target = e.target as HTMLElement;
-      const anchor = target.closest("a") as HTMLAnchorElement | null;
-      if (!anchor) return;
-      const href = anchor.getAttribute("href") ?? "";
-      if (href.includes("#") || href.startsWith("/advisory") || href.startsWith("/insights") || href.startsWith("/newsletter") || href.startsWith("/client") || href.startsWith("/calculator")) {
-        setMobileOpen(false);
-      }
+      const anchor = (e.target as HTMLElement).closest("a");
+      if (!anchor?.getAttribute("href")) return;
+      setMobileOpen(false);
     };
     drawer.addEventListener("click", handleClick);
     return () => drawer.removeEventListener("click", handleClick);
@@ -100,7 +96,10 @@ export default function NavClient() {
     });
   }, [activeSection]);
 
-  /* ── desktop Advisory dropdown (hover + keyboard) ── */
+  /* The two Advisory-dropdown effects below use `[]` deps intentionally: they
+     bind to Astro-rendered DOM that never remounts, and the `announced` flag
+     must persist across drawer open/close so NavDropdownOpened fires once
+     per session, not once per toggle. */
   useEffect(() => {
     const group = document.querySelector<HTMLElement>("[data-advisory-dropdown]");
     if (!group) return;
@@ -152,6 +151,33 @@ export default function NavClient() {
       if (e.key === "Escape") {
         close();
         trigger.focus();
+        return;
+      }
+
+      const target = e.target as HTMLElement;
+      const items = Array.from(menu.querySelectorAll<HTMLAnchorElement>("a"));
+
+      if (target === trigger && e.key === "ArrowDown") {
+        e.preventDefault();
+        open();
+        items[0]?.focus();
+        return;
+      }
+
+      const idx = items.indexOf(target as HTMLAnchorElement);
+      if (idx === -1) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        items[(idx + 1) % items.length]?.focus();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        items[(idx - 1 + items.length) % items.length]?.focus();
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        items[0]?.focus();
+      } else if (e.key === "End") {
+        e.preventDefault();
+        items[items.length - 1]?.focus();
       }
     };
     group.addEventListener("keydown", onKey);
@@ -167,7 +193,6 @@ export default function NavClient() {
     };
   }, []);
 
-  /* ── mobile Advisory expandable sub-list ── */
   useEffect(() => {
     const group = document.querySelector<HTMLElement>("[data-advisory-mobile]");
     if (!group) return;
@@ -182,6 +207,14 @@ export default function NavClient() {
 
     let open = false;
     let announced = false;
+    const collapse = () => {
+      if (!open) return;
+      open = false;
+      toggle.setAttribute("aria-expanded", "false");
+      list.classList.add("hidden");
+      list.classList.remove("flex");
+      chevron?.style.removeProperty("transform");
+    };
     const onClick = () => {
       open = !open;
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
@@ -200,8 +233,20 @@ export default function NavClient() {
       }
     };
     toggle.addEventListener("click", onClick);
-    return () => toggle.removeEventListener("click", onClick);
+    collapseAdvisorySublistRef.current = collapse;
+    return () => {
+      toggle.removeEventListener("click", onClick);
+      collapseAdvisorySublistRef.current = null;
+    };
   }, []);
+
+  /* Collapse mobile sublist whenever the drawer closes, so the next open
+     doesn't start in a stale expanded state. Does not reset `announced`,
+     keeping Advisory:NavDropdownOpened fire-once per mount. */
+  useEffect(() => {
+    if (mobileOpen) return;
+    collapseAdvisorySublistRef.current?.();
+  }, [mobileOpen]);
 
   return (
     <>

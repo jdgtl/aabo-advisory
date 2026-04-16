@@ -109,8 +109,6 @@ export function professionalServiceJsonLd() {
   });
 }
 
-/* ── 3b. Service (advisory pillar pages) ── */
-
 export interface ServicePageJsonLdInput {
   name: string;
   description: string;
@@ -118,6 +116,11 @@ export interface ServicePageJsonLdInput {
 }
 
 export function servicePageJsonLd(input: ServicePageJsonLdInput) {
+  if (!input.name.trim() || !input.description.trim()) {
+    throw new Error(
+      `servicePageJsonLd: name and description must be non-empty (url=${input.url})`,
+    );
+  }
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Service",

@@ -16,7 +16,7 @@ import { site } from "@/lib/constants";
 const data = await getAdvisoryOperationalStewardship();
 
 if (!data) {
-  throw new Error("Missing advisoryOperationalStewardship singleton");
+  return new Response(null, { status: 404 });
 }
 
 const pageUrl = `${site.url}/advisory/operational-stewardship`;

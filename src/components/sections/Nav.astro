@@ -39,7 +39,6 @@ const advisoryPillars = [
 
     {/* Desktop links */}
     <div class="hidden md:flex gap-7 items-center">
-      {/* Approach */}
       <a
         href="/#approach"
         data-nav-link="approach"
@@ -53,14 +52,13 @@ const advisoryPillars = [
         Approach
       </a>
 
-      {/* Advisory dropdown group */}
       <div data-advisory-dropdown class="relative">
         <a
           href="/#services"
           data-nav-link="services"
           data-advisory-trigger
-          aria-haspopup="menu"
           aria-expanded="false"
+          aria-controls="advisory-submenu"
           class:list={[
             "text-xs tracking-[0.06em] font-body pb-0.5 border-b-[1.5px] border-transparent transition-all duration-300 inline-flex items-center gap-1.5",
             light
@@ -82,14 +80,13 @@ const advisoryPillars = [
         </a>
 
         <div
+          id="advisory-submenu"
           data-advisory-menu
-          role="menu"
           aria-label="Advisory pillars"
           class="hidden absolute right-0 top-full mt-3 min-w-[300px] bg-primary border border-accent/15 shadow-xl py-2"
         >
           {advisoryPillars.map((p) => (
             <a
-              role="menuitem"
               href={p.href}
               class="block px-5 py-3 text-xs tracking-[0.04em] text-accent hover:bg-canvas/[0.04] transition-colors duration-200"
             >
@@ -100,7 +97,6 @@ const advisoryPillars = [
         </div>
       </div>
 
-      {/* Other top-level links */}
       {sectionLinks.map((link) => (
         <a
           href={link.href}
@@ -151,7 +147,6 @@ const advisoryPillars = [
       Approach
     </a>
 
-    {/* Advisory mobile expandable */}
     <div data-advisory-mobile class="flex flex-col items-center gap-3">
       <div class="flex items-center gap-3">
         <a
