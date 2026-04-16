@@ -4,6 +4,12 @@ import RevealWrapper from "@/components/ui/RevealWrapper";
 import { getHomepage } from "@/lib/content";
 import { renderLinks } from "@/lib/markdown-links";
 
+const pillarUrls = [
+  "/advisory/strategic-housing",
+  "/advisory/transaction-representation",
+  "/advisory/operational-stewardship",
+];
+
 const hp = await getHomepage();
 const services = hp?.services;
 
@@ -75,7 +81,7 @@ const pillars = services?.pillars ?? [
             </p>
           </div>
 
-          {/* Items list */}
+          {/* Items list + learn more */}
           <div class="flex flex-col gap-2.5 md:col-span-2 lg:col-span-1">
             {p.items.map((item) => (
               <div class="flex items-baseline gap-3 text-sm text-canvas/75 leading-relaxed">
@@ -83,6 +89,15 @@ const pillars = services?.pillars ?? [
                 <span>{item}</span>
               </div>
             ))}
+            {pillarUrls[pi] && (
+              <a
+                href={pillarUrls[pi]}
+                class="mt-4 inline-flex items-center gap-1.5 text-[12px] tracking-[0.08em] text-accent hover:text-accent-light underline-offset-4 hover:underline uppercase font-medium self-start"
+              >
+                Learn more
+                <span aria-hidden="true">→</span>
+              </a>
+            )}
           </div>
         </div>
       </RevealWrapper>
