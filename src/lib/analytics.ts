@@ -14,7 +14,10 @@ type AnalyticsEvent =
   | "Article:Opened"
   | "CTA:Clicked"
   | "Calculator:PDFDownloaded"
-  | "Calculator:ResultsEmailed";
+  | "Calculator:ResultsEmailed"
+  | "Advisory:CTAClicked"
+  | "Advisory:CrossLinkClicked"
+  | "Advisory:NavDropdownOpened";
 
 type EventProps = Record<string, string | number | boolean>;
 
@@ -72,4 +75,20 @@ export function trackPDFDownloaded(): void {
 
 export function trackResultsEmailed(): void {
   trackEvent("Calculator:ResultsEmailed");
+}
+
+export function trackAdvisoryCTAClicked(pillar: string, location: string): void {
+  trackEvent("Advisory:CTAClicked", { pillar, location });
+}
+
+export function trackAdvisoryCrossLinkClicked(
+  pillar: string,
+  targetHref: string,
+  label: string,
+): void {
+  trackEvent("Advisory:CrossLinkClicked", { pillar, targetHref, label });
+}
+
+export function trackAdvisoryNavDropdownOpened(source: "desktop" | "mobile"): void {
+  trackEvent("Advisory:NavDropdownOpened", { source });
 }
