@@ -105,7 +105,6 @@ export default function NavClient() {
     if (!group) return;
     const trigger = group.querySelector<HTMLAnchorElement>("[data-advisory-trigger]");
     const menu = group.querySelector<HTMLElement>("[data-advisory-menu]");
-    const chevron = group.querySelector<SVGElement>("[data-advisory-chevron]");
     if (!trigger || !menu) return;
 
     let openTimer: number | undefined;
@@ -116,7 +115,6 @@ export default function NavClient() {
       window.clearTimeout(closeTimer);
       menu.classList.remove("hidden");
       trigger.setAttribute("aria-expanded", "true");
-      chevron?.style.setProperty("transform", "rotate(180deg)");
       if (!announced) {
         trackAdvisoryNavDropdownOpened("desktop");
         announced = true;
@@ -125,7 +123,6 @@ export default function NavClient() {
     const close = () => {
       menu.classList.add("hidden");
       trigger.setAttribute("aria-expanded", "false");
-      chevron?.style.removeProperty("transform");
     };
 
     const onEnter = () => {
