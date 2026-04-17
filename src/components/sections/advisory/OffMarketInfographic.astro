@@ -1,9 +1,11 @@
 ---
+import type { PillarId } from "@/lib/analytics";
+
 interface Props {
   enabled: boolean;
   percentage: string;
   caption: string;
-  pillarSlug: string;
+  pillarSlug: PillarId;
 }
 
 const { enabled, percentage, caption, pillarSlug } = Astro.props;
@@ -99,7 +101,7 @@ const hasStat = trimmedPercentage.length > 0 && !Number.isNaN(parseFloat(trimmed
 </section>
 
 <script>
-  import { trackAdvisoryOffMarketViewed } from "@/lib/analytics";
+  import { trackAdvisoryOffMarketViewed, type PillarId } from "@/lib/analytics";
 
   function easeOutCubic(t: number): number {
     return 1 - Math.pow(1 - t, 3);
@@ -124,7 +126,7 @@ const hasStat = trimmedPercentage.length > 0 && !Number.isNaN(parseFloat(trimmed
     sections.forEach((section) => {
       if (section.dataset.wired === "1") return;
       section.dataset.wired = "1";
-      const pillar = section.dataset.pillar ?? "unknown";
+      const pillar = section.dataset.pillar as PillarId;
       const hasStat = section.dataset.hasStat === "1";
       const valueEl = section.querySelector<HTMLElement>("[data-offmarket-value]");
 

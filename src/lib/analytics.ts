@@ -23,10 +23,10 @@ type EventPropMap = {
   "Advisory:CTAClicked": { pillar: PillarId; location: string };
   "Advisory:CrossLinkClicked": { pillar: PillarId; targetHref: string; label: string };
   "Advisory:NavDropdownOpened": { source: "desktop" | "mobile" };
-  "Advisory:CounterViewed": { pillar: string };
-  "Advisory:TimelineStageViewed": { pillar: string; stage: string };
-  "Advisory:OffMarketViewed": { pillar: string; hasStat: boolean };
-  "Advisory:HeartbeatViewed": { pillar: string };
+  "Advisory:CounterViewed": { pillar: PillarId };
+  "Advisory:TimelineStageViewed": { pillar: PillarId; stage: string };
+  "Advisory:OffMarketViewed": { pillar: PillarId; hasStat: boolean };
+  "Advisory:HeartbeatViewed": { pillar: PillarId };
 };
 
 export type AnalyticsEvent = keyof EventPropMap;
@@ -115,18 +115,18 @@ export function trackAdvisoryNavDropdownOpened(source: "desktop" | "mobile"): vo
   trackEvent("Advisory:NavDropdownOpened", { source });
 }
 
-export function trackAdvisoryCounterViewed(pillar: string): void {
+export function trackAdvisoryCounterViewed(pillar: PillarId): void {
   trackEvent("Advisory:CounterViewed", { pillar });
 }
 
-export function trackAdvisoryTimelineStageViewed(pillar: string, stage: string): void {
+export function trackAdvisoryTimelineStageViewed(pillar: PillarId, stage: string): void {
   trackEvent("Advisory:TimelineStageViewed", { pillar, stage });
 }
 
-export function trackAdvisoryOffMarketViewed(pillar: string, hasStat: boolean): void {
+export function trackAdvisoryOffMarketViewed(pillar: PillarId, hasStat: boolean): void {
   trackEvent("Advisory:OffMarketViewed", { pillar, hasStat });
 }
 
-export function trackAdvisoryHeartbeatViewed(pillar: string): void {
+export function trackAdvisoryHeartbeatViewed(pillar: PillarId): void {
   trackEvent("Advisory:HeartbeatViewed", { pillar });
 }

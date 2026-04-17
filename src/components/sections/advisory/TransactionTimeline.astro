@@ -1,4 +1,6 @@
 ---
+import type { PillarId } from "@/lib/analytics";
+
 interface TimelineStage {
   name: string;
   description?: string;
@@ -6,7 +8,7 @@ interface TimelineStage {
 
 interface Props {
   stages?: TimelineStage[];
-  pillarSlug: string;
+  pillarSlug: PillarId;
 }
 
 const { stages: stagesProp, pillarSlug } = Astro.props;
@@ -130,7 +132,20 @@ const span = lastX - firstX;
 </section>
 
 <script>
-  import { trackAdvisoryTimelineStageViewed } from "@/lib/analytics";
+  import { trackAdvisoryTimelineStageViewed, type PillarId } from "@/lib/analytics";
+
+  const closers = new Set<() => void>();
+  let docClickWired = false;
+
+  function ensureDocClickHandler() {
+    if (docClickWired) return;
+    docClickWired = true;
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-timeline-node]") || target.closest("[data-timeline-popover]")) return;
+      closers.forEach((fn) => fn());
+    });
+  }
 
   function initTimelines() {
     const timelines = document.querySelectorAll<HTMLElement>("[data-transaction-timeline]");
@@ -138,7 +153,7 @@ const span = lastX - firstX;
       if (timeline.dataset.wired === "1") return;
       timeline.dataset.wired = "1";
 
-      const pillar = timeline.dataset.pillar ?? "unknown";
+      const pillar = timeline.dataset.pillar as PillarId;
       const buttons = Array.from(
         timeline.querySelectorAll<HTMLButtonElement>("[data-timeline-node]"),
       );
@@ -154,17 +169,32 @@ const span = lastX - firstX;
 
       const positionPopover = (btn: HTMLButtonElement, pop: HTMLElement) => {
         const narrow = window.matchMedia("(max-width: 640px)").matches;
+        const sectionRect = timeline.getBoundingClientRect();
+        const btnRect = btn.getBoundingClientRect();
+        const popWidth = pop.offsetWidth;
+        const centerX = btnRect.left + btnRect.width / 2;
+        const edgePad = 8;
+
+        let txPx = -popWidth / 2;
+        const leftIfCentered = centerX + txPx;
+        const rightIfCentered = leftIfCentered + popWidth;
+        if (leftIfCentered < sectionRect.left + edgePad) {
+          txPx = sectionRect.left + edgePad - centerX;
+        } else if (rightIfCentered > sectionRect.right - edgePad) {
+          txPx = sectionRect.right - edgePad - centerX - popWidth;
+        }
+
         pop.style.top = narrow ? "24px" : "-16px";
-        pop.style.transform = narrow ? "translate(-50%, 16px)" : "translate(-50%, -100%)";
+        pop.style.transform = `translate(${txPx}px, ${narrow ? "16px" : "-100%"})`;
       };
 
       const open = (btn: HTMLButtonElement) => {
         if (openButton && openButton !== btn) close(openButton);
         const pop = getPopover(btn);
         if (!pop) return;
-        positionPopover(btn, pop);
         pop.hidden = false;
         pop.style.pointerEvents = "auto";
+        positionPopover(btn, pop);
         btn.setAttribute("aria-expanded", "true");
         openButton = btn;
         const stage = btn.dataset.stage ?? "unknown";
@@ -187,6 +217,7 @@ const span = lastX - firstX;
       const closeAll = () => {
         if (openButton) close(openButton);
       };
+      closers.add(closeAll);
 
       buttons.forEach((btn, idx) => {
         btn.addEventListener("mouseenter", () => {
@@ -224,14 +255,9 @@ const span = lastX - firstX;
           }
         });
       });
-
-      document.addEventListener("click", (e) => {
-        const target = e.target as HTMLElement;
-        if (!target.closest("[data-timeline-node]") && !target.closest("[data-timeline-popover]")) {
-          closeAll();
-        }
-      });
     });
+
+    ensureDocClickHandler();
   }
 
   initTimelines();

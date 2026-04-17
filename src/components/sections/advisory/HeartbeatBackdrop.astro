@@ -1,6 +1,8 @@
 ---
+import type { PillarId } from "@/lib/analytics";
+
 interface Props {
-  pillarSlug: string;
+  pillarSlug: PillarId;
 }
 
 const { pillarSlug } = Astro.props;
@@ -49,14 +51,14 @@ const { pillarSlug } = Astro.props;
 </style>
 
 <script>
-  import { trackAdvisoryHeartbeatViewed } from "@/lib/analytics";
+  import { trackAdvisoryHeartbeatViewed, type PillarId } from "@/lib/analytics";
 
   function initHeartbeat() {
     const wraps = document.querySelectorAll<HTMLElement>("[data-heartbeat]");
     wraps.forEach((wrap) => {
       if (wrap.dataset.wired === "1") return;
       wrap.dataset.wired = "1";
-      const pillar = wrap.dataset.pillar ?? "unknown";
+      const pillar = wrap.dataset.pillar as PillarId;
 
       const observer = new IntersectionObserver(
         (entries) => {

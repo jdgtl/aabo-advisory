@@ -1,4 +1,6 @@
 ---
+import type { PillarId } from "@/lib/analytics";
+
 interface CounterItem {
   value: string;
   prefix?: string;
@@ -8,12 +10,17 @@ interface CounterItem {
 
 interface Props {
   items: CounterItem[];
-  pillarSlug: string;
+  pillarSlug: PillarId;
 }
 
 const { items, pillarSlug } = Astro.props;
 
-if (items.length === 0) return;
+if (items.length === 0) {
+  if (import.meta.env.DEV) {
+    console.warn(`[PortfolioCounter] Empty items array on pillar "${pillarSlug}" — section hidden. Populate via Keystatic "Benchmark Counter" field.`);
+  }
+  return;
+}
 
 const layout: "hero" | "row" = items.length === 1 ? "hero" : "row";
 const colsClass =
@@ -74,7 +81,7 @@ const colsClass =
 </section>
 
 <script>
-  import { trackAdvisoryCounterViewed } from "@/lib/analytics";
+  import { trackAdvisoryCounterViewed, type PillarId } from "@/lib/analytics";
 
   function parseNumeric(raw: string): { value: number; decimals: number } | null {
     const parsed = parseFloat(raw);
@@ -109,7 +116,7 @@ const colsClass =
       if (section.dataset.wired === "1") return;
       section.dataset.wired = "1";
       const valueEls = section.querySelectorAll<HTMLElement>("[data-counter-value]");
-      const pillar = section.dataset.pillar ?? "unknown";
+      const pillar = section.dataset.pillar as PillarId;
 
       const observer = new IntersectionObserver(
         (entries) => {
