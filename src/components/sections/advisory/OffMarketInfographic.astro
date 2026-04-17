@@ -16,13 +16,13 @@ const trimmedPercentage = percentage.trim();
 const hasStat = trimmedPercentage.length > 0 && !Number.isNaN(parseFloat(trimmedPercentage));
 ---
 
-<section
-  class="bg-canvas px-6 md:px-12 lg:px-20 py-16 lg:py-24"
+<div
+  class="pt-14 lg:pt-20 pb-4 lg:pb-6"
   data-off-market
   data-pillar={pillarSlug}
   data-has-stat={hasStat ? "1" : "0"}
 >
-  <div class="max-w-[880px] mx-auto text-center">
+  <div class="border-t border-accent/30 pt-14 lg:pt-20 text-center">
     {hasStat && (
       <div
         role="group"
@@ -98,7 +98,7 @@ const hasStat = trimmedPercentage.length > 0 && !Number.isNaN(parseFloat(trimmed
       </div>
     )}
   </div>
-</section>
+</div>
 
 <script>
   import { trackAdvisoryOffMarketViewed, type PillarId } from "@/lib/analytics";

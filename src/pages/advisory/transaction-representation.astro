@@ -58,23 +58,28 @@ const jsonld = [
     />
 
     <section class="bg-light px-6 md:px-12 lg:px-20 py-16 lg:py-24">
-      <div class="max-w-[880px] mx-auto">
+      <div class="max-w-[920px] mx-auto">
         {data.services.map((service, i) => (
           <RevealWrapper delay={0.08 * i}>
-            <ServiceBox headline={service.headline} body={service.body} index={i} />
+            <ServiceBox
+              headline={service.headline}
+              body={service.body}
+              index={i}
+              total={data.services.length}
+            />
           </RevealWrapper>
         ))}
+
+        <OffMarketInfographic
+          enabled={data.offMarket.enabled}
+          percentage={data.offMarket.percentage}
+          caption={data.offMarket.caption}
+          pillarSlug="transaction-representation"
+        />
+
+        <PullQuote text={data.pullQuote.text} />
       </div>
     </section>
-
-    <OffMarketInfographic
-      enabled={data.offMarket.enabled}
-      percentage={data.offMarket.percentage}
-      caption={data.offMarket.caption}
-      pillarSlug="transaction-representation"
-    />
-
-    <PullQuote text={data.pullQuote.text} />
 
     <PillarCTA
       headline={data.cta.headline}
