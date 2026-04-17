@@ -44,15 +44,16 @@ const jsonld = [
   <PillarSecondaryNav active="III" />
 
   <main id="main-content" class="bg-canvas">
-    <PillarHero
-      numeral={data.hero.numeral}
-      title={data.hero.title}
-      subtitle={data.hero.subtitle}
-      intro={data.hero.intro}
-      introSecondary={data.hero.introSecondary}
-    >
-      <HeartbeatBackdrop slot="backdrop" pillarSlug="operational-stewardship" />
-    </PillarHero>
+    <div class="relative">
+      <PillarHero
+        numeral={data.hero.numeral}
+        title={data.hero.title}
+        subtitle={data.hero.subtitle}
+        intro={data.hero.intro}
+        introSecondary={data.hero.introSecondary}
+      />
+      <HeartbeatBackdrop pillarSlug="operational-stewardship" />
+    </div>
 
     <section class="bg-light px-6 md:px-12 lg:px-20 py-16 lg:py-24">
       <div class="max-w-[880px] mx-auto">
