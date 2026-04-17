@@ -7,7 +7,31 @@ const { class: className = "" } = Astro.props;
 ---
 
 <div class:list={["flex items-center py-1", className]}>
-  <div class="flex-1 h-px bg-mid" />
-  <div class="w-1.5 h-1.5 bg-accent rotate-45 mx-5" />
-  <div class="flex-1 h-px bg-mid" />
+  <div class="div-line-segment div-line-left flex-1 h-px bg-mid" />
+  <div class="w-1.5 h-1.5 bg-accent rotate-45 mx-5 shrink-0" />
+  <div class="div-line-segment div-line-right flex-1 h-px bg-mid" />
 </div>
+
+<style>
+  .div-line-segment {
+    transform: scaleX(0);
+    animation: div-line-grow 0.9s cubic-bezier(.4, 0, .2, 1) 0.2s forwards;
+  }
+  .div-line-left {
+    transform-origin: right;
+  }
+  .div-line-right {
+    transform-origin: left;
+  }
+  @keyframes div-line-grow {
+    to {
+      transform: scaleX(1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .div-line-segment {
+      transform: scaleX(1);
+      animation: none;
+    }
+  }
+</style>
