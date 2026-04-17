@@ -8,6 +8,7 @@ import PillarHero from "@/components/sections/advisory/PillarHero.astro";
 import ServiceBox from "@/components/sections/advisory/ServiceBox.astro";
 import PullQuote from "@/components/sections/advisory/PullQuote.astro";
 import PillarCTA from "@/components/sections/advisory/PillarCTA.astro";
+import PortfolioCounter from "@/components/sections/advisory/PortfolioCounter.astro";
 import { getAdvisoryStrategicHousing } from "@/lib/content";
 import { servicePageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import { site } from "@/lib/constants";
@@ -49,6 +50,8 @@ const jsonld = [
       intro={data.hero.intro}
       introSecondary={data.hero.introSecondary}
     />
+
+    <PortfolioCounter items={[...data.counter]} pillarSlug="strategic-housing" />
 
     <section class="bg-light px-6 md:px-12 lg:px-20 py-16 lg:py-24">
       <div class="max-w-[880px] mx-auto">

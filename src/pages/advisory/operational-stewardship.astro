@@ -9,6 +9,7 @@ import ServiceBox from "@/components/sections/advisory/ServiceBox.astro";
 import PullQuote from "@/components/sections/advisory/PullQuote.astro";
 import PillarCTA from "@/components/sections/advisory/PillarCTA.astro";
 import DashboardIllustration from "@/components/sections/advisory/DashboardIllustration.astro";
+import HeartbeatBackdrop from "@/components/sections/advisory/HeartbeatBackdrop.astro";
 import { getAdvisoryOperationalStewardship } from "@/lib/content";
 import { servicePageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import { site } from "@/lib/constants";
@@ -49,7 +50,9 @@ const jsonld = [
       subtitle={data.hero.subtitle}
       intro={data.hero.intro}
       introSecondary={data.hero.introSecondary}
-    />
+    >
+      <HeartbeatBackdrop slot="backdrop" pillarSlug="operational-stewardship" />
+    </PillarHero>
 
     <section class="bg-light px-6 md:px-12 lg:px-20 py-16 lg:py-24">
       <div class="max-w-[880px] mx-auto">

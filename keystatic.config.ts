@@ -68,6 +68,71 @@ const advisorySchema = {
   ),
 };
 
+const advisoryStrategicHousingSchema = {
+  ...advisorySchema,
+  counter: fields.array(
+    fields.object({
+      value: fields.text({
+        label: "Value (numeric)",
+        description: "The number to animate to — digits only, e.g. \"45\" or \"2.5\".",
+      }),
+      prefix: fields.text({
+        label: "Prefix",
+        description: "Optional text before the number, e.g. \"$\".",
+      }),
+      suffix: fields.text({
+        label: "Suffix",
+        description: "Optional text after the number, e.g. \"M\" or \"+\".",
+      }),
+      caption: fields.text({ label: "Caption", multiline: true }),
+    }),
+    {
+      label: "Benchmark Counter",
+      description: "0 items hides the section. 1 item renders as a hero number. 2–4 items render as a row of tiles.",
+      itemLabel: (props) =>
+        `${props.fields.prefix.value}${props.fields.value.value}${props.fields.suffix.value}`.trim() || "(empty)",
+    },
+  ),
+};
+
+const advisoryTransactionRepresentationSchema = {
+  ...advisorySchema,
+  timelineStages: fields.array(
+    fields.object({
+      name: fields.text({ label: "Stage Name" }),
+      description: fields.text({
+        label: "Description",
+        description: "Shown in the popover on hover/tap. Blank = non-interactive label only.",
+        multiline: true,
+      }),
+    }),
+    {
+      label: "Timeline Stages",
+      description: "Five stages expected. If the array is empty, the component falls back to its hardcoded labels.",
+      itemLabel: (props) => props.fields.name.value,
+    },
+  ),
+  offMarket: fields.object(
+    {
+      enabled: fields.checkbox({ label: "Show Section", defaultValue: false }),
+      percentage: fields.text({
+        label: "Percentage (optional)",
+        description: "Digits only, e.g. \"68\". If blank, the qualitative map variant renders instead of the stat.",
+      }),
+      caption: fields.text({
+        label: "Caption",
+        description: "Shown in both the stat variant and the map variant.",
+        multiline: true,
+      }),
+    },
+    { label: "Off-Market Access" },
+  ),
+};
+
+const advisoryOperationalStewardshipSchema = {
+  ...advisorySchema,
+};
+
 export default config({
   storage: {
     kind: "cloud",
@@ -427,21 +492,21 @@ export default config({
       label: "Advisory — Strategic Housing",
       path: "src/content/advisory-strategic-housing",
       format: { data: "json" },
-      schema: advisorySchema,
+      schema: advisoryStrategicHousingSchema,
     }),
 
     advisoryTransactionRepresentation: singleton({
       label: "Advisory — Transaction & Representation",
       path: "src/content/advisory-transaction-representation",
       format: { data: "json" },
-      schema: advisorySchema,
+      schema: advisoryTransactionRepresentationSchema,
     }),
 
     advisoryOperationalStewardship: singleton({
       label: "Advisory — Operational Stewardship",
       path: "src/content/advisory-operational-stewardship",
       format: { data: "json" },
-      schema: advisorySchema,
+      schema: advisoryOperationalStewardshipSchema,
     }),
   },
 });

@@ -1,0 +1,80 @@
+---
+import type { PillarId } from "@/lib/analytics";
+
+interface Props {
+  pillarSlug: PillarId;
+}
+
+const { pillarSlug } = Astro.props;
+---
+
+<div
+  class="heartbeat-wrap absolute inset-0 flex items-center justify-center"
+  data-heartbeat
+  data-pillar={pillarSlug}
+  aria-hidden="true"
+>
+  <svg
+    viewBox="0 0 1200 200"
+    preserveAspectRatio="none"
+    class="w-full h-full"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      class="heartbeat-path"
+      d="M 0 100 L 200 100 L 220 60 L 240 140 L 260 100 L 500 100 L 520 60 L 540 140 L 560 100 L 800 100 L 820 60 L 840 140 L 860 100 L 1200 100"
+      stroke="var(--color-accent-light)"
+      stroke-opacity="0.22"
+      stroke-width="1.25"
+      fill="none"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+    />
+  </svg>
+</div>
+
+<style>
+  .heartbeat-path {
+    stroke-dasharray: 2800;
+    stroke-dashoffset: 2800;
+  }
+  .heartbeat-wrap.is-visible .heartbeat-path {
+    transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1);
+    stroke-dashoffset: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .heartbeat-path {
+      stroke-dashoffset: 0;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { trackAdvisoryHeartbeatViewed, type PillarId } from "@/lib/analytics";
+
+  function initHeartbeat() {
+    const wraps = document.querySelectorAll<HTMLElement>("[data-heartbeat]");
+    wraps.forEach((wrap) => {
+      if (wrap.dataset.wired === "1") return;
+      wrap.dataset.wired = "1";
+      const pillar = wrap.dataset.pillar as PillarId;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            wrap.classList.add("is-visible");
+            trackAdvisoryHeartbeatViewed(pillar);
+            observer.disconnect();
+          });
+        },
+        { threshold: 0.3 },
+      );
+      observer.observe(wrap);
+    });
+  }
+
+  initHeartbeat();
+  document.addEventListener("astro:page-load", initHeartbeat);
+</script>

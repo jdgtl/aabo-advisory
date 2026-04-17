@@ -1,0 +1,150 @@
+---
+import type { PillarId } from "@/lib/analytics";
+
+interface CounterItem {
+  value: string;
+  prefix?: string;
+  suffix?: string;
+  caption: string;
+}
+
+interface Props {
+  items: CounterItem[];
+  pillarSlug: PillarId;
+}
+
+const { items, pillarSlug } = Astro.props;
+
+if (items.length === 0) {
+  if (import.meta.env.DEV) {
+    console.warn(`[PortfolioCounter] Empty items array on pillar "${pillarSlug}" — section hidden. Populate via Keystatic "Benchmark Counter" field.`);
+  }
+  return;
+}
+
+const layout: "hero" | "row" = items.length === 1 ? "hero" : "row";
+const colsClass =
+  items.length === 2
+    ? "md:grid-cols-2"
+    : items.length === 3
+      ? "md:grid-cols-3"
+      : "md:grid-cols-2 lg:grid-cols-4";
+---
+
+<section
+  class="bg-canvas px-6 md:px-12 lg:px-20 py-16 lg:py-24"
+  data-portfolio-counter
+  data-pillar={pillarSlug}
+>
+  {layout === "hero" && items[0] && (
+    <div class="max-w-[640px] mx-auto text-center">
+      <div
+        role="group"
+        aria-label={`${items[0].prefix ?? ""}${items[0].value}${items[0].suffix ?? ""} — ${items[0].caption}`}
+      >
+        <div class="font-heading font-bold text-primary leading-none" style="font-size: clamp(72px, 11vw, 120px);">
+          <span aria-hidden="true">
+            {items[0].prefix && <span>{items[0].prefix}</span>}
+            <span data-counter-value data-target={items[0].value}>0</span>
+            {items[0].suffix && <span>{items[0].suffix}</span>}
+          </span>
+        </div>
+        <p class="mt-6 font-heading italic text-[18px] lg:text-[20px] text-text/70 leading-[1.55] max-w-[560px] mx-auto">
+          {items[0].caption}
+        </p>
+      </div>
+    </div>
+  )}
+
+  {layout === "row" && (
+    <div class={`max-w-[1100px] mx-auto grid grid-cols-1 ${colsClass} gap-8 lg:gap-10`}>
+      {items.map((item) => (
+        <div
+          role="group"
+          aria-label={`${item.prefix ?? ""}${item.value}${item.suffix ?? ""} — ${item.caption}`}
+          class="text-center"
+        >
+          <div class="font-heading font-bold text-primary leading-none" style="font-size: clamp(44px, 5.5vw, 72px);">
+            <span aria-hidden="true">
+              {item.prefix && <span>{item.prefix}</span>}
+              <span data-counter-value data-target={item.value}>0</span>
+              {item.suffix && <span>{item.suffix}</span>}
+            </span>
+          </div>
+          <p class="mt-4 text-[13px] lg:text-sm text-text/70 leading-[1.55] max-w-[280px] mx-auto">
+            {item.caption}
+          </p>
+        </div>
+      ))}
+    </div>
+  )}
+</section>
+
+<script>
+  import { trackAdvisoryCounterViewed, type PillarId } from "@/lib/analytics";
+
+  function parseNumeric(raw: string): { value: number; decimals: number } | null {
+    const parsed = parseFloat(raw);
+    if (Number.isNaN(parsed)) return null;
+    const dotIdx = raw.indexOf(".");
+    const decimals = dotIdx === -1 ? 0 : raw.length - dotIdx - 1;
+    return { value: parsed, decimals };
+  }
+
+  function easeOutCubic(t: number): number {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function tweenValue(el: HTMLElement, target: number, decimals: number, durationMs: number) {
+    const start = performance.now();
+    function frame(now: number) {
+      const t = Math.min(1, (now - start) / durationMs);
+      const eased = easeOutCubic(t);
+      const current = target * eased;
+      el.textContent = current.toFixed(decimals);
+      if (t < 1) requestAnimationFrame(frame);
+      else el.textContent = target.toFixed(decimals);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function initCounters() {
+    const sections = document.querySelectorAll<HTMLElement>("[data-portfolio-counter]");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    sections.forEach((section) => {
+      if (section.dataset.wired === "1") return;
+      section.dataset.wired = "1";
+      const valueEls = section.querySelectorAll<HTMLElement>("[data-counter-value]");
+      const pillar = section.dataset.pillar as PillarId;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            valueEls.forEach((el) => {
+              const target = el.dataset.target ?? "";
+              const parsed = parseNumeric(target);
+              if (!parsed) {
+                el.textContent = target;
+                return;
+              }
+              if (reducedMotion) {
+                el.textContent = parsed.value.toFixed(parsed.decimals);
+              } else {
+                tweenValue(el, parsed.value, parsed.decimals, 1400);
+              }
+            });
+            trackAdvisoryCounterViewed(pillar);
+            observer.disconnect();
+          });
+        },
+        { threshold: 0.5 },
+      );
+      observer.observe(section);
+    });
+  }
+
+  initCounters();
+  document.addEventListener("astro:page-load", initCounters);
+</script>
