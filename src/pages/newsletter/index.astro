@@ -2,7 +2,7 @@
 import Base from "@/layouts/Base.astro";
 import Nav from "@/components/sections/Nav.astro";
 import Footer from "@/components/sections/Footer.astro";
-import RevealWrapper from "@/components/ui/RevealWrapper";
+import RevealWrapper from "@/components/ui/RevealWrapper.astro";
 import LineReveal from "@/components/ui/LineReveal.astro";
 import NewsletterSubscribe from "@/components/interactive/NewsletterSubscribe";
 import NewsletterArchive from "@/components/interactive/NewsletterArchive";
@@ -23,7 +23,7 @@ const tags = getNewsletterTags();
     {/* Header */}
     <div class="px-6 md:px-12 lg:px-20 pt-14 lg:pt-[60px] pb-10 lg:pb-12">
       <div class="max-w-[1100px] mx-auto">
-        <RevealWrapper client:visible>
+        <RevealWrapper>
           <div class="text-[10px] tracking-[0.25em] uppercase text-accent mb-4 font-semibold">
             {page?.subtext ?? "Diplomatic Housing Intelligence"}
           </div>

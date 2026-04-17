@@ -1,0 +1,85 @@
+---
+type Direction = "up" | "down" | "left" | "right" | "none";
+
+interface Props {
+  delay?: number;
+  direction?: Direction;
+  threshold?: number;
+  class?: string;
+}
+
+const { delay = 0, direction = "up", threshold = 0.13, class: className = "" } = Astro.props;
+
+const offsetMap: Record<Direction, string> = {
+  up: "translateY(32px)",
+  down: "translateY(-32px)",
+  left: "translateX(32px)",
+  right: "translateX(-32px)",
+  none: "none",
+};
+---
+
+<div
+  class={className}
+  data-reveal
+  data-reveal-delay={delay}
+  data-reveal-offset={offsetMap[direction]}
+  data-reveal-threshold={threshold}
+>
+  <slot />
+</div>
+
+<script>
+  function initReveals() {
+    const els = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-reveal]:not([data-reveal-wired])"),
+    );
+    if (els.length === 0) return;
+
+    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    const hasIO = typeof IntersectionObserver !== "undefined";
+
+    // If we can't observe, leave content visible as SSR rendered it.
+    if (!hasIO || reducedMotion) {
+      els.forEach((el) => el.setAttribute("data-reveal-wired", ""));
+      return;
+    }
+
+    // Group elements by threshold so we reuse observers.
+    const byThreshold = new Map<number, HTMLElement[]>();
+    els.forEach((el) => {
+      el.setAttribute("data-reveal-wired", "");
+      const delay = parseFloat(el.dataset.revealDelay ?? "0");
+      const offset = el.dataset.revealOffset ?? "translateY(32px)";
+      const threshold = parseFloat(el.dataset.revealThreshold ?? "0.13");
+
+      // Hide via JS so the SSR output is visible by default.
+      el.style.opacity = "0";
+      el.style.transform = offset;
+      el.style.transition = `opacity 0.7s cubic-bezier(.4,0,.2,1) ${delay}s, transform 0.7s cubic-bezier(.4,0,.2,1) ${delay}s`;
+
+      const bucket = byThreshold.get(threshold) ?? [];
+      bucket.push(el);
+      byThreshold.set(threshold, bucket);
+    });
+
+    byThreshold.forEach((bucket, threshold) => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target as HTMLElement;
+            el.style.opacity = "1";
+            el.style.transform = "none";
+            observer.unobserve(el);
+          });
+        },
+        { threshold },
+      );
+      bucket.forEach((el) => observer.observe(el));
+    });
+  }
+
+  initReveals();
+  document.addEventListener("astro:page-load", initReveals);
+</script>

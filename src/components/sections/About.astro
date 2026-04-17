@@ -1,6 +1,6 @@
 ---
 import Label from "@/components/ui/Label.astro";
-import RevealWrapper from "@/components/ui/RevealWrapper";
+import RevealWrapper from "@/components/ui/RevealWrapper.astro";
 import { getHomepage } from "@/lib/content";
 import { renderLinks } from "@/lib/markdown-links";
 
@@ -17,18 +17,18 @@ const paragraphs = about?.paragraphs ?? [
 <section id="about" class="bg-light px-6 py-16 sm:px-10 md:px-16 lg:px-20 lg:py-[100px]">
   <div class="max-w-[1100px] mx-auto">
     <div class="max-w-[680px]">
-      <RevealWrapper client:visible>
+      <RevealWrapper>
         <Label text="About" />
       </RevealWrapper>
 
-      <RevealWrapper client:visible delay={0.1}>
+      <RevealWrapper delay={0.1}>
         <h2 class="font-heading text-[28px] sm:text-[32px] lg:text-[36px] font-bold text-primary mb-7">
           {headline}
         </h2>
       </RevealWrapper>
 
       {paragraphs.map((para, i) => (
-        <RevealWrapper client:visible delay={0.15 + 0.05 * i}>
+        <RevealWrapper delay={0.15 + 0.05 * i}>
           <p class:list={[
             "text-sm lg:text-base leading-[1.85] text-text/80",
             i < paragraphs.length - 1 ? "mb-5" : "",

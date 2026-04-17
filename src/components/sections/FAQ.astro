@@ -1,6 +1,6 @@
 ---
 import Label from "@/components/ui/Label.astro";
-import RevealWrapper from "@/components/ui/RevealWrapper";
+import RevealWrapper from "@/components/ui/RevealWrapper.astro";
 import { renderLinks } from "@/lib/markdown-links";
 
 interface FAQItem {
@@ -19,11 +19,11 @@ const { label = "Frequently Asked Questions", headline = "Common Questions", faq
 
 <section class="bg-canvas px-6 py-16 sm:px-10 md:px-16 lg:px-20 lg:py-[80px]">
   <div class="max-w-[1100px] mx-auto">
-    <RevealWrapper client:visible>
+    <RevealWrapper>
       <Label text={label} />
     </RevealWrapper>
 
-    <RevealWrapper client:visible delay={0.1}>
+    <RevealWrapper delay={0.1}>
       <h2 class="font-heading text-[28px] sm:text-[32px] lg:text-[36px] font-bold text-primary mb-10">
         {headline}
       </h2>
@@ -31,7 +31,7 @@ const { label = "Frequently Asked Questions", headline = "Common Questions", faq
 
     <div class="max-w-[760px] flex flex-col gap-0" data-faq-accordion>
       {faqs.map((faq, i) => (
-        <RevealWrapper client:visible delay={0.05 * i}>
+        <RevealWrapper delay={0.05 * i}>
           <div class="border-t border-mid last:border-b" data-faq-item>
             <button
               type="button"

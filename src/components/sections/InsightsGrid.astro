@@ -1,6 +1,6 @@
 ---
 import Label from "@/components/ui/Label.astro";
-import RevealWrapper from "@/components/ui/RevealWrapper";
+import RevealWrapper from "@/components/ui/RevealWrapper.astro";
 import Card from "@/components/ui/Card";
 import { getAllArticles } from "@/lib/content";
 
@@ -22,17 +22,17 @@ const hasArticles = articles.length > 0;
 
 <section id="insights" class="bg-canvas px-6 py-16 sm:px-10 md:px-16 lg:px-20 lg:py-[100px]">
   <div class="max-w-[1100px] mx-auto">
-    <RevealWrapper client:visible>
+    <RevealWrapper>
       <Label text="Insights" />
     </RevealWrapper>
 
-    <RevealWrapper client:visible delay={0.1}>
+    <RevealWrapper delay={0.1}>
       <h2 class="font-heading text-[28px] sm:text-[32px] lg:text-[36px] font-bold text-primary mb-3.5">
         Perspectives &amp; Field Guides
       </h2>
     </RevealWrapper>
 
-    <RevealWrapper client:visible delay={0.15}>
+    <RevealWrapper delay={0.15}>
       <p class="text-sm lg:text-base text-text/60 max-w-[480px] leading-[1.7] mb-10 lg:mb-[52px]">
         Strategic observations and practical guidance.
       </p>
@@ -41,7 +41,7 @@ const hasArticles = articles.length > 0;
     {hasArticles ? (
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {articles.map((a, i) => (
-          <RevealWrapper client:visible delay={0.1 * i}>
+          <RevealWrapper delay={0.1 * i}>
             <a href={`/insights/${a.slug}`} class="block h-full no-underline">
               <Card
                 className="h-full bg-light border-b-2 border-accent flex flex-col justify-between px-6 py-8 sm:px-[30px] sm:py-9 cursor-pointer"
@@ -67,7 +67,7 @@ const hasArticles = articles.length > 0;
         ))}
       </div>
     ) : (
-      <RevealWrapper client:visible delay={0.2}>
+      <RevealWrapper delay={0.2}>
         <p class="text-sm text-text/40 italic">
           Insights coming soon.
         </p>
@@ -75,7 +75,7 @@ const hasArticles = articles.length > 0;
     )}
 
     {/* View All CTA */}
-    <RevealWrapper client:visible delay={hasArticles ? 0.3 : 0.2}>
+    <RevealWrapper delay={hasArticles ? 0.3 : 0.2}>
       <div class="mt-10 lg:mt-14 text-center">
         <a
           href="/insights"
