@@ -45,16 +45,9 @@
       "href": "/advisory/operational-stewardship"
     }
   ],
-  "timelineStages": [
-    { "name": "Sourcing", "description": "" },
-    { "name": "Negotiation", "description": "" },
-    { "name": "Contract", "description": "" },
-    { "name": "Closing", "description": "" },
-    { "name": "Handoff", "description": "" }
-  ],
+  "timelineStages": [],
   "offMarket": {
     "enabled": false,
-    "percentage": "",
     "caption": "Where the best diplomatic properties surface before they reach the open market."
   }
 }
