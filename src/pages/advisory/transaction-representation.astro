@@ -8,6 +8,7 @@ import PillarHero from "@/components/sections/advisory/PillarHero.astro";
 import ServiceBox from "@/components/sections/advisory/ServiceBox.astro";
 import PullQuote from "@/components/sections/advisory/PullQuote.astro";
 import PillarCTA from "@/components/sections/advisory/PillarCTA.astro";
+import CrossLinksGrid from "@/components/sections/advisory/CrossLinksGrid.astro";
 import TransactionTimeline from "@/components/sections/advisory/TransactionTimeline.astro";
 import OffMarketInfographic from "@/components/sections/advisory/OffMarketInfographic.astro";
 import { getAdvisoryTransactionRepresentation } from "@/lib/content";
@@ -77,13 +78,17 @@ const jsonld = [
         />
 
         <PullQuote text={data.pullQuote.text} />
+
+        <CrossLinksGrid
+          crossLinks={[...data.crossLinks]}
+          pillarSlug="transaction-representation"
+        />
       </div>
     </section>
 
     <PillarCTA
       headline={data.cta.headline}
       buttonText={data.cta.buttonText}
-      crossLinks={[...data.crossLinks]}
       pillarSlug="transaction-representation"
     />
   </main>

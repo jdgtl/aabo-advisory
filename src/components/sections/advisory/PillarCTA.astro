@@ -1,19 +1,13 @@
 ---
 import type { PillarId } from "@/lib/analytics";
 
-interface CrossLink {
-  label: string;
-  href: string;
-}
-
 interface Props {
   headline: string;
   buttonText: string;
-  crossLinks: CrossLink[];
   pillarSlug: PillarId;
 }
 
-const { headline, buttonText, crossLinks, pillarSlug } = Astro.props;
+const { headline, buttonText, pillarSlug } = Astro.props;
 ---
 
 <section class="relative overflow-hidden bg-primary px-6 md:px-12 lg:px-20 py-16 lg:py-24 text-center">
@@ -33,33 +27,11 @@ const { headline, buttonText, crossLinks, pillarSlug } = Astro.props;
     >
       {buttonText}
     </a>
-
-    {crossLinks?.length > 0 && (
-      <ul class="mt-10 flex flex-col sm:flex-row sm:flex-wrap justify-center gap-4 sm:gap-6 text-[13px]">
-        {crossLinks.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              data-advisory-crosslink
-              data-pillar={pillarSlug}
-              data-label={link.label}
-              class="text-accent hover:text-accent-light transition-colors duration-300 underline-offset-4 hover:underline"
-            >
-              {link.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    )}
   </div>
 </section>
 
 <script>
-  import {
-    trackAdvisoryCTAClicked,
-    trackAdvisoryCrossLinkClicked,
-    type PillarId,
-  } from "@/lib/analytics";
+  import { trackAdvisoryCTAClicked, type PillarId } from "@/lib/analytics";
 
   const PILLAR_IDS: readonly PillarId[] = [
     "strategic-housing",
@@ -81,18 +53,6 @@ const { headline, buttonText, crossLinks, pillarSlug } = Astro.props;
         const pillar = asPillarId(el.dataset.pillar);
         if (!pillar) return;
         trackAdvisoryCTAClicked(pillar, "cta-banner");
-      });
-    });
-
-    document.querySelectorAll<HTMLAnchorElement>("[data-advisory-crosslink]").forEach((el) => {
-      if (el.dataset.wired === "1") return;
-      el.dataset.wired = "1";
-      el.addEventListener("click", () => {
-        const pillar = asPillarId(el.dataset.pillar);
-        if (!pillar) return;
-        const href = el.getAttribute("href") ?? "";
-        const label = el.dataset.label ?? "";
-        trackAdvisoryCrossLinkClicked(pillar, href, label);
       });
     });
   }

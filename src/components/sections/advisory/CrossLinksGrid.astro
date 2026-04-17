@@ -1,0 +1,81 @@
+---
+import type { PillarId } from "@/lib/analytics";
+
+interface CrossLink {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  crossLinks: CrossLink[];
+  pillarSlug: PillarId;
+}
+
+const { crossLinks, pillarSlug } = Astro.props;
+
+const cleanLabel = (raw: string) => raw.replace(/\s*→\s*$/, "").trim();
+---
+
+{crossLinks?.length > 0 && (
+  <nav aria-label="Related pages" class="mt-10 lg:mt-14">
+    <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+      {crossLinks.map((link) => {
+        const label = cleanLabel(link.label);
+        return (
+          <li class="h-full">
+            <a
+              href={link.href}
+              data-advisory-crosslink
+              data-pillar={pillarSlug}
+              data-label={label}
+              class="group flex items-center justify-between gap-4 h-full bg-canvas border border-accent/25 hover:border-accent hover:bg-canvas px-5 py-4 lg:px-6 lg:py-5 transition-colors duration-300"
+            >
+              <span class="text-[13px] lg:text-[14px] leading-[1.4] text-primary">
+                {label}
+              </span>
+              <span
+                aria-hidden="true"
+                class="text-accent shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
+              >
+                →
+              </span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </nav>
+)}
+
+<script>
+  import { trackAdvisoryCrossLinkClicked, type PillarId } from "@/lib/analytics";
+
+  const PILLAR_IDS: readonly PillarId[] = [
+    "strategic-housing",
+    "transaction-representation",
+    "operational-stewardship",
+  ];
+
+  function asPillarId(value: string | undefined): PillarId | null {
+    return value && (PILLAR_IDS as readonly string[]).includes(value)
+      ? (value as PillarId)
+      : null;
+  }
+
+  function wireCrossLinks() {
+    document.querySelectorAll<HTMLAnchorElement>("[data-advisory-crosslink]").forEach((el) => {
+      if (el.dataset.wired === "1") return;
+      el.dataset.wired = "1";
+      el.addEventListener("click", () => {
+        const pillar = asPillarId(el.dataset.pillar);
+        if (!pillar) return;
+        const href = el.getAttribute("href") ?? "";
+        const label = el.dataset.label ?? "";
+        trackAdvisoryCrossLinkClicked(pillar, href, label);
+      });
+    });
+  }
+
+  wireCrossLinks();
+  document.addEventListener("astro:page-load", wireCrossLinks);
+</script>
