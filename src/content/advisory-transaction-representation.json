@@ -44,11 +44,5 @@
       "label": "After closing, our work continues →",
       "href": "/advisory/operational-stewardship"
     }
-  ],
-  "timelineStages": [],
-  "offMarket": {
-    "enabled": true,
-    "percentage": "69",
-    "caption": "Where the best diplomatic properties surface before they reach the open market."
-  }
+  ]
 }

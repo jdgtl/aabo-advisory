@@ -9,8 +9,6 @@ import ServiceBox from "@/components/sections/advisory/ServiceBox.astro";
 import PullQuote from "@/components/sections/advisory/PullQuote.astro";
 import PillarCTA from "@/components/sections/advisory/PillarCTA.astro";
 import CrossLinksGrid from "@/components/sections/advisory/CrossLinksGrid.astro";
-import TransactionTimeline from "@/components/sections/advisory/TransactionTimeline.astro";
-import OffMarketInfographic from "@/components/sections/advisory/OffMarketInfographic.astro";
 import { getAdvisoryTransactionRepresentation } from "@/lib/content";
 import { servicePageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import { site } from "@/lib/constants";
@@ -53,11 +51,6 @@ const jsonld = [
       introSecondary={data.hero.introSecondary}
     />
 
-    <TransactionTimeline
-      stages={[...data.timelineStages]}
-      pillarSlug="transaction-representation"
-    />
-
     <section class="bg-light px-6 md:px-12 lg:px-20 py-16 lg:py-24">
       <div class="max-w-[920px] mx-auto">
         {data.services.map((service, i) => (
@@ -69,13 +62,6 @@ const jsonld = [
             />
           </RevealWrapper>
         ))}
-
-        <OffMarketInfographic
-          enabled={data.offMarket.enabled}
-          percentage={data.offMarket.percentage}
-          caption={data.offMarket.caption}
-          pillarSlug="transaction-representation"
-        />
 
         <PullQuote text={data.pullQuote.text} />
 

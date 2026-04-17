@@ -97,36 +97,6 @@ const advisoryStrategicHousingSchema = {
 
 const advisoryTransactionRepresentationSchema = {
   ...advisorySchema,
-  timelineStages: fields.array(
-    fields.object({
-      name: fields.text({ label: "Stage Name" }),
-      description: fields.text({
-        label: "Description",
-        description: "Shown in the popover on hover/tap. Blank = non-interactive label only.",
-        multiline: true,
-      }),
-    }),
-    {
-      label: "Timeline Stages",
-      description: "Five stages expected. If the array is empty, the component falls back to its hardcoded labels.",
-      itemLabel: (props) => props.fields.name.value,
-    },
-  ),
-  offMarket: fields.object(
-    {
-      enabled: fields.checkbox({ label: "Show Section", defaultValue: false }),
-      percentage: fields.text({
-        label: "Percentage (optional)",
-        description: "Digits only, e.g. \"68\". If blank, the qualitative map variant renders instead of the stat.",
-      }),
-      caption: fields.text({
-        label: "Caption",
-        description: "Shown in both the stat variant and the map variant.",
-        multiline: true,
-      }),
-    },
-    { label: "Off-Market Access" },
-  ),
 };
 
 const advisoryOperationalStewardshipSchema = {
