@@ -24,23 +24,27 @@ const pillars = [
       ← Back to Advisory Services
     </a>
 
-    <ul class="flex items-center gap-5 sm:gap-7">
+    <ul class="flex items-center gap-1 sm:gap-2">
       {pillars.map((p) => {
         const isActive = p.numeral === active;
+        const wrapperClasses =
+          "inline-flex items-center justify-center w-10 sm:w-12 py-1.5 font-heading text-[15px] transition-colors duration-300";
         return (
           <li>
             {isActive ? (
               <span
-                class="font-heading text-[15px] text-primary border-b-[1.5px] border-accent pb-0.5"
+                class={`${wrapperClasses} text-primary`}
                 aria-current="page"
                 title={p.name}
               >
-                {p.numeral}
+                <span class="border-b-[1.5px] border-accent pb-0.5">
+                  {p.numeral}
+                </span>
               </span>
             ) : (
               <a
                 href={p.href}
-                class="font-heading text-[15px] text-primary/50 hover:text-primary transition-colors duration-300"
+                class={`${wrapperClasses} text-primary/50 hover:text-primary`}
                 title={p.name}
               >
                 {p.numeral}
