@@ -3,6 +3,7 @@ import Base from "@/layouts/Base.astro";
 import Nav from "@/components/sections/Nav.astro";
 import Footer from "@/components/sections/Footer.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper.astro";
+import DivLine from "@/components/ui/DivLine.astro";
 import PillarSecondaryNav from "@/components/sections/advisory/PillarSecondaryNav.astro";
 import PillarHero from "@/components/sections/advisory/PillarHero.astro";
 import ServiceBox from "@/components/sections/advisory/ServiceBox.astro";
@@ -50,6 +51,8 @@ const jsonld = [
       intro={data.hero.intro}
       introSecondary={data.hero.introSecondary}
     />
+
+    <DivLine />
 
     <section class="bg-light px-6 md:px-12 lg:px-20 py-16 lg:py-24">
       <div class="max-w-[920px] mx-auto">
