@@ -1,32 +1,61 @@
 ---
-const stages = [
-  "Sourcing",
-  "Negotiation",
-  "Contract",
-  "Closing",
-  "Handoff",
+interface TimelineStage {
+  name: string;
+  description?: string;
+}
+
+interface Props {
+  stages?: TimelineStage[];
+  pillarSlug: string;
+}
+
+const { stages: stagesProp, pillarSlug } = Astro.props;
+
+const fallback: TimelineStage[] = [
+  { name: "Sourcing" },
+  { name: "Negotiation" },
+  { name: "Contract" },
+  { name: "Closing" },
+  { name: "Handoff" },
 ];
+
+const stages: TimelineStage[] =
+  stagesProp && stagesProp.length > 0 ? stagesProp : fallback;
+
+const nodeCount = stages.length;
+const firstX = 80;
+const lastX = 1020;
+const span = lastX - firstX;
 ---
 
 <section
   aria-label="Transaction lifecycle"
-  class="bg-canvas px-6 md:px-12 lg:px-20 pb-10 lg:pb-14"
+  class="bg-canvas px-6 md:px-12 lg:px-20 pb-10 lg:pb-14 relative"
+  data-transaction-timeline
+  data-pillar={pillarSlug}
 >
-  <div class="max-w-[1100px] mx-auto">
+  <div class="max-w-[1100px] mx-auto relative">
     <svg
-      viewBox="0 0 1100 72"
+      viewBox={`0 0 1100 72`}
       class="w-full h-auto"
       role="img"
       xmlns="http://www.w3.org/2000/svg"
     >
       <title>Transaction lifecycle: sourcing through handoff</title>
       <desc>
-        Five-stage horizontal timeline showing the full-cycle representation
-        process: sourcing, negotiation, contract, closing, and handoff.
+        {nodeCount}-stage horizontal timeline showing the full-cycle
+        representation process.
       </desc>
-      <line x1="80" y1="24" x2="1020" y2="24" stroke="#E8DFD0" stroke-width="1" />
-      {stages.map((label, i) => {
-        const x = 80 + (i * (940 / (stages.length - 1)));
+      <line
+        x1={firstX}
+        y1="24"
+        x2={lastX}
+        y2="24"
+        stroke="#E8DFD0"
+        stroke-width="1"
+      />
+      {stages.map((stage, i) => {
+        const x = firstX + (nodeCount === 1 ? 0 : (i * span) / (nodeCount - 1));
         return (
           <Fragment>
             <circle cx={x} cy={24} r={8} fill="#B8965A" />
@@ -41,11 +70,170 @@ const stages = [
               fill="#0F1B2D"
               style="text-transform: uppercase;"
             >
-              {label}
+              {stage.name}
             </text>
           </Fragment>
         );
       })}
     </svg>
+
+    <div class="absolute inset-0 pointer-events-none" data-timeline-overlay>
+      {stages.map((stage, i) => {
+        const leftPct = (firstX + (nodeCount === 1 ? 0 : (i * span) / (nodeCount - 1))) / 1100 * 100;
+        const hasDetail = Boolean(stage.description && stage.description.trim().length > 0);
+        const popId = `tl-pop-${i}`;
+        if (!hasDetail) {
+          return (
+            <span
+              aria-hidden="true"
+              class="absolute block w-5 h-5 -translate-x-1/2 -translate-y-1/2"
+              style={`left: ${leftPct}%; top: 24px;`}
+            />
+          );
+        }
+        return (
+          <div
+            class="absolute"
+            style={`left: ${leftPct}%; top: 24px;`}
+          >
+            <button
+              type="button"
+              data-timeline-node
+              data-stage={stage.name}
+              data-index={i}
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls={popId}
+              aria-label={`${stage.name} — tap to reveal detail`}
+              class="pointer-events-auto absolute w-6 h-6 -translate-x-1/2 -translate-y-1/2 rounded-full cursor-pointer bg-transparent hover:bg-accent/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 transition-colors"
+            />
+            <div
+              id={popId}
+              data-timeline-popover
+              role="region"
+              aria-label={`${stage.name} detail`}
+              hidden
+              class="pointer-events-none absolute z-20 w-[280px] sm:w-[300px] bg-primary text-canvas p-4 sm:p-5 shadow-lg rounded-sm -translate-x-1/2 left-1/2"
+            >
+              <p class="font-heading font-bold text-[15px] mb-1.5 text-canvas">
+                {stage.name}
+              </p>
+              <p class="text-[13px] leading-[1.55] text-canvas/80">
+                {stage.description}
+              </p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
   </div>
 </section>
+
+<script>
+  import { trackAdvisoryTimelineStageViewed } from "@/lib/analytics";
+
+  function initTimelines() {
+    const timelines = document.querySelectorAll<HTMLElement>("[data-transaction-timeline]");
+    timelines.forEach((timeline) => {
+      if (timeline.dataset.wired === "1") return;
+      timeline.dataset.wired = "1";
+
+      const pillar = timeline.dataset.pillar ?? "unknown";
+      const buttons = Array.from(
+        timeline.querySelectorAll<HTMLButtonElement>("[data-timeline-node]"),
+      );
+      const viewed = new Set<string>();
+      let openButton: HTMLButtonElement | null = null;
+      let openTimer: number | undefined;
+      let closeTimer: number | undefined;
+
+      const getPopover = (btn: HTMLButtonElement): HTMLElement | null => {
+        const id = btn.getAttribute("aria-controls");
+        return id ? document.getElementById(id) : null;
+      };
+
+      const positionPopover = (btn: HTMLButtonElement, pop: HTMLElement) => {
+        const narrow = window.matchMedia("(max-width: 640px)").matches;
+        pop.style.top = narrow ? "24px" : "-16px";
+        pop.style.transform = narrow ? "translate(-50%, 16px)" : "translate(-50%, -100%)";
+      };
+
+      const open = (btn: HTMLButtonElement) => {
+        if (openButton && openButton !== btn) close(openButton);
+        const pop = getPopover(btn);
+        if (!pop) return;
+        positionPopover(btn, pop);
+        pop.hidden = false;
+        pop.style.pointerEvents = "auto";
+        btn.setAttribute("aria-expanded", "true");
+        openButton = btn;
+        const stage = btn.dataset.stage ?? "unknown";
+        if (!viewed.has(stage)) {
+          viewed.add(stage);
+          trackAdvisoryTimelineStageViewed(pillar, stage);
+        }
+      };
+
+      const close = (btn: HTMLButtonElement) => {
+        const pop = getPopover(btn);
+        if (pop) {
+          pop.hidden = true;
+          pop.style.pointerEvents = "none";
+        }
+        btn.setAttribute("aria-expanded", "false");
+        if (openButton === btn) openButton = null;
+      };
+
+      const closeAll = () => {
+        if (openButton) close(openButton);
+      };
+
+      buttons.forEach((btn, idx) => {
+        btn.addEventListener("mouseenter", () => {
+          window.clearTimeout(closeTimer);
+          openTimer = window.setTimeout(() => open(btn), 100);
+        });
+        btn.addEventListener("mouseleave", () => {
+          window.clearTimeout(openTimer);
+          closeTimer = window.setTimeout(() => close(btn), 200);
+        });
+
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const isOpen = btn.getAttribute("aria-expanded") === "true";
+          if (isOpen) close(btn);
+          else open(btn);
+        });
+
+        btn.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            const isOpen = btn.getAttribute("aria-expanded") === "true";
+            if (isOpen) close(btn);
+            else open(btn);
+          } else if (e.key === "Escape") {
+            close(btn);
+            btn.focus();
+          } else if (e.key === "ArrowRight") {
+            e.preventDefault();
+            buttons[(idx + 1) % buttons.length]?.focus();
+          } else if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            buttons[(idx - 1 + buttons.length) % buttons.length]?.focus();
+          }
+        });
+      });
+
+      document.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
+        if (!target.closest("[data-timeline-node]") && !target.closest("[data-timeline-popover]")) {
+          closeAll();
+        }
+      });
+    });
+  }
+
+  initTimelines();
+  document.addEventListener("astro:page-load", initTimelines);
+</script>
