@@ -47,7 +47,8 @@
   ],
   "timelineStages": [],
   "offMarket": {
-    "enabled": false,
+    "enabled": true,
+    "percentage": "69",
     "caption": "Where the best diplomatic properties surface before they reach the open market."
   }
 }
