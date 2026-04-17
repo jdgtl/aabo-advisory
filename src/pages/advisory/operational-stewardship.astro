@@ -3,13 +3,13 @@ import Base from "@/layouts/Base.astro";
 import Nav from "@/components/sections/Nav.astro";
 import Footer from "@/components/sections/Footer.astro";
 import RevealWrapper from "@/components/ui/RevealWrapper.astro";
+import DivLine from "@/components/ui/DivLine.astro";
 import PillarSecondaryNav from "@/components/sections/advisory/PillarSecondaryNav.astro";
 import PillarHero from "@/components/sections/advisory/PillarHero.astro";
 import ServiceBox from "@/components/sections/advisory/ServiceBox.astro";
 import PullQuote from "@/components/sections/advisory/PullQuote.astro";
 import PillarCTA from "@/components/sections/advisory/PillarCTA.astro";
 import CrossLinksGrid from "@/components/sections/advisory/CrossLinksGrid.astro";
-import HeartbeatBackdrop from "@/components/sections/advisory/HeartbeatBackdrop.astro";
 import { getAdvisoryOperationalStewardship } from "@/lib/content";
 import { servicePageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import { site } from "@/lib/constants";
@@ -44,16 +44,15 @@ const jsonld = [
   <PillarSecondaryNav active="III" />
 
   <main id="main-content" class="bg-canvas">
-    <div class="relative">
-      <PillarHero
-        numeral={data.hero.numeral}
-        title={data.hero.title}
-        subtitle={data.hero.subtitle}
-        intro={data.hero.intro}
-        introSecondary={data.hero.introSecondary}
-      />
-      <HeartbeatBackdrop pillarSlug="operational-stewardship" />
-    </div>
+    <PillarHero
+      numeral={data.hero.numeral}
+      title={data.hero.title}
+      subtitle={data.hero.subtitle}
+      intro={data.hero.intro}
+      introSecondary={data.hero.introSecondary}
+    />
+
+    <DivLine class="max-w-[920px] mx-auto px-6 md:px-12 lg:px-20" />
 
     <section class="bg-light px-6 md:px-12 lg:px-20 py-16 lg:py-24">
       <div class="max-w-[920px] mx-auto">
