@@ -109,6 +109,33 @@ export function professionalServiceJsonLd() {
   });
 }
 
+export interface ServicePageJsonLdInput {
+  name: string;
+  description: string;
+  url: string;
+}
+
+export function servicePageJsonLd(input: ServicePageJsonLdInput) {
+  if (!input.name.trim() || !input.description.trim()) {
+    throw new Error(
+      `servicePageJsonLd: name and description must be non-empty (url=${input.url})`,
+    );
+  }
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: input.name,
+    description: input.description,
+    url: input.url,
+    provider: {
+      "@type": "ProfessionalService",
+      name: ORG_NAME,
+      url: SITE_URL,
+    },
+    areaServed,
+  });
+}
+
 /* ── 4. Article (insight/dossier pages) ── */
 
 export interface ArticleJsonLdInput {

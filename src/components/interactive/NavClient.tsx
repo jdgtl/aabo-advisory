@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { trackAdvisoryNavDropdownOpened } from "@/lib/analytics";
 
 const NAV_SECTIONS = ["home", "approach", "services", "insights", "about"];
 
 export default function NavClient() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const collapseAdvisorySublistRef = useRef<(() => void) | null>(null);
   const [activeSection, setActiveSection] = useState(() => {
     if (typeof window === "undefined") return "home";
     const path = window.location.pathname;
     if (path.startsWith("/insights")) return "insights";
     if (path.startsWith("/calculator")) return "calculator";
+    if (path.startsWith("/advisory")) return "services";
     return "home";
   });
 
@@ -68,15 +71,13 @@ export default function NavClient() {
     }
   }, [mobileOpen]);
 
-  /* ── close mobile drawer when clicking anchor links ── */
   useEffect(() => {
     const drawer = document.querySelector<HTMLElement>("[data-nav-drawer]");
     if (!drawer) return;
     const handleClick = (e: Event) => {
-      const target = e.target as HTMLAnchorElement;
-      if (target.tagName === "A" && target.getAttribute("href")?.includes("#")) {
-        setMobileOpen(false);
-      }
+      const anchor = (e.target as HTMLElement).closest("a");
+      if (!anchor?.getAttribute("href")) return;
+      setMobileOpen(false);
     };
     drawer.addEventListener("click", handleClick);
     return () => drawer.removeEventListener("click", handleClick);
@@ -94,6 +95,158 @@ export default function NavClient() {
       }
     });
   }, [activeSection]);
+
+  /* The two Advisory-dropdown effects below use `[]` deps intentionally: they
+     bind to Astro-rendered DOM that never remounts, and the `announced` flag
+     must persist across drawer open/close so NavDropdownOpened fires once
+     per session, not once per toggle. */
+  useEffect(() => {
+    const group = document.querySelector<HTMLElement>("[data-advisory-dropdown]");
+    if (!group) return;
+    const trigger = group.querySelector<HTMLAnchorElement>("[data-advisory-trigger]");
+    const menu = group.querySelector<HTMLElement>("[data-advisory-menu]");
+    const chevron = group.querySelector<SVGElement>("[data-advisory-chevron]");
+    if (!trigger || !menu) return;
+
+    let openTimer: number | undefined;
+    let closeTimer: number | undefined;
+    let announced = false;
+
+    const open = () => {
+      window.clearTimeout(closeTimer);
+      menu.classList.remove("hidden");
+      trigger.setAttribute("aria-expanded", "true");
+      chevron?.style.setProperty("transform", "rotate(180deg)");
+      if (!announced) {
+        trackAdvisoryNavDropdownOpened("desktop");
+        announced = true;
+      }
+    };
+    const close = () => {
+      menu.classList.add("hidden");
+      trigger.setAttribute("aria-expanded", "false");
+      chevron?.style.removeProperty("transform");
+    };
+
+    const onEnter = () => {
+      window.clearTimeout(closeTimer);
+      openTimer = window.setTimeout(open, 100);
+    };
+    const onLeave = () => {
+      window.clearTimeout(openTimer);
+      closeTimer = window.setTimeout(close, 200);
+    };
+
+    group.addEventListener("mouseenter", onEnter);
+    group.addEventListener("mouseleave", onLeave);
+
+    const onFocusIn = () => open();
+    const onFocusOut = (e: FocusEvent) => {
+      if (!group.contains(e.relatedTarget as Node)) close();
+    };
+    group.addEventListener("focusin", onFocusIn);
+    group.addEventListener("focusout", onFocusOut);
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        close();
+        trigger.focus();
+        return;
+      }
+
+      const target = e.target as HTMLElement;
+      const items = Array.from(menu.querySelectorAll<HTMLAnchorElement>("a"));
+
+      if (target === trigger && e.key === "ArrowDown") {
+        e.preventDefault();
+        open();
+        items[0]?.focus();
+        return;
+      }
+
+      const idx = items.indexOf(target as HTMLAnchorElement);
+      if (idx === -1) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        items[(idx + 1) % items.length]?.focus();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        items[(idx - 1 + items.length) % items.length]?.focus();
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        items[0]?.focus();
+      } else if (e.key === "End") {
+        e.preventDefault();
+        items[items.length - 1]?.focus();
+      }
+    };
+    group.addEventListener("keydown", onKey);
+
+    return () => {
+      group.removeEventListener("mouseenter", onEnter);
+      group.removeEventListener("mouseleave", onLeave);
+      group.removeEventListener("focusin", onFocusIn);
+      group.removeEventListener("focusout", onFocusOut);
+      group.removeEventListener("keydown", onKey);
+      window.clearTimeout(openTimer);
+      window.clearTimeout(closeTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    const group = document.querySelector<HTMLElement>("[data-advisory-mobile]");
+    if (!group) return;
+    const toggle = group.querySelector<HTMLButtonElement>(
+      "[data-advisory-mobile-toggle]",
+    );
+    const list = group.querySelector<HTMLElement>("[data-advisory-mobile-list]");
+    const chevron = group.querySelector<SVGElement>(
+      "[data-advisory-mobile-chevron]",
+    );
+    if (!toggle || !list) return;
+
+    let open = false;
+    let announced = false;
+    const collapse = () => {
+      if (!open) return;
+      open = false;
+      toggle.setAttribute("aria-expanded", "false");
+      list.classList.add("hidden");
+      list.classList.remove("flex");
+      chevron?.style.removeProperty("transform");
+    };
+    const onClick = () => {
+      open = !open;
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) {
+        list.classList.remove("hidden");
+        list.classList.add("flex");
+        chevron?.style.setProperty("transform", "rotate(180deg)");
+        if (!announced) {
+          trackAdvisoryNavDropdownOpened("mobile");
+          announced = true;
+        }
+      } else {
+        list.classList.add("hidden");
+        list.classList.remove("flex");
+        chevron?.style.removeProperty("transform");
+      }
+    };
+    toggle.addEventListener("click", onClick);
+    collapseAdvisorySublistRef.current = collapse;
+    return () => {
+      toggle.removeEventListener("click", onClick);
+      collapseAdvisorySublistRef.current = null;
+    };
+  }, []);
+
+  /* Collapse mobile sublist whenever the drawer closes, so the next open
+     doesn't start in a stale expanded state. Does not reset `announced`,
+     keeping Advisory:NavDropdownOpened fire-once per mount. */
+  useEffect(() => {
+    if (mobileOpen) return;
+    collapseAdvisorySublistRef.current?.();
+  }, [mobileOpen]);
 
   return (
     <>

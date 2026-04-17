@@ -1,0 +1,48 @@
+{
+  "seo": {
+    "title": "Transaction & Representation | Aabo Advisory",
+    "description": "Full-cycle diplomatic real estate transaction management — acquisitions, disposals, leasing, off-market sourcing, negotiation, and closing oversight for sovereign clients."
+  },
+  "hero": {
+    "numeral": "II",
+    "title": "Transaction & Representation",
+    "subtitle": "Full Cycle Transaction Management",
+    "intro": "When a diplomatic mission enters a real estate transaction, it does so under conditions unlike any other buyer, seller, or tenant. Sovereign immunity, tax-exempt status, multi-year approval processes, security requirements, host-country regulations. Every transaction requires understanding of both the deal mechanics and the institutional context surrounding it.",
+    "introSecondary": "Aabo Advisory provides full-cycle transaction management for diplomatic clients. From the earliest identification of opportunity through negotiation, execution, and closing, we represent missions with the precision, discretion, and strategic judgment that sovereign transactions demand."
+  },
+  "services": [
+    {
+      "headline": "Acquisitions, Disposals & Leasing",
+      "body": "Whether a mission is acquiring its first property in a new capital, disposing of a legacy asset that no longer serves its mandate, or negotiating a lease for staff housing, the fundamentals of representation remain the same: deep market knowledge, disciplined process, and unwavering alignment with client interests. Through vetted local partners Aabo Advisory supports and executes all transaction types across the full spectrum of diplomatic real estate — chanceries, residences, staff apartments, and representational spaces — in markets where we have direct experience and established relationships."
+    },
+    {
+      "headline": "New Development & Off-Market Sourcing",
+      "body": "The optimal diplomatic properties may not always be listed on the open market. A purpose-built chancery site, a townhouse suitable for an ambassador's residence, a development opportunity in an emerging diplomatic quarter, require relationships, local intelligence, and the credibility to engage private sellers and developers before a property reaches the public. We maintain active sourcing networks in our most markets and have the development expertise to evaluate new construction and conversion opportunities from feasibility through delivery."
+    },
+    {
+      "headline": "Negotiation & Execution",
+      "body": "Diplomatic transactions are rarely simple. They involve multiple stakeholders, competing priorities, and timelines that extend well beyond commercial norms. A negotiation may span two budget cycles. An approval often requires sign-off from a capital thousands of miles away. Counterparties may not understand sovereign process — and may even attempt to exploit it. We bring structure, pace, and strategic discipline to every negotiation. We know when to press and when to hold. And we ensure that the terms agreed at the table are the terms that appear in the contract."
+    },
+    {
+      "headline": "Closing Oversight & Risk Mitigation",
+      "body": "The period between contract execution and closing is where transactions are most vulnerable. Title issues, financing conditions, inspection findings, regulatory approvals, last-minute counterparty changes — any one of these can derail a deal that took months to negotiate. We manage the closing process with the same rigor we bring to the negotiation: tracking every condition, coordinating with legal counsel and title companies, ensuring compliance with host-country requirements, and maintaining a clear line of communication between all parties. Nothing closes without our review."
+    }
+  ],
+  "pullQuote": {
+    "text": "In diplomatic real estate, every transaction carries institutional weight. A purchase is not simply an acquisition — it is a sovereign commitment to a location, a neighborhood, and a relationship with the host country that may endure for generations. The representation must match the stakes."
+  },
+  "cta": {
+    "headline": "Discuss a transaction",
+    "buttonText": "Schedule a Consultation"
+  },
+  "crossLinks": [
+    {
+      "label": "Our strategic advisory often precedes a transaction →",
+      "href": "/advisory/strategic-housing"
+    },
+    {
+      "label": "After closing, our work continues →",
+      "href": "/advisory/operational-stewardship"
+    }
+  ]
+}

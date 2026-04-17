@@ -3,6 +3,71 @@ import { getTagOptions } from "./src/lib/newsletter-tags";
 
 const tagOptions = getTagOptions();
 
+const advisorySchema = {
+  seo: fields.object(
+    {
+      title: fields.text({ label: "SEO Title" }),
+      description: fields.text({ label: "SEO Description", multiline: true }),
+    },
+    { label: "SEO" },
+  ),
+  hero: fields.object(
+    {
+      numeral: fields.select({
+        label: "Numeral",
+        options: [
+          { label: "I", value: "I" },
+          { label: "II", value: "II" },
+          { label: "III", value: "III" },
+        ],
+        defaultValue: "I",
+      }),
+      title: fields.text({ label: "Title" }),
+      subtitle: fields.text({ label: "Subtitle" }),
+      intro: fields.text({ label: "Intro Paragraph 1", multiline: true }),
+      introSecondary: fields.text({ label: "Intro Paragraph 2", multiline: true }),
+    },
+    { label: "Hero" },
+  ),
+  services: fields.array(
+    fields.object({
+      headline: fields.text({ label: "Headline" }),
+      body: fields.text({ label: "Body", multiline: true }),
+    }),
+    {
+      label: "Service Boxes",
+      itemLabel: (props) => props.fields.headline.value,
+    },
+  ),
+  pullQuote: fields.object(
+    {
+      text: fields.text({ label: "Pull Quote Text", multiline: true }),
+    },
+    { label: "Pull Quote" },
+  ),
+  cta: fields.object(
+    {
+      headline: fields.text({ label: "CTA Headline" }),
+      buttonText: fields.text({ label: "Button Text" }),
+    },
+    { label: "CTA" },
+  ),
+  crossLinks: fields.array(
+    fields.object({
+      label: fields.text({ label: "Label" }),
+      href: fields.text({
+        label: "Href",
+        description:
+          "Absolute path, e.g. /advisory/operational-stewardship or /insights/<slug>.",
+      }),
+    }),
+    {
+      label: "Cross Links",
+      itemLabel: (props) => props.fields.label.value,
+    },
+  ),
+};
+
 export default config({
   storage: {
     kind: "cloud",
@@ -356,6 +421,27 @@ export default config({
           },
         ),
       },
+    }),
+
+    advisoryStrategicHousing: singleton({
+      label: "Advisory — Strategic Housing",
+      path: "src/content/advisory-strategic-housing",
+      format: { data: "json" },
+      schema: advisorySchema,
+    }),
+
+    advisoryTransactionRepresentation: singleton({
+      label: "Advisory — Transaction & Representation",
+      path: "src/content/advisory-transaction-representation",
+      format: { data: "json" },
+      schema: advisorySchema,
+    }),
+
+    advisoryOperationalStewardship: singleton({
+      label: "Advisory — Operational Stewardship",
+      path: "src/content/advisory-operational-stewardship",
+      format: { data: "json" },
+      schema: advisorySchema,
     }),
   },
 });

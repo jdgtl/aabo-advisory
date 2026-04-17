@@ -1,0 +1,102 @@
+---
+import type { PillarId } from "@/lib/analytics";
+
+interface CrossLink {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  headline: string;
+  buttonText: string;
+  crossLinks: CrossLink[];
+  pillarSlug: PillarId;
+}
+
+const { headline, buttonText, crossLinks, pillarSlug } = Astro.props;
+---
+
+<section class="relative overflow-hidden bg-primary px-6 md:px-12 lg:px-20 py-16 lg:py-24 text-center">
+  <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#1A2D4755_0%,transparent_70%)]" />
+
+  <div class="relative z-[1] max-w-[700px] mx-auto">
+    <h2 class="font-heading text-[26px] sm:text-[28px] lg:text-[32px] font-bold text-canvas mb-8 leading-[1.2]">
+      {headline}
+    </h2>
+
+    <a
+      href="/#contact"
+      data-advisory-cta
+      data-pillar={pillarSlug}
+      class="inline-block border border-accent text-canvas px-8 sm:px-11 py-3.5 text-[11px] tracking-[0.16em] uppercase font-body font-medium
+             transition-all duration-300 ease-[cubic-bezier(.4,0,.2,1)] hover:bg-accent hover:text-primary hover:-translate-y-px cursor-pointer"
+    >
+      {buttonText}
+    </a>
+
+    {crossLinks?.length > 0 && (
+      <ul class="mt-10 flex flex-col sm:flex-row sm:flex-wrap justify-center gap-4 sm:gap-6 text-[13px]">
+        {crossLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              data-advisory-crosslink
+              data-pillar={pillarSlug}
+              data-label={link.label}
+              class="text-accent hover:text-accent-light transition-colors duration-300 underline-offset-4 hover:underline"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</section>
+
+<script>
+  import {
+    trackAdvisoryCTAClicked,
+    trackAdvisoryCrossLinkClicked,
+    type PillarId,
+  } from "@/lib/analytics";
+
+  const PILLAR_IDS: readonly PillarId[] = [
+    "strategic-housing",
+    "transaction-representation",
+    "operational-stewardship",
+  ];
+
+  function asPillarId(value: string | undefined): PillarId | null {
+    return value && (PILLAR_IDS as readonly string[]).includes(value)
+      ? (value as PillarId)
+      : null;
+  }
+
+  function wireAdvisoryCTA() {
+    document.querySelectorAll<HTMLAnchorElement>("[data-advisory-cta]").forEach((el) => {
+      if (el.dataset.wired === "1") return;
+      el.dataset.wired = "1";
+      el.addEventListener("click", () => {
+        const pillar = asPillarId(el.dataset.pillar);
+        if (!pillar) return;
+        trackAdvisoryCTAClicked(pillar, "cta-banner");
+      });
+    });
+
+    document.querySelectorAll<HTMLAnchorElement>("[data-advisory-crosslink]").forEach((el) => {
+      if (el.dataset.wired === "1") return;
+      el.dataset.wired = "1";
+      el.addEventListener("click", () => {
+        const pillar = asPillarId(el.dataset.pillar);
+        if (!pillar) return;
+        const href = el.getAttribute("href") ?? "";
+        const label = el.dataset.label ?? "";
+        trackAdvisoryCrossLinkClicked(pillar, href, label);
+      });
+    });
+  }
+
+  wireAdvisoryCTA();
+  document.addEventListener("astro:page-load", wireAdvisoryCTA);
+</script>

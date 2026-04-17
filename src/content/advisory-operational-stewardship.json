@@ -1,0 +1,52 @@
+{
+  "seo": {
+    "title": "Operational Stewardship | Aabo Advisory",
+    "description": "Proactive, ongoing advisory for diplomatic missions' real estate portfolios — post-closing oversight, vendor coordination, asset performance monitoring, and market intelligence."
+  },
+  "hero": {
+    "numeral": "III",
+    "title": "Operational Stewardship",
+    "subtitle": "Proactive, Ongoing Support",
+    "intro": "Closing day is not the finish line. For a diplomatic mission, it is the beginning of a decades-long relationship with a property — and with the market it sits within. The residence that was the right acquisition in 2024 must still be the right asset in 2034 and 2044. That requires attention, judgment, and a partner who remains engaged long after the transaction closes.",
+    "introSecondary": "Aabo Advisory's Operational Stewardship provides the ongoing support that diplomatic properties require. The strategic layer above day-to-day management: monitoring performance, anticipating issues, coordinating specialized vendors, and ensuring that the asset continues to serve a mission's evolving needs. This is the institutional memory that survives every rotation."
+  },
+  "services": [
+    {
+      "headline": "Post-Closing Oversight",
+      "body": "The first twelve months after a property acquisition are critical. Warranty periods expire. Construction defects surface. Systems require commissioning and adjustment. Vendor relationships must be established. Aabo Advisory provides structured post-closing oversight that ensures nothing falls through the cracks during this transition period — managing punch lists, coordinating with contractors, reviewing warranty claims, and establishing the maintenance cadence that will govern the property for years to come. The goal is a clean handoff to steady-state operations, not a slow discovery of deferred problems."
+    },
+    {
+      "headline": "Vendor & Issue Coordination",
+      "body": "Diplomatic properties present maintenance and service challenges that residential and commercial buildings do not. Security systems require specialized contractors. Historic or landmark buildings demand qualified restoration firms. Issues that arise in sovereign-owned property often involve sensitivities around access, scheduling, and confidentiality that standard property managers are not equipped to handle. We maintain a vetted network of service providers experienced in diplomatic work and coordinate issue resolution with discretion and efficiency."
+    },
+    {
+      "headline": "Ongoing Asset Performance Monitoring",
+      "body": "A property's value and utility are not static. Markets shift. Neighborhoods evolve. Building systems age. A residence that was ideally positioned a decade ago may now sit in a declining area — or an appreciating one. We monitor assets against market benchmarks continuously: tracking valuation trends, comparing operating costs to portfolio norms, flagging capital expenditure needs before they become emergencies, and providing the data necessary for informed hold-or-dispose decisions. Stewardship, at its core, is the discipline of paying attention."
+    },
+    {
+      "headline": "Market Intelligence & Insights",
+      "body": "Our clients do not operate in isolation, and neither do we. Aabo Advisory publishes regular market intelligence tailored to the diplomatic community — covering pricing trends, regulatory changes, neighborhood shifts, and macroeconomic factors that affect real estate strategy. This is not generic market commentary. It is analysis built specifically for the institutions that hold property as sovereign assets in global capitals. Our insights inform decisions both at mission and at headquarters, and they ensure our clients are never surprised by a market they are active in."
+    }
+  ],
+  "pullQuote": {
+    "text": "The most valuable thing an advisor can offer a diplomatic mission is not a transaction — it is continuity. What endures is the advisory relationship: the institutional knowledge, the ongoing vigilance, and the commitment to seeing every decision through its full lifecycle."
+  },
+  "cta": {
+    "headline": "Discuss ongoing advisory",
+    "buttonText": "Schedule a Consultation"
+  },
+  "crossLinks": [
+    {
+      "label": "Explore our latest market intelligence →",
+      "href": "/insights"
+    },
+    {
+      "label": "Subscribe to the Aabo Newsletter →",
+      "href": "/newsletter"
+    },
+    {
+      "label": "Every engagement begins with strategy →",
+      "href": "/advisory/strategic-housing"
+    }
+  ]
+}

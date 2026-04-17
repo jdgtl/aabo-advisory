@@ -56,3 +56,15 @@ export async function getAllArticles() {
 export async function getArticle(slug: string) {
   return await reader.collections.articles.read(slug);
 }
+
+export async function getAdvisoryStrategicHousing() {
+  return await reader.singletons.advisoryStrategicHousing.read();
+}
+
+export async function getAdvisoryTransactionRepresentation() {
+  return await reader.singletons.advisoryTransactionRepresentation.read();
+}
+
+export async function getAdvisoryOperationalStewardship() {
+  return await reader.singletons.advisoryOperationalStewardship.read();
+}
