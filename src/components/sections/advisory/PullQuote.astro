@@ -7,8 +7,18 @@ const { text } = Astro.props;
 ---
 
 <div class="py-14 lg:py-20">
-  <div class="border-l-[3px] border-accent pl-6 sm:pl-8 max-w-[720px]">
-    <blockquote class="font-heading italic text-[22px] sm:text-[26px] lg:text-[30px] leading-[1.45] text-primary">
+  <div class="relative max-w-[720px]">
+    <span
+      aria-hidden="true"
+      role="presentation"
+      class="pointer-events-none select-none absolute -top-6 lg:-top-12 left-0 font-heading font-bold leading-none text-primary/[0.07] z-0"
+      style="font-size: clamp(140px, 20vw, 240px);"
+    >
+      &ldquo;
+    </span>
+    <blockquote
+      class="relative z-[1] border-l-[3px] border-accent pl-6 sm:pl-8 font-heading italic text-[16px] sm:text-[18px] lg:text-[20px] leading-[1.6] text-primary"
+    >
       {text}
     </blockquote>
   </div>
