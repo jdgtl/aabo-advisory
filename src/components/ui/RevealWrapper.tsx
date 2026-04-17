@@ -26,11 +26,22 @@ export default function RevealWrapper({
   children,
 }: RevealWrapperProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  // Start visible so SSR and no-JS render content immediately.
+  // The effect below opts into the fade-in-on-scroll animation after mount.
+  const [visible, setVisible] = useState(true);
+  const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (typeof IntersectionObserver === "undefined") return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
     const el = ref.current;
     if (!el) return;
+
+    // Opt in to the animation: hide first, then observe for reveal.
+    setAnimate(true);
+    setVisible(false);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -46,24 +57,16 @@ export default function RevealWrapper({
     return () => observer.disconnect();
   }, [threshold]);
 
-  const hiddenStyle: CSSProperties = {
-    opacity: 0,
-    ...offsets[direction],
-    transition: `opacity 0.7s cubic-bezier(.4,0,.2,1) ${delay}s, transform 0.7s cubic-bezier(.4,0,.2,1) ${delay}s`,
-  };
-
-  const visibleStyle: CSSProperties = {
-    opacity: 1,
-    transform: "none",
-    transition: `opacity 0.7s cubic-bezier(.4,0,.2,1) ${delay}s, transform 0.7s cubic-bezier(.4,0,.2,1) ${delay}s`,
-  };
+  const style: CSSProperties = animate
+    ? {
+        opacity: visible ? 1 : 0,
+        transform: visible ? "none" : offsets[direction].transform,
+        transition: `opacity 0.7s cubic-bezier(.4,0,.2,1) ${delay}s, transform 0.7s cubic-bezier(.4,0,.2,1) ${delay}s`,
+      }
+    : {};
 
   return (
-    <div
-      ref={ref}
-      className={className}
-      style={visible ? visibleStyle : hiddenStyle}
-    >
+    <div ref={ref} className={className} style={style}>
       {children}
     </div>
   );
