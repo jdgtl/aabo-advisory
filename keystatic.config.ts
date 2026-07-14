@@ -134,7 +134,7 @@ export default config({
           defaultValue: "Insights",
         }),
         date: fields.date({ label: "Date", validation: { isRequired: true } }),
-        excerpt: fields.text({ label: "Excerpt", multiline: true }),
+        excerpt: fields.text({ label: "Excerpt", multiline: true, validation: { isRequired: true } }),
         keyTakeaway: fields.text({ label: "Key Takeaway", multiline: true }),
         publicationUrl: fields.url({
           label: "Publication URL",
